@@ -8,13 +8,15 @@ const travelDemoEvents = [
   "view_item_list",
   "select_item",
   "view_item",
+  "add_to_wishlist",
   "add_to_cart",
   "remove_from_cart",
   "view_cart",
   "begin_checkout",
   "add_shipping_info",
   "add_payment_info",
-  "purchase"
+  "purchase",
+  "survey_answer"
 ];
 
 export function demoControlPage(state) {
@@ -51,6 +53,12 @@ export function demoControlPage(state) {
       <article class="summary-card tracking-log">
         <h2>Tracking readiness</h2>
         ${(state.trackingLog || []).slice(-8).reverse().map((event) => `<code>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
+      </article>
+      <article class="summary-card">
+        <h2>Lifecycle simulator</h2>
+        <button class="secondary full" data-lifecycle="trip_completed">Emit trip completed</button>
+        <button class="secondary full" data-lifecycle="review_submitted">Emit 5-star review</button>
+        <button class="secondary full" data-lifecycle="payment_failed">Emit payment failed</button>
       </article>
     </section>
     <section class="event-types">

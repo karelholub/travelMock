@@ -54,6 +54,12 @@ assert(html.includes("https://travel.eu1.pipes.meiro.io/mpt.js"), "Meiro Pipes t
 assert(sourceText.includes('mpt("event", "page_view"'), "Meiro page_view event call missing");
 assert(sourceText.includes('mpt("event", name'), "Meiro named event call missing");
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
+for (const field of ["origin", "region", "depart_date", "pax", "cabin_class", "route", "line_items", "product_types", "total_value", "travel_start_date", "travel_end_date", "saved_price", "saved_at"]) {
+  assert(trackingSchema.includes(field) || sourceText.includes(field), `Travel playbook field missing: ${field}`);
+}
+for (const playbookEvent of ["search_performed", "wishlist_added", "booking_started", "booking_confirmed", "trip_completed", "review_submitted", "payment_failed"]) {
+  assert(sourceText.includes(playbookEvent), `Travel playbook event coverage missing: ${playbookEvent}`);
+}
 assert(checkout.includes("email: contact.email"), "Purchase payload must include top-level email");
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");

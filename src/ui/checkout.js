@@ -47,7 +47,12 @@ export function checkoutPage(state, summary) {
 
 export function buildPurchasePayload(form, state, summary) {
   const data = Object.fromEntries(new FormData(form).entries());
-  const cartPayload = trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count });
+  const draftBookingId = state.checkoutDraft?.bookingId || `ELSE-${Math.floor(100000 + Math.random() * 899999)}`;
+  const cartPayload = trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, {
+    ...state.search,
+    bookingId: draftBookingId,
+    playbookEvent: "booking_confirmed"
+  });
   const firstDestination = summary.enriched[0]?.product.destination || state.search.destination;
   const flightIds = summary.enriched.filter((item) => item.product.type === "flight").map((item) => item.product.id);
   const hotelIds = summary.enriched.filter((item) => item.product.type === "hotel").map((item) => item.product.id);
@@ -56,15 +61,23 @@ export function buildPurchasePayload(form, state, summary) {
   const contact = { email: data.email, phone: data.phone };
   return {
     transaction_id: `txn_${Date.now()}`,
-    booking_id: `ELSE-${Math.floor(100000 + Math.random() * 899999)}`,
+    booking_id: draftBookingId,
     email: contact.email,
     phone: contact.phone,
     first_name: data.firstName,
     surname: data.surname,
     destination: firstDestination,
+    origin: state.search.origin || "Prague",
+    region: cartPayload.region,
+    route: cartPayload.route,
     departure_date: state.search.departureDate,
     return_date: state.search.returnDate,
+    depart_date: state.search.departureDate,
+    travel_start_date: state.search.departureDate,
+    travel_end_date: state.search.returnDate,
     traveler_count: Number(data.travelerCount || state.search.travelers),
+    pax: Number(data.travelerCount || state.search.travelers),
+    cabin_class: state.search.cabinClass || "economy",
     trip_type: state.search.tripType,
     flight_ids: flightIds,
     hotel_ids: hotelIds,
@@ -72,10 +85,14 @@ export function buildPurchasePayload(form, state, summary) {
     add_on_ids: addOnIds,
     cart_value: summary.total,
     booking_value: summary.total,
+    total_value: summary.total,
     currency: "EUR",
     coupon: data.coupon,
     loyalty_tier: state.profile?.fields?.loyalty_tier || "Guest",
     items: cartPayload.items,
+    line_items: cartPayload.line_items,
+    product_types: cartPayload.product_types,
+    booked_product_types: cartPayload.booked_product_types,
     payment_type: data.paymentType,
     country: data.country,
     marketing_consent: data.marketingConsent === "on",

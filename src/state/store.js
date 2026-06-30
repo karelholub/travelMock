@@ -7,10 +7,12 @@ export const state = saved || {
   personaId: "anonymous",
   profile: null,
   search: {
+    origin: "Prague",
     destination: "Lisbon",
     departureDate: "2026-09-12",
     returnDate: "2026-09-18",
     travelers: 2,
+    cabinClass: "economy",
     tripType: "city"
   },
   cart: { items: [] },

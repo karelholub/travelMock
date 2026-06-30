@@ -20,6 +20,7 @@ export function productCard(product, options = {}) {
         </div>
         <div class="card-actions">
           <button class="primary small" data-add="${product.id}">${cta}</button>
+          <button class="secondary small" data-watch="${product.id}">Watch price</button>
           <a class="secondary small" href="/product/${product.slug}" data-link>${secondary}</a>
         </div>
       </div>
@@ -44,6 +45,11 @@ export function rail(title, products, listName, empty = "Recommendations are rec
 export function searchPanel(search) {
   return `
     <form class="search-panel" data-search-form>
+      <label>Origin
+        <select name="origin">
+          ${["Prague", "Vienna", "Berlin", "London", "Amsterdam"].map((city) => `<option ${city === (search.origin || "Prague") ? "selected" : ""}>${city}</option>`).join("")}
+        </select>
+      </label>
       <label>Destination
         <select name="destination">
           ${["Lisbon", "Mallorca", "Zurich", "Kyoto", "Reykjavik"].map((city) => `<option ${city === search.destination ? "selected" : ""}>${city}</option>`).join("")}
@@ -61,6 +67,11 @@ export function searchPanel(search) {
       <label>Trip type
         <select name="tripType">
           ${["city", "family", "business", "culture", "wellness", "leisure"].map((type) => `<option value="${type}" ${type === search.tripType ? "selected" : ""}>${type}</option>`).join("")}
+        </select>
+      </label>
+      <label>Cabin
+        <select name="cabinClass">
+          ${["economy", "premium_economy", "business"].map((type) => `<option value="${type}" ${type === (search.cabinClass || "economy") ? "selected" : ""}>${type.replace("_", " ")}</option>`).join("")}
         </select>
       </label>
       <button class="primary" type="submit">Search trips</button>

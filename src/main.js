@@ -3,7 +3,7 @@ import { findProductById } from "./catalog/lookups.js";
 import { personas } from "./data/personas.js";
 import { addToCart, cartSummary, clearCart, rememberProduct, removeFromCart, setPersona, state, subscribe, updateState } from "./state/store.js";
 import { configureTracking, identifyUser, setConsent, setSharedContext, trackEvent, trackPageView } from "./tracking/index.js";
-import { trackingCartPayload, trackingItem } from "./tracking/schema.js";
+import { trackingCartPayload, trackingItem, trackingLifecyclePayload, trackingSearchPayload, trackingWishlistPayload } from "./tracking/schema.js";
 import { accountPage } from "./ui/account.js";
 import { buildPurchasePayload, checkoutPage } from "./ui/checkout.js";
 import { demoControlPage } from "./ui/demoControl.js";
@@ -48,24 +48,27 @@ function render() {
   trackPageView({ route: path, persona: state.personaId });
 
   if (path === "/search") {
+    const resultProducts = [...document.querySelectorAll(".product-card")]
+      .map((card) => findProductById(card.dataset.productId))
+      .filter(Boolean);
     trackEvent("view_search_results", {
-      destination: state.search.destination,
-      result_count: document.querySelectorAll(".product-card").length,
-      items: [...document.querySelectorAll(".product-card")].map((card) => card.dataset.productId)
+      ...trackingSearchPayload(state.search),
+      result_count: resultProducts.length,
+      items: resultProducts.map((product) => trackingItem(product, 1, state.search))
     });
-    trackEvent("view_item_list", { list_name: "search_results", items: [...document.querySelectorAll(".product-card")].map((card) => card.dataset.productId) });
+    trackEvent("view_item_list", { list_name: "search_results", items: resultProducts.map((product) => trackingItem(product, 1, state.search)) });
   }
 
   if (path.startsWith("/product/")) {
     const product = findProductById(document.querySelector("[data-add]")?.dataset.add);
     if (product) {
       rememberProduct(product.id);
-      trackEvent("view_item", trackingItem(product));
+      trackEvent("view_item", trackingItem(product, 1, state.search));
     }
   }
 
   if (path === "/itinerary") {
-    trackEvent("view_cart", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }));
+    trackEvent("view_cart", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, state.search));
   }
 }
 
@@ -103,7 +106,20 @@ function wireEvents(summary) {
   document.querySelectorAll("[data-link]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
-      history.pushState({}, "", link.getAttribute("href"));
+      const href = link.getAttribute("href");
+      if (href === "/checkout" && summary.enriched.length) {
+        state.checkoutDraft = state.checkoutDraft || {
+          bookingId: `ELSE-${Math.floor(100000 + Math.random() * 899999)}`,
+          startedAt: new Date().toISOString()
+        };
+        localStorage.setItem("elsewhere-state", JSON.stringify(state));
+        trackEvent("begin_checkout", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, {
+          ...state.search,
+          bookingId: state.checkoutDraft.bookingId,
+          playbookEvent: "booking_started"
+        }));
+      }
+      history.pushState({}, "", href);
       render();
     });
   });
@@ -115,9 +131,21 @@ function wireEvents(summary) {
       addToCart(product.id);
       const next = cartSummary();
       trackEvent("add_to_cart", {
-        ...trackingItem(product),
-        ...trackingCartPayload(next.enriched, { total: next.total, count: next.count })
+        ...trackingItem(product, 1, state.search),
+        ancillary_type: ["transfer", "experience", "insurance", "add_on"].includes(product.type) ? product.type : undefined,
+        ...trackingCartPayload(next.enriched, { total: next.total, count: next.count }, {
+          ...state.search,
+          playbookEvent: ["transfer", "experience", "insurance", "add_on"].includes(product.type) ? "ancillary_added" : undefined
+        })
       });
+    });
+  });
+
+  document.querySelectorAll("[data-watch]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const product = findProductById(button.dataset.watch);
+      if (!product) return;
+      trackEvent("add_to_wishlist", trackingWishlistPayload(product, state.search));
     });
   });
 
@@ -128,8 +156,8 @@ function wireEvents(summary) {
       const next = cartSummary();
       if (product) {
         trackEvent("remove_from_cart", {
-          ...trackingItem(product),
-          ...trackingCartPayload(next.enriched, { total: next.total, count: next.count })
+          ...trackingItem(product, 1, state.search),
+          ...trackingCartPayload(next.enriched, { total: next.total, count: next.count }, state.search)
         });
       }
     });
@@ -139,13 +167,7 @@ function wireEvents(summary) {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget).entries());
     updateState({ search: { ...state.search, ...data, travelers: Number(data.travelers || 1) } });
-    trackEvent("search", {
-      destination: state.search.destination,
-      departure_date: state.search.departureDate,
-      return_date: state.search.returnDate,
-      traveler_count: state.search.travelers,
-      trip_type: state.search.tripType
-    });
+    trackEvent("search", trackingSearchPayload(state.search));
     history.pushState({}, "", "/search");
     render();
   });
@@ -153,7 +175,11 @@ function wireEvents(summary) {
   document.querySelector("[data-checkout-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const payload = buildPurchasePayload(event.currentTarget, state, summary);
-    trackEvent("begin_checkout", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }));
+    trackEvent("begin_checkout", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, {
+      ...state.search,
+      bookingId: payload.booking_id,
+      playbookEvent: "booking_started"
+    }));
     trackEvent("add_shipping_info", payload);
     trackEvent("add_payment_info", payload);
     trackEvent("purchase", payload);
@@ -164,7 +190,7 @@ function wireEvents(summary) {
       surname: payload.surname,
       loyaltyTier: payload.loyalty_tier
     });
-    updateState({ booking: payload });
+    updateState({ booking: payload, checkoutDraft: null });
     clearCart();
     history.pushState({}, "", "/thank-you");
     render();
@@ -181,6 +207,26 @@ function wireEvents(summary) {
       setPersona(button.dataset.persona, profile);
       setSharedContext({ persona: button.dataset.persona, loyalty_tier: profile.fields.loyalty_tier });
       trackEvent("select_item", { item_id: button.dataset.persona, item_name: personas[button.dataset.persona].label, item_type: "persona", list_name: "demo_control" });
+    });
+  });
+
+  document.querySelectorAll("[data-lifecycle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const lifecyclePayload = trackingLifecyclePayload(state.booking, {
+        destination: state.search.destination,
+        travel_start_date: state.search.departureDate,
+        travel_end_date: state.search.returnDate,
+        pax: state.search.travelers
+      });
+      if (button.dataset.lifecycle === "trip_completed") {
+        trackEvent("trip_completed", { ...lifecyclePayload, playbook_event: "trip_completed" });
+      }
+      if (button.dataset.lifecycle === "review_submitted") {
+        trackEvent("survey_answer", { ...lifecyclePayload, playbook_event: "review_submitted", rating: 5 });
+      }
+      if (button.dataset.lifecycle === "payment_failed") {
+        trackEvent("payment_failed", { ...lifecyclePayload, playbook_event: "payment_failed", reason: "demo_card_declined" });
+      }
     });
   });
 

@@ -91,7 +91,7 @@ export function trackEvent(name, payload = {}) {
     consent: consentState
   };
   const mpt = getPipesTag();
-  if (mpt && isMeiroBuiltInEventType(name)) {
+  if (mpt && (isMeiroBuiltInEventType(name) || window.__MEIRO_SEND_CUSTOM_PLAYBOOK_EVENTS__ === true)) {
     mpt("event", name, enriched);
   }
   const sdk = getMeiro();
