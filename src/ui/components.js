@@ -128,10 +128,11 @@ export function profileProof(profile) {
     fields.abandoned_booking
   )
     || "Lisbon";
+  const firstName = detailText(fields.first_name, "");
   return `
     <div class="profile-proof">
       <span>Profile API</span>
-      <strong>${fields.first_name ? `${fields.first_name}'s ` : ""}${destination}</strong>
+      <strong>${firstName ? `${firstName}'s ` : ""}${destination}</strong>
       <span>${detailListName(fields.last_viewed_item_list_name || fields.next_departure_date)}</span>
       <span>${fields.loyalty_tier || "Guest"}</span>
     </div>

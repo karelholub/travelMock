@@ -1,6 +1,10 @@
 import { personas } from "../data/personas.js";
 
 export const meiroProfileAttributes = [
+  "Last name",
+  "has_active_booking",
+  "searches_last_7d",
+  "Profile activity",
   "Abandoned Booking",
   "Last Viewed Item",
   "Last Search Details",
@@ -11,6 +15,7 @@ export const meiroProfileAttributes = [
   "Last Search Performed Details",
   "Last Purchased Item Destination",
   "User's Email (from Purchase or Shipping)",
+  "First name",
   "User's First Name (from Shipping)",
   "User's Last Name (from Shipping)",
   "Last Viewed Item List Name",
@@ -28,10 +33,13 @@ const aliases = {
   last_search_performed_details: ["last_search_performed_details", "lastSearchPerformedDetails", "Last Search Performed Details"],
   last_purchased_item_destination: ["last_purchased_item_destination", "lastPurchasedItemDestination", "Last Purchased Item Destination"],
   email: ["email", "user_email", "userEmail", "User's Email (from Purchase or Shipping)"],
-  first_name: ["first_name", "firstName", "user_first_name", "User's First Name (from Shipping)"],
-  last_name: ["last_name", "lastName", "surname", "user_last_name", "userLastName", "User's Last Name (from Shipping)", "User's Surname (from Shipping)"],
+  first_name: ["first_name", "firstName", "first", "user_first_name", "First name", "First Name", "User's First Name (from Shipping)"],
+  last_name: ["last_name", "lastName", "last", "surname", "user_last_name", "userLastName", "Last name", "Last Name", "User's Last Name (from Shipping)", "User's Surname (from Shipping)"],
   last_viewed_item_list_name: ["last_viewed_item_list_name", "lastViewedItemListName", "Last Viewed Item List Name"],
-  total_lifetime_purchase_value: ["total_lifetime_purchase_value", "totalLifetimePurchaseValue", "Total Lifetime Purchase Value"]
+  total_lifetime_purchase_value: ["total_lifetime_purchase_value", "totalLifetimePurchaseValue", "Total Lifetime Purchase Value"],
+  has_active_booking: ["has_active_booking", "hasActiveBooking", "Has Active Booking"],
+  searches_last_7d: ["searches_last_7d", "searchesLast7d", "Searches Last 7d", "Searches last 7d"],
+  profile_activity: ["profile_activity", "profileActivity", "Profile activity", "Profile Activity"]
 };
 
 export function slugFieldName(value) {
@@ -156,6 +164,9 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
       first_name: detailNameValue(normalized.first_name) || fallback.first_name,
       last_name: detailNameValue(normalized.last_name) || detailNameValue(normalized.surname) || fallback.last_name || fallback.surname,
       surname: detailNameValue(normalized.last_name) || detailNameValue(normalized.surname) || fallback.surname || fallback.last_name,
+      has_active_booking: detailBooleanValue(normalized.has_active_booking, fallback.has_active_booking),
+      searches_last_7d: detailNumberValue(normalized.searches_last_7d) || fallback.searches_last_7d || 0,
+      profile_activity: normalized.profile_activity || fallback.profile_activity,
       last_viewed_item_list_name: detailListValue(normalized.last_viewed_item_list_name) || fallback.last_viewed_item_list_name,
       total_lifetime_purchase_value: Number.isFinite(value) ? value : fallback.total_lifetime_purchase_value,
       next_trip_destination: detailDestinationValue(normalized.next_trip_destination) || destination,
@@ -211,6 +222,21 @@ function detailNumberValue(value) {
   return NaN;
 }
 
+function detailBooleanValue(value, fallback = false) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (unwrapped === undefined || unwrapped === null || unwrapped === "") return Boolean(fallback);
+  if (typeof unwrapped === "boolean") return unwrapped;
+  if (typeof unwrapped === "number") return unwrapped > 0;
+  if (typeof unwrapped === "string") return ["true", "1", "yes", "y", "active"].includes(unwrapped.trim().toLowerCase());
+  if (Array.isArray(unwrapped)) return detailBooleanValue(unwrapped[0], fallback);
+  if (typeof unwrapped === "object") {
+    for (const key of ["value", "active", "has_active_booking", "hasActiveBooking"]) {
+      if (unwrapped[key] !== undefined) return detailBooleanValue(unwrapped[key], fallback);
+    }
+  }
+  return Boolean(fallback);
+}
+
 export function localProfile(personaId = "anonymous", identity = {}) {
   const persona = personas[personaId] || personas.anonymous;
   const bookingValue = persona.id === "vip" ? 4820 : persona.id === "family" ? 2450 : persona.id === "business" ? 1300 : 1640;
@@ -235,6 +261,13 @@ export function localProfile(personaId = "anonymous", identity = {}) {
       first_name: identity.firstName || identity.first_name || "Alex",
       last_name: identity.lastName || identity.last_name || identity.surname || "Somewhere",
       surname: identity.surname || identity.lastName || identity.last_name || "Somewhere",
+      has_active_booking: persona.id !== "anonymous",
+      searches_last_7d: persona.id === "abandoner" ? 7 : persona.id === "business" ? 5 : persona.id === "family" ? 4 : 2,
+      profile_activity: {
+        status: persona.id === "abandoner" ? "high_intent" : "active",
+        last_seen: new Date().toISOString(),
+        searches_last_7d: persona.id === "abandoner" ? 7 : persona.id === "business" ? 5 : persona.id === "family" ? 4 : 2
+      },
       last_viewed_item_list_name: "homepage_recommended",
       total_lifetime_purchase_value: bookingValue,
       abandoned_booking: {

@@ -24,6 +24,9 @@ export function accountPage(state) {
   const firstName = detailText(fields.first_name || state.booking?.first_name, "Unknown");
   const lastName = detailText(fields.last_name || fields.surname || state.booking?.surname, "Unknown");
   const displayName = [firstName, lastName].filter((name) => name && name !== "Unknown").join(" ");
+  const activeBooking = fields.has_active_booking ? "yes" : "no";
+  const searchesLast7d = detailNumber(fields.searches_last_7d, 0);
+  const profileActivity = detailText(fields.profile_activity, "pending");
   const tripSignal = detailText(fields.last_interest_trip_type, persona.preferredTripType);
   const source = state.profile?.source || "pending";
   const identity = profileIdentity(state);
@@ -58,7 +61,8 @@ export function accountPage(state) {
           <article><span>Loyalty</span><strong>${fields.loyalty_tier || persona.loyaltyTier}</strong></article>
           <article><span>Destination affinity</span><strong>${destination}</strong></article>
           <article><span>Lifetime value</span><strong>${lifetimeValue}</strong></article>
-          <article><span>Traveler type</span><strong>${persona.travelerKind}</strong></article>
+          <article><span>Active booking</span><strong>${activeBooking}</strong></article>
+          <article><span>Searches 7d</span><strong>${searchesLast7d}</strong></article>
         </div>
         <section class="profile-signal-grid">
           <article class="summary-card">
@@ -71,6 +75,7 @@ export function accountPage(state) {
           <article class="summary-card">
             <h2>Intent</h2>
             <div><span>Last search</span><strong>${lastSearch}</strong></div>
+            <div><span>Profile activity</span><strong>${profileActivity}</strong></div>
             <div><span>Last viewed list</span><strong>${viewedList}</strong></div>
             <div><span>Last wishlist item</span><strong>${wishlist}</strong></div>
           </article>

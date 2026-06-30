@@ -45,6 +45,8 @@ export function demoControlPage(state) {
   ) || activePersona.preferredDestination;
   const viewedList = detailListName(fields.last_viewed_item_list_name, "pending");
   const lifetimeValue = money(detailNumber(fields.total_lifetime_purchase_value ?? fields.booking_value, 0));
+  const activeBooking = fields.has_active_booking ? "yes" : "no";
+  const searchesLast7d = detailNumber(fields.searches_last_7d, 0);
   return `
     <section class="page-head dense">
       <div>
@@ -89,6 +91,9 @@ export function demoControlPage(state) {
           ${signalRow("email", detailText(fields.email || state.booking?.email, "pending checkout identity"))}
           ${signalRow("first_name", detailText(fields.first_name || state.booking?.first_name, "pending"))}
           ${signalRow("last_name", detailText(fields.last_name || fields.surname || state.booking?.surname, "pending"))}
+          ${signalRow("has_active_booking", activeBooking)}
+          ${signalRow("searches_last_7d", searchesLast7d)}
+          ${signalRow("profile_activity", detailText(fields.profile_activity))}
           ${signalRow("destination", destination)}
           ${signalRow("last_search", detailText(fields.last_search_details || fields.last_search_performed_details))}
           ${signalRow("last_viewed_item", detailText(fields.last_viewed_item))}
