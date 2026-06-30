@@ -7,6 +7,7 @@ export function checkoutPage(state, summary) {
   }
   const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
   const serviceFee = 29;
+  const addOnItems = summary.enriched.filter((item) => ["transfer", "experience", "insurance", "add_on"].includes(item.product.type));
   return `
     <section class="page-head dense">
       <div>
@@ -17,13 +18,13 @@ export function checkoutPage(state, summary) {
     </section>
     <form class="checkout-flow" data-checkout-form>
       <div class="checkout-main">
-        <section class="checkout-progress">
-          <span class="is-active">Travelers</span>
-          <span>Contact</span>
-          <span>Add-ons</span>
-          <span>Payment</span>
+        <section class="checkout-progress" aria-label="Checkout steps">
+          <button class="is-active" type="button" data-checkout-step="travelers" aria-current="step">Travelers</button>
+          <button type="button" data-checkout-step="contact">Contact</button>
+          <button type="button" data-checkout-step="addons">Add-ons</button>
+          <button type="button" data-checkout-step="payment">Payment</button>
         </section>
-        <section class="form-card checkout-section">
+        <section class="form-card checkout-section" id="checkout-travelers" data-checkout-section="travelers" tabindex="-1">
           <div>
             <span class="eyebrow">Step 1</span>
             <h2>Traveler details</h2>
@@ -34,8 +35,9 @@ export function checkoutPage(state, summary) {
             <label>Date of birth<input name="dob" type="date" value="1988-04-12" /></label>
             <label>Traveler count<input name="travelerCount" type="number" min="1" value="${travelerCount}" /></label>
           </div>
+          <button class="secondary step-next" type="button" data-checkout-next="contact">Continue to contact</button>
         </section>
-        <section class="form-card checkout-section">
+        <section class="form-card checkout-section" id="checkout-contact" data-checkout-section="contact" tabindex="-1">
           <div>
             <span class="eyebrow">Step 2</span>
             <h2>Contact and documents</h2>
@@ -47,10 +49,33 @@ export function checkoutPage(state, summary) {
             <label>Passport number<input name="passport" value="MOCK123456" /></label>
             <label class="wide">Billing address<input name="billingAddress" value="42 Demo Street, Prague" /></label>
           </div>
+          <button class="secondary step-next" type="button" data-checkout-next="addons">Continue to add-ons</button>
         </section>
-        <section class="form-card checkout-section">
+        <section class="form-card checkout-section" id="checkout-addons" data-checkout-section="addons" tabindex="-1">
           <div>
             <span class="eyebrow">Step 3</span>
+            <h2>Add-ons and tiny comforts</h2>
+          </div>
+          <div class="checkout-addons">
+            ${addOnItems.length ? addOnItems.map((item) => `
+              <article>
+                <span>${item.product.type}</span>
+                <strong>${item.product.name}</strong>
+                <small>${money(item.lineTotal)}</small>
+              </article>
+            `).join("") : `
+              <p>No extras selected yet. The itinerary is brave, but it may still want a transfer, an excursion, or a small insurance blanket.</p>
+            `}
+          </div>
+          <div class="form-grid compact">
+            <label class="check"><input name="seatPreference" type="checkbox" checked /> Keep seats together where possible</label>
+            <label class="check"><input name="transferReminder" type="checkbox" checked /> Remind me about transfers</label>
+          </div>
+          <button class="secondary step-next" type="button" data-checkout-next="payment">Continue to payment</button>
+        </section>
+        <section class="form-card checkout-section" id="checkout-payment" data-checkout-section="payment" tabindex="-1">
+          <div>
+            <span class="eyebrow">Step 4</span>
             <h2>Payment simulation</h2>
           </div>
           <div class="form-grid">

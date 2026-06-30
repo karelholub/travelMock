@@ -1042,14 +1042,21 @@ input, select {
   border-radius: 14px;
   box-shadow: var(--soft-shadow);
 }
-.checkout-progress span {
+.checkout-progress button {
   min-width: 0;
   padding: 9px 10px;
   color: var(--muted);
   background: var(--soft);
+  border: 0;
   border-radius: 10px;
   text-align: center;
   font-weight: 820;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.checkout-progress button:hover {
+  color: var(--ink);
+  transform: translateY(-1px);
 }
 .checkout-progress .is-active {
   color: white;
@@ -1058,11 +1065,57 @@ input, select {
 .checkout-section {
   padding: 18px;
   border-radius: 14px;
+  scroll-margin-top: 96px;
+}
+.checkout-section:focus {
+  outline: 2px solid rgba(0, 107, 104, 0.28);
+  outline-offset: 3px;
+}
+.step-next {
+  justify-self: end;
+}
+.checkout-addons {
+  display: grid;
+  gap: 8px;
+}
+.checkout-addons article {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.45fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.checkout-addons article span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.checkout-addons article strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.checkout-addons article small {
+  color: var(--accent);
+  font-weight: 850;
+}
+.checkout-addons p {
+  margin: 0;
+  padding: 12px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
 }
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+.form-grid.compact {
+  gap: 8px;
 }
 .form-grid .wide {
   grid-column: 1 / -1;

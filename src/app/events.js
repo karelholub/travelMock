@@ -13,6 +13,7 @@ export function wireEvents(summary, render) {
   wireCartControls();
   wireSearchForm();
   wireCheckoutForm(summary);
+  wireCheckoutSteps();
   wireProfileControls();
   wireDemoControls();
 }
@@ -180,6 +181,41 @@ function wireCheckoutForm(summary) {
     });
     history.pushState({}, "", "/thank-you");
     updateState({ booking: payload, checkoutDraft: null, profile, cart: { items: [] } });
+  });
+}
+
+function wireCheckoutSteps() {
+  const steps = [...document.querySelectorAll("[data-checkout-step]")];
+  const sections = [...document.querySelectorAll("[data-checkout-section]")];
+  if (!steps.length || !sections.length) return;
+
+  const setActiveStep = (stepName) => {
+    steps.forEach((step) => {
+      const isActive = step.dataset.checkoutStep === stepName;
+      step.classList.toggle("is-active", isActive);
+      step.setAttribute("aria-current", isActive ? "step" : "false");
+    });
+  };
+
+  const goToStep = (stepName) => {
+    const section = document.querySelector(`[data-checkout-section="${stepName}"]`);
+    if (!section) return;
+    setActiveStep(stepName);
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    const firstField = section.querySelector("input, select, button");
+    window.setTimeout(() => (firstField || section).focus({ preventScroll: true }), 260);
+  };
+
+  steps.forEach((step) => {
+    step.addEventListener("click", () => goToStep(step.dataset.checkoutStep));
+  });
+
+  document.querySelectorAll("[data-checkout-next]").forEach((button) => {
+    button.addEventListener("click", () => goToStep(button.dataset.checkoutNext));
+  });
+
+  sections.forEach((section) => {
+    section.addEventListener("focusin", () => setActiveStep(section.dataset.checkoutSection));
   });
 }
 

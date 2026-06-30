@@ -84,6 +84,11 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
+for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
+  assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);
+  assert(checkout.includes(`data-checkout-section="${checkoutStep}"`), `Checkout section target missing: ${checkoutStep}`);
+}
+assert(sourceText.includes("wireCheckoutSteps") && sourceText.includes("data-checkout-next"), "Checkout progress controls must navigate between steps");
 for (const attribute of ["Abandoned Booking", "Last Viewed Item", "Last Search Details", "Last Booking Started Details", "Last Wishlist Item Added", "Last Viewed Offer Details", "Last Viewed Destination Details", "Last Search Performed Details", "Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
   assert(profileAttributes.includes(attribute), `Profile API attribute missing: ${attribute}`);
 }
