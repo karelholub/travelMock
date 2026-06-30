@@ -39,13 +39,6 @@ export function homePage(state) {
       </div>
       ${profileProof(state.profile)}
     </section>
-    <section class="trust-strip">
-      <span>Consent-aware tracking</span>
-      <span>Profile API hydration</span>
-      <span>Cart abandonment recovery</span>
-      <span>VIP and family personalization</span>
-      <a href="/demo-control" data-link>Presenter cockpit</a>
-    </section>
     <section class="destination-band">
       <div class="section-heading">
         <h2>Popular ways to leave responsibly</h2>

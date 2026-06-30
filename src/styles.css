@@ -344,30 +344,19 @@ textarea {
   box-shadow: var(--soft-shadow);
 }
 .profile-proof span, .profile-proof strong { white-space: nowrap; font-size: 0.85rem; }
-.trust-strip, .filters, .scenario-grid {
+.filters, .scenario-grid {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin: 18px 0;
 }
-.trust-strip span, .scenario-grid span, .chip {
+.scenario-grid span, .chip {
   padding: 9px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--white);
   color: var(--muted);
   font-weight: 700;
-}
-.trust-strip {
-  align-items: center;
-  justify-content: center;
-}
-.trust-strip a {
-  padding: 9px 12px;
-  color: white;
-  background: var(--navy);
-  border-radius: 999px;
-  font-weight: 800;
 }
 .destination-band {
   margin-top: 30px;
