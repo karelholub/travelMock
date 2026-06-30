@@ -20,9 +20,16 @@ export function detailText(value, fallback = "pending") {
 
 export function detailDestination(...details) {
   for (const detail of details) {
-    if (!detail || typeof detail === "string") continue;
+    if (!detail) continue;
+    if (typeof detail === "string") return detail;
     const destination = detail.destination || detail.destinations?.[0];
     if (destination) return destination;
   }
   return "";
+}
+
+export function detailListName(value, fallback = "homepage_recommended") {
+  if (!value) return fallback;
+  if (typeof value === "string") return value;
+  return value.list_name || value.listName || value.name || value.title || detailText(value, fallback);
 }
