@@ -153,6 +153,22 @@ input, select {
   color: var(--muted);
   font-weight: 700;
 }
+.filters {
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+.filters .chip {
+  min-height: 36px;
+  padding: 7px 10px;
+}
+.filters select {
+  flex: 0 0 190px;
+  width: auto;
+  margin-left: auto;
+}
 
 .rail, .page-head, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary {
   margin-top: 28px;
@@ -313,6 +329,9 @@ input, select {
   .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
     grid-template-columns: 1fr;
   }
+  .filters select {
+    flex-basis: 220px;
+  }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .profile-proof { position: relative; right: auto; bottom: auto; margin: 0 16px 16px; }
   .hero { align-items: stretch; }
@@ -349,6 +368,20 @@ input, select {
   .search-panel select,
   .search-panel button {
     min-height: 39px;
+  }
+  .filters {
+    gap: 6px;
+    padding: 8px;
+  }
+  .filters .chip {
+    min-height: 34px;
+    padding: 6px 9px;
+    font-size: 0.86rem;
+  }
+  .filters select {
+    flex-basis: 100%;
+    min-height: 39px;
+    margin-left: 0;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: 1fr; }
   .cart-row { grid-template-columns: 76px 1fr 34px; }
