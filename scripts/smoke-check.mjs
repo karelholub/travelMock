@@ -103,6 +103,8 @@ for (const field of ["abandoned_booking", "last_viewed_item", "last_search_detai
 }
 assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API proxy route missing");
 assert(profileFunction.includes("MEIRO_PROFILE_API_KEY"), "Profile API proxy must use env var for API key");
+assert(profileFunction.includes('"X-API-Token": apiKey'), "Profile API proxy must send token with X-API-Token header");
+assert(profileFunction.includes('getUrl.searchParams.set("identifier_type", identifierType)') && profileFunction.includes('getUrl.searchParams.set("identifier_value", identifierValue)'), "Profile API proxy must use identifier_type and identifier_value query params");
 assert(profileFunction.includes('["user_id", identifiers.user_id]') && profileFunction.includes('["email", identifiers.email]'), "Profile API lookup must use user_id before email identifiers");
 assert(profileClient.includes("mpt_user_id_js") && profileClient.includes('params.set("user_id", userId)'), "Profile API client must use Meiro cookie user_id");
 assert(pageEffects.includes('path === "/account"') && pageEffects.includes("hydrateProfile"), "Account page must refresh from Profile API");

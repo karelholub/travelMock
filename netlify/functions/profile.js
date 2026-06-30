@@ -42,45 +42,23 @@ function identifierCandidates(identifiers) {
   ].filter(([, value]) => value);
 }
 
-async function fetchProfileWithIdentifier(apiUrl, headers, payload, identifier) {
+async function fetchProfileWithIdentifier(apiUrl, headers, identifier) {
   const [identifierType, identifierValue] = identifier;
-  const identifierPayload = {
-    ...payload,
-    identifiers: {
-      [identifierType]: identifierValue
-    }
-  };
-  const post = await fetch(apiUrl, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(identifierPayload)
-  });
-
-  if (![400, 405].includes(post.status)) return post;
-
   const getUrl = new URL(apiUrl);
   getUrl.searchParams.set("identifier_type", identifierType);
   getUrl.searchParams.set("identifier_value", identifierValue);
-  payload.attributes.forEach((attribute) => getUrl.searchParams.append("attribute", attribute));
-  const firstGet = await fetch(getUrl, { headers });
-  if (firstGet.ok || firstGet.status !== 400) return firstGet;
-
-  getUrl.searchParams.delete("attribute");
-  payload.attributes.forEach((attribute) => getUrl.searchParams.append("attributes", attribute));
   return fetch(getUrl, { headers });
 }
 
 async function fetchProfile(apiUrl, apiKey, payload) {
   const headers = {
     accept: "application/json",
-    "content-type": "application/json",
-    authorization: `Bearer ${apiKey}`,
-    "x-api-key": apiKey
+    "X-API-Token": apiKey
   };
   const candidates = identifierCandidates(payload.identifiers);
   let lastResponse = null;
   for (const candidate of candidates) {
-    const response = await fetchProfileWithIdentifier(apiUrl, headers, payload, candidate);
+    const response = await fetchProfileWithIdentifier(apiUrl, headers, candidate);
     if (response.ok || ![404, 422].includes(response.status)) return response;
     lastResponse = response;
   }
