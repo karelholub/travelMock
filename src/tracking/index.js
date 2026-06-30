@@ -20,18 +20,30 @@ function getPipesTag() {
   return typeof window.mpt === "function" ? window.mpt : null;
 }
 
+function callMpt(command, ...args) {
+  const mpt = getPipesTag();
+  if (!mpt) return;
+  try {
+    const result = mpt(command, ...args);
+    if (result && typeof result.catch === "function") {
+      result.catch((error) => console.warn("[tracking:mpt]", command, args[0], error));
+    }
+  } catch (error) {
+    console.warn("[tracking:mpt]", command, args[0], error);
+  }
+}
+
 export function configureTracking(config = {}) {
   sharedContext = { ...sharedContext, ...config.sharedContext };
   const collectionEndpoint = config.collectionEndpoint || window.__MEIRO_COLLECTION_ENDPOINT__;
-  const mpt = getPipesTag();
-  if (mpt && collectionEndpoint) {
-    mpt("config", {
+  if (collectionEndpoint) {
+    callMpt("config", {
       collection_endpoint: collectionEndpoint,
       link_tracking: { enabled: true },
       tracking_rules: { enabled: true }
     });
-    mpt("consent", mptConsentState);
-    mpt("set", sharedContext);
+    callMpt("consent", mptConsentState);
+    callMpt("set", sharedContext);
   }
   const sdk = getMeiro();
   if (sdk?.init) {
@@ -51,8 +63,7 @@ export function configureTracking(config = {}) {
 
 export function setSharedContext(context) {
   sharedContext = { ...sharedContext, ...context };
-  const mpt = getPipesTag();
-  if (mpt) mpt("set", sharedContext);
+  callMpt("set", sharedContext);
   const sdk = getMeiro();
   if (sdk?.setSharedContext) sdk.setSharedContext(sharedContext);
 }
@@ -66,8 +77,7 @@ export function setConsent(consent) {
     session_id: consentState.analytics || consentState.personalization ? "granted" : "denied"
   };
   Object.assign(mptConsentState, mptConsent);
-  const mpt = getPipesTag();
-  if (mpt) mpt("consent", mptConsent);
+  callMpt("consent", mptConsent);
   const sdk = getMeiro();
   if (sdk?.setConsent) sdk.setConsent(payload);
   logLocalEvent("set_consent", payload);
@@ -81,17 +91,20 @@ export function identifyUser(profile) {
     surname: profile.surname,
     loyalty_tier: profile.loyaltyTier
   };
-  const mpt = getPipesTag();
-  if (mpt) mpt("set", payload);
+  callMpt("set", payload);
   const sdk = getMeiro();
   if (sdk?.identify) sdk.identify(payload);
   logLocalEvent("identify_user", payload);
 }
 
 export function trackPageView(payload = {}) {
-  const enriched = { ...sharedContext, ...payload, url: location.pathname, title: document.title };
-  const mpt = getPipesTag();
-  if (mpt) mpt("event", "page_view", enriched);
+  const enriched = { ...sharedContext, ...payload, page_path: location.pathname, page_title: document.title, url: location.href, referrer: document.referrer };
+  callMpt("set", enriched);
+  callMpt("event", "page_view", {
+    page_title: document.title,
+    url: location.href,
+    referrer: document.referrer
+  });
   const sdk = getMeiro();
   if (sdk?.pageView) sdk.pageView(enriched);
   logLocalEvent("page_view", enriched);
@@ -107,9 +120,8 @@ export function trackEvent(name, payload = {}) {
     timestamp: new Date().toISOString(),
     consent: consentState
   };
-  const mpt = getPipesTag();
-  if (mpt && (isMeiroBuiltInEventType(name) || window.__MEIRO_SEND_CUSTOM_PLAYBOOK_EVENTS__ === true)) {
-    mpt("event", name, enriched);
+  if (isMeiroBuiltInEventType(name) || window.__MEIRO_SEND_CUSTOM_PLAYBOOK_EVENTS__ === true) {
+    callMpt("event", name, enriched);
   }
   const sdk = getMeiro();
   if (sdk?.track) sdk.track(name, enriched);

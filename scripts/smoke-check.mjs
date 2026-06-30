@@ -39,6 +39,7 @@ const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
 const profileAttributes = await readFile("src/api/profileAttributes.js", "utf8");
 const profileFunction = await readFile("netlify/functions/profile.js", "utf8");
+const netlifyConfig = await readFile("netlify.toml", "utf8");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -57,9 +58,11 @@ assert(html.includes("https://travel.eu1.pipes.meiro.io/mpt.js"), "Meiro Pipes t
 assert(html.includes("link_tracking: { enabled: true }"), "Meiro link tracking config missing");
 assert(html.includes("tracking_rules: { enabled: true }"), "Meiro tracking rules config missing");
 assert(html.includes('window.mpt("consent"'), "Meiro consent command missing");
-assert(sourceText.includes('mpt("set", sharedContext'), "Meiro shared context set command missing");
-assert(sourceText.includes('mpt("event", "page_view"'), "Meiro page_view event call missing");
-assert(sourceText.includes('mpt("event", name'), "Meiro named event call missing");
+assert(sourceText.includes('callMpt("set", sharedContext'), "Meiro shared context set command missing");
+assert(sourceText.includes('callMpt("event", "page_view"'), "Meiro page_view event call missing");
+assert(sourceText.includes('callMpt("event", name'), "Meiro named event call missing");
+assert(sourceText.includes("page_title: document.title") && sourceText.includes("url: location.href") && sourceText.includes("referrer: document.referrer"), "Meiro page_view payload must use allowed fields");
+assert(netlifyConfig.includes('from = "/*"') && netlifyConfig.includes('to = "/index.html"'), "Netlify SPA fallback redirect missing");
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
 for (const field of ["origin", "region", "depart_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "route", "line_items", "product_types", "total_value", "travel_start_date", "travel_end_date", "saved_price", "saved_at"]) {
   assert(trackingSchema.includes(field) || sourceText.includes(field), `Travel playbook field missing: ${field}`);
