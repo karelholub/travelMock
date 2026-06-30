@@ -79,7 +79,6 @@ export function searchPanel(search) {
           ${["economy", "premium_economy", "business"].map((type) => `<option value="${type}" ${type === (search.cabinClass || "economy") ? "selected" : ""}>${type.replace("_", " ")}</option>`).join("")}
         </select>
       </label>
-      <button class="primary" type="submit">Search trips</button>
       <div class="child-age-fields ${childCount > 0 ? "" : "is-hidden"}" data-child-age-fields>
         ${Array.from({ length: childCount }, (_, index) => `
           <label>Child ${index + 1} age
@@ -87,6 +86,7 @@ export function searchPanel(search) {
           </label>
         `).join("")}
       </div>
+      <button class="primary" type="submit">Search trips</button>
     </form>
   `;
 }
