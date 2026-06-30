@@ -4,6 +4,7 @@ import { constants } from "node:fs";
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 await cp("index.html", "dist/index.html");
+await cp("_redirects", "dist/_redirects");
 await cp("src", "dist/src", { recursive: true });
 await cp("api", "dist/api", { recursive: true });
 await cp("assets", "dist/assets", { recursive: true });

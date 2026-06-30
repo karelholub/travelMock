@@ -40,6 +40,7 @@ const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
 const profileAttributes = await readFile("src/api/profileAttributes.js", "utf8");
 const profileFunction = await readFile("netlify/functions/profile.js", "utf8");
 const netlifyConfig = await readFile("netlify.toml", "utf8");
+const redirects = await readFile("_redirects", "utf8");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -63,6 +64,8 @@ assert(sourceText.includes('callMpt("event", "page_view"'), "Meiro page_view eve
 assert(sourceText.includes('callMpt("event", name'), "Meiro named event call missing");
 assert(sourceText.includes("page_title: document.title") && sourceText.includes("url: location.href") && sourceText.includes("referrer: document.referrer"), "Meiro page_view payload must use allowed fields");
 assert(netlifyConfig.includes('from = "/*"') && netlifyConfig.includes('to = "/index.html"'), "Netlify SPA fallback redirect missing");
+assert(netlifyConfig.includes('publish = "dist"'), "Netlify publish directory must match build output");
+assert(redirects.includes("/* /index.html 200"), "Published SPA fallback _redirects file missing");
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
 for (const field of ["origin", "region", "depart_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "route", "line_items", "product_types", "total_value", "travel_start_date", "travel_end_date", "saved_price", "saved_at"]) {
   assert(trackingSchema.includes(field) || sourceText.includes(field), `Travel playbook field missing: ${field}`);
