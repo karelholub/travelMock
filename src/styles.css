@@ -661,6 +661,33 @@ input, select {
 .card-actions a {
   grid-column: 1 / -1;
 }
+.watch-cta.is-watching {
+  color: #075448;
+  border-color: #9bd8cb;
+  background: #dff5ee;
+}
+.toast {
+  position: fixed;
+  right: clamp(14px, 3vw, 32px);
+  bottom: 24px;
+  z-index: 80;
+  max-width: min(420px, calc(100vw - 28px));
+  padding: 13px 15px;
+  color: white;
+  background: var(--ink);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  font-weight: 800;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .product-detail {
   display: grid;

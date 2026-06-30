@@ -60,7 +60,7 @@ export function searchPage(state) {
           <span>${results.length} live-ish fares</span>
         </div>
         <section class="results-list">
-          ${primaryResults.length ? primaryResults.map((product, index) => resultCard(product, index)).join("") : emptyResults(state)}
+          ${primaryResults.length ? primaryResults.map((product, index) => resultCard(product, index, state)).join("") : emptyResults(state)}
         </section>
       </div>
     </section>
@@ -69,7 +69,8 @@ export function searchPage(state) {
   `;
 }
 
-function resultCard(product, index) {
+function resultCard(product, index, state) {
+  const watched = (state.watchedProductIds || []).includes(product.id);
   return `
     <article class="product-card result-card" data-product-id="${product.id}">
       <a class="result-image" href="/product/${product.slug}" data-link>
@@ -92,7 +93,7 @@ function resultCard(product, index) {
         </div>
         <div class="result-actions">
           <button class="primary" data-add="${product.id}">Add to itinerary</button>
-          <button class="secondary" data-watch="${product.id}">Watch price</button>
+          <button class="secondary watch-cta ${watched ? "is-watching" : ""}" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary" href="/product/${product.slug}" data-link>View details</a>
         </div>
       </div>

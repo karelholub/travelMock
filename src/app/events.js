@@ -3,7 +3,7 @@ import { findProductById } from "../catalog/lookups.js";
 import { personas } from "../data/personas.js";
 import { refreshAccountProfile } from "./pageEffects.js";
 import { profileIdentity } from "./profileIdentity.js";
-import { addItemsToCart, addToCart, cartSummary, removeFromCart, setPersona, state, updateState } from "../state/store.js";
+import { addItemsToCart, addToCart, cartSummary, removeFromCart, setPersona, state, updateState, watchProduct } from "../state/store.js";
 import { identifyUser, setConsent, setSharedContext, trackEvent } from "../tracking/index.js";
 import { trackingCartPayload, trackingItem, trackingLifecyclePayload, trackingSearchPayload, trackingWishlistPayload } from "../tracking/schema.js";
 import { buildPurchasePayload } from "../ui/checkout.js";
@@ -69,7 +69,12 @@ function wireCartControls() {
     button.addEventListener("click", () => {
       const product = findProductById(button.dataset.watch);
       if (!product) return;
+      const isNewWatch = watchProduct(product.id);
       trackEvent("add_to_wishlist", trackingWishlistPayload(product, state.search));
+      showToast(isNewWatch
+        ? `Watching ${product.name}. We will pretend to be very alert about price changes.`
+        : `${product.name} is already on your watch list. Still vigilant.`
+      );
     });
   });
 
@@ -86,6 +91,21 @@ function wireCartControls() {
       }
     });
   });
+}
+
+function showToast(message) {
+  document.querySelector("[data-toast]")?.remove();
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.dataset.toast = "true";
+  toast.setAttribute("role", "status");
+  toast.textContent = message;
+  document.body.append(toast);
+  window.setTimeout(() => toast.classList.add("is-visible"), 20);
+  window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+    window.setTimeout(() => toast.remove(), 220);
+  }, 3600);
 }
 
 function wireSearchForm() {

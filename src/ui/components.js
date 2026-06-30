@@ -1,5 +1,6 @@
 import { money, productTypeLabel } from "../utils/format.js";
 import { detailDestination, detailListName } from "../utils/profileDisplay.js";
+import { state } from "../state/store.js";
 
 export function image(product, className = "card-image") {
   return `<img class="${className}" src="${product.image}" alt="${product.destination} travel view" loading="lazy" />`;
@@ -8,6 +9,7 @@ export function image(product, className = "card-image") {
 export function productCard(product, options = {}) {
   const cta = options.cta || "Add";
   const secondary = options.secondary || "Details";
+  const watched = options.watchedProductIds?.includes(product.id);
   return `
     <article class="product-card" data-product-id="${product.id}">
       <a href="/product/${product.slug}" data-link>${image(product)}</a>
@@ -21,7 +23,7 @@ export function productCard(product, options = {}) {
         </div>
         <div class="card-actions">
           <button class="primary small" data-add="${product.id}">${cta}</button>
-          <button class="secondary small" data-watch="${product.id}">Watch price</button>
+          <button class="secondary small watch-cta ${watched ? "is-watching" : ""}" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary small" href="/product/${product.slug}" data-link>${secondary}</a>
         </div>
       </div>
@@ -30,6 +32,7 @@ export function productCard(product, options = {}) {
 }
 
 export function rail(title, products, listName, empty = "Recommendations are recalculating.") {
+  const watchedProductIds = state.watchedProductIds || [];
   return `
     <section class="rail" data-rail="${listName}">
       <div class="section-heading">
@@ -37,7 +40,7 @@ export function rail(title, products, listName, empty = "Recommendations are rec
         <span>${products.length ? `${products.length} tailored ideas` : empty}</span>
       </div>
       <div class="rail-grid">
-        ${products.map((product) => productCard(product, { cta: "Add to itinerary" })).join("")}
+        ${products.map((product) => productCard(product, { cta: "Add to itinerary", watchedProductIds })).join("")}
       </div>
     </section>
   `;

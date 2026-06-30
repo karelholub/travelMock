@@ -23,7 +23,8 @@ function normalizeSavedState(value) {
       children,
       childAges: Array.isArray(search.childAges) ? search.childAges.slice(0, children) : [],
       travelers: adults + children
-    }
+    },
+    watchedProductIds: Array.isArray(value.watchedProductIds) ? value.watchedProductIds : []
   };
 }
 
@@ -46,6 +47,7 @@ export const state = normalizeSavedState(saved) || {
   cart: { items: [] },
   booking: null,
   recentProductIds: [...personas.anonymous.recentProductIds],
+  watchedProductIds: [],
   trackingLog: []
 };
 
@@ -114,6 +116,12 @@ export function rememberProduct(productId) {
   updateState({
     recentProductIds: [productId, ...state.recentProductIds.filter((id) => id !== productId)].slice(0, 6)
   });
+}
+
+export function watchProduct(productId) {
+  if (state.watchedProductIds.includes(productId)) return false;
+  updateState({ watchedProductIds: [productId, ...state.watchedProductIds].slice(0, 20) });
+  return true;
 }
 
 export function cartSummary() {
