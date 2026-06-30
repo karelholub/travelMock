@@ -29,6 +29,7 @@ export function accountPage(state) {
   const lookupType = lookup.identityType || (identity.user_id ? "user_id" : identity.email ? "email" : "none");
   const lookupValue = lookup.identityValue || identity.user_id || identity.email || "";
   const checkedAt = lookup.checkedAt ? new Date(lookup.checkedAt).toLocaleTimeString() : "loading";
+  const profileStatus = profileApiStatus(state.profile);
   return `
     <section class="page-head dense">
       <div>
@@ -86,9 +87,11 @@ export function accountPage(state) {
       </section>
       <aside class="summary-card account-side">
         <h2>Profile API proof</h2>
+        <span class="status-pill ${profileStatus.tone}">${profileStatus.label}</span>
         <div><span>Source</span><strong>${source}</strong></div>
         <div><span>Lookup</span><strong>${lookupType} · ${maskIdentifier(lookupValue)}</strong></div>
         <div><span>Checked</span><strong>${checkedAt}</strong></div>
+        ${profileStatus.detail ? `<div><span>Status detail</span><strong>${profileStatus.detail}</strong></div>` : ""}
         <div><span>Destination</span><strong>${destination}</strong></div>
         <div><span>Trip signal</span><strong>${tripSignal}</strong></div>
         <div><span>List</span><strong>${viewedList}</strong></div>
@@ -98,4 +101,16 @@ export function accountPage(state) {
     </section>
     ${rail("Account recommendations", recommendationRail("account", state), "account_recommendations")}
   `;
+}
+
+function profileApiStatus(profile) {
+  const source = profile?.source || "pending";
+  const meta = profile?.meta || {};
+  const status = meta.profileApiStatus || profile?.raw?.profileApiStatus || profile?.raw?.raw?.profileApiStatus || "";
+  const error = meta.profileApiError || profile?.raw?.profileApiError || profile?.raw?.raw?.profileApiError || "";
+  if (error) return { label: "Fallback after API error", tone: "warning", detail: error };
+  if (status) return { label: "Fallback after API status", tone: "warning", detail: String(status) };
+  if (source.includes("local") || meta.mode === "fallback") return { label: "Local fallback", tone: "neutral", detail: "" };
+  if (source.includes("meiro") || meta.mode === "profile-api") return { label: "Live Profile API", tone: "success", detail: "" };
+  return { label: "Profile pending", tone: "neutral", detail: "" };
 }

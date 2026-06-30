@@ -133,9 +133,20 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
     || fallback.next_trip_destination;
   const value = detailNumberValue(normalized.total_lifetime_purchase_value ?? fallback.booking_value);
 
+  const source = raw.source || fallback.source || "meiro-profile-api";
+  const profileApiStatus = raw.profileApiStatus || raw.raw?.profileApiStatus || "";
+  const profileApiError = raw.profileApiError || raw.raw?.profileApiError || "";
+  const mode = source.includes("fallback") || source.includes("local") ? "fallback" : "profile-api";
+
   return {
-    source: raw.source || fallback.source || "meiro-profile-api",
+    source,
     persona: raw.persona || fallback.persona || "anonymous",
+    meta: {
+      mode,
+      profileApiStatus,
+      profileApiError,
+      normalizedAt: new Date().toISOString()
+    },
     fields: {
       ...fallback,
       ...normalized,
