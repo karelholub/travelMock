@@ -2,7 +2,7 @@ import { profileIdentity } from "../app/profileIdentity.js";
 import { personas, scenarioNotes } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
-import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier } from "../utils/profileDisplay.js";
+import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier, profileApiStatus } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
 
 export function accountPage(state) {
@@ -101,16 +101,4 @@ export function accountPage(state) {
     </section>
     ${rail("Account recommendations", recommendationRail("account", state), "account_recommendations")}
   `;
-}
-
-function profileApiStatus(profile) {
-  const source = profile?.source || "pending";
-  const meta = profile?.meta || {};
-  const status = meta.profileApiStatus || profile?.raw?.profileApiStatus || profile?.raw?.raw?.profileApiStatus || "";
-  const error = meta.profileApiError || profile?.raw?.profileApiError || profile?.raw?.raw?.profileApiError || "";
-  if (error) return { label: "Fallback after API error", tone: "warning", detail: error };
-  if (status) return { label: "Fallback after API status", tone: "warning", detail: String(status) };
-  if (source.includes("local") || meta.mode === "fallback") return { label: "Local fallback", tone: "neutral", detail: "" };
-  if (source.includes("meiro") || meta.mode === "profile-api") return { label: "Live Profile API", tone: "success", detail: "" };
-  return { label: "Profile pending", tone: "neutral", detail: "" };
 }

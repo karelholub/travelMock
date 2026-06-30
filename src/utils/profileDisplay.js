@@ -76,3 +76,15 @@ export function maskIdentifier(value, fallback = "No identifier yet") {
   if (text.length <= 10) return text;
   return `${text.slice(0, 8)}...${text.slice(-6)}`;
 }
+
+export function profileApiStatus(profile) {
+  const source = profile?.source || "pending";
+  const meta = profile?.meta || {};
+  const status = meta.profileApiStatus || profile?.raw?.profileApiStatus || profile?.raw?.raw?.profileApiStatus || "";
+  const error = meta.profileApiError || profile?.raw?.profileApiError || profile?.raw?.raw?.profileApiError || "";
+  if (error) return { label: "Fallback after API error", tone: "warning", detail: error };
+  if (status) return { label: "Fallback after API status", tone: "warning", detail: String(status) };
+  if (source.includes("local") || meta.mode === "fallback") return { label: "Local fallback", tone: "neutral", detail: "" };
+  if (source.includes("meiro") || meta.mode === "profile-api") return { label: "Live Profile API", tone: "success", detail: "" };
+  return { label: "Profile pending", tone: "neutral", detail: "" };
+}
