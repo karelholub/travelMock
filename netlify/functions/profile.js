@@ -1,0 +1,97 @@
+import { localProfile, meiroProfileAttributes, normalizeProfileResponse } from "../../src/api/profileAttributes.js";
+
+const defaultProfileApiUrl = "https://travel.eu1.pipes.meiro.io/profile-api/customer-lookup";
+
+function env(name) {
+  return globalThis.Netlify?.env?.get(name) || process.env[name];
+}
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    }
+  });
+}
+
+function identityFromUrl(url) {
+  return {
+    email: url.searchParams.get("email") || "",
+    phone: url.searchParams.get("phone") || "",
+    userId: url.searchParams.get("userId") || "",
+    meiroUserId: url.searchParams.get("meiroUserId") || ""
+  };
+}
+
+function lookupPayload(identity, persona) {
+  return {
+    persona,
+    identifiers: {
+      email: identity.email || undefined,
+      phone: identity.phone || undefined,
+      user_id: identity.userId || undefined,
+      meiro_user_id: identity.meiroUserId || undefined
+    },
+    attributes: meiroProfileAttributes
+  };
+}
+
+async function fetchProfile(apiUrl, apiKey, payload) {
+  const headers = {
+    accept: "application/json",
+    "content-type": "application/json",
+    authorization: `Bearer ${apiKey}`,
+    "x-api-key": apiKey
+  };
+  const post = await fetch(apiUrl, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload)
+  });
+
+  if (post.status !== 405) return post;
+
+  const getUrl = new URL(apiUrl);
+  Object.entries(payload.identifiers).forEach(([key, value]) => {
+    if (value) getUrl.searchParams.set(key, value);
+  });
+  payload.attributes.forEach((attribute) => getUrl.searchParams.append("attributes", attribute));
+  return fetch(getUrl, { headers });
+}
+
+export default async (request) => {
+  const url = new URL(request.url);
+  const persona = url.searchParams.get("persona") || "anonymous";
+  const identity = identityFromUrl(url);
+  const fallback = localProfile(persona, identity);
+  const apiKey = env("MEIRO_PROFILE_API_KEY") || env("MEIRO_PROFILE_API_TOKEN");
+  const apiUrl = env("MEIRO_PROFILE_API_URL") || defaultProfileApiUrl;
+  const hasIdentifier = Object.values(identity).some(Boolean);
+
+  if (!apiKey || !hasIdentifier) return json(fallback);
+
+  try {
+    const upstream = await fetchProfile(apiUrl, apiKey, lookupPayload(identity, persona));
+    if (!upstream.ok) {
+      return json({
+        ...fallback,
+        source: "local-fallback-after-profile-api-error",
+        profileApiStatus: upstream.status
+      });
+    }
+    return json(normalizeProfileResponse(await upstream.json(), fallback.fields));
+  } catch (error) {
+    return json({
+      ...fallback,
+      source: "local-fallback-after-profile-api-error",
+      profileApiError: error instanceof Error ? error.message : "Profile API lookup failed"
+    });
+  }
+};
+
+export const config = {
+  path: "/api/profile",
+  method: ["GET"]
+};

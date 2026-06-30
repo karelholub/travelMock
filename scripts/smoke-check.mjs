@@ -37,6 +37,8 @@ const checkout = await readFile("src/ui/checkout.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
+const profileAttributes = await readFile("src/api/profileAttributes.js", "utf8");
+const profileFunction = await readFile("netlify/functions/profile.js", "utf8");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -68,7 +70,15 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
-assert(sourceText.includes("profile?.fields?.next_trip_destination") || sourceText.includes("state.profile?.fields?.next_trip_destination"), "Profile API fields must feed visible surfaces");
+for (const attribute of ["Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
+  assert(profileAttributes.includes(attribute), `Profile API attribute missing: ${attribute}`);
+}
+for (const field of ["last_purchased_item_destination", "email", "first_name", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
+  assert(sourceText.includes(field), `Profile API field must feed visible surfaces: ${field}`);
+}
+assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API proxy route missing");
+assert(profileFunction.includes("MEIRO_PROFILE_API_KEY"), "Profile API proxy must use env var for API key");
+assert(!sourceText.includes("mpp" + "ak_") && !profileFunction.includes("mpp" + "ak_"), "Profile API key must not be committed");
 assert(sourceText.includes("empty-itinerary"), "Empty itinerary recovery surface missing");
 for (const rail of ["homepage", "search", "cart", "product", "thank-you"]) {
   assert(recommendations.includes(rail), `Recommendation rail missing ${rail}`);

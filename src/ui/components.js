@@ -96,8 +96,8 @@ export function profileProof(profile) {
   return `
     <div class="profile-proof">
       <span>Profile API</span>
-      <strong>${fields.next_trip_destination || "Lisbon"}</strong>
-      <span>${fields.next_departure_date || "2026-09-12"}</span>
+      <strong>${fields.first_name ? `${fields.first_name}'s ` : ""}${fields.next_trip_destination || fields.last_purchased_item_destination || "Lisbon"}</strong>
+      <span>${fields.last_viewed_item_list_name || fields.next_departure_date || "homepage_recommended"}</span>
       <span>${fields.loyalty_tier || "Guest"}</span>
     </div>
   `;

@@ -1,25 +1,21 @@
-import { personas } from "../data/personas.js";
+import { localProfile, normalizeProfileResponse } from "./profileAttributes.js";
 
-export async function hydrateProfile(personaId) {
+function profileQuery(personaId, identity = {}) {
+  const params = new URLSearchParams({ persona: personaId || "anonymous" });
+  ["email", "phone", "userId", "meiroUserId"].forEach((key) => {
+    if (identity[key]) params.set(key, identity[key]);
+  });
+  return params;
+}
+
+export async function hydrateProfile(personaId, identity = {}) {
+  const fallback = localProfile(personaId, identity);
   try {
-    const response = await fetch(`/api/profile?persona=${encodeURIComponent(personaId)}`);
-    if (response.ok) return await response.json();
+    const response = await fetch(`/api/profile?${profileQuery(personaId, identity)}`);
+    if (response.ok) return normalizeProfileResponse(await response.json(), fallback.fields);
   } catch {
     // Static demos fall back to local profile fields when no serverless proxy is available.
   }
 
-  const persona = personas[personaId] || personas.anonymous;
-  return {
-    source: "local-static-fallback",
-    persona: persona.id,
-    fields: {
-      next_trip_destination: persona.preferredDestination,
-      next_departure_date: "2026-09-12",
-      booking_value: persona.id === "vip" ? 4820 : persona.id === "family" ? 2450 : 1640,
-      loyalty_tier: persona.loyaltyTier,
-      recommended_add_on_ids: persona.id === "business"
-        ? ["addon-lounge-nap", "transfer-emotional-support"]
-        : ["transfer-emotional-support", "addon-baggage-metaphorical", "exp-sunset-networking"]
-    }
-  };
+  return fallback;
 }

@@ -1,26 +1,42 @@
+import { localProfile, meiroProfileAttributes, normalizeProfileResponse } from "../src/api/profileAttributes.js";
+
 export default async function handler(request, response) {
   const url = new URL(request.url, `https://${request.headers.host}`);
   const persona = url.searchParams.get("persona") || "anonymous";
-  const token = process.env.MEIRO_PROFILE_API_TOKEN;
+  const identity = {
+    email: url.searchParams.get("email") || "",
+    phone: url.searchParams.get("phone") || "",
+    userId: url.searchParams.get("userId") || "",
+    meiroUserId: url.searchParams.get("meiroUserId") || ""
+  };
+  const fallback = localProfile(persona, identity);
+  const token = process.env.MEIRO_PROFILE_API_KEY || process.env.MEIRO_PROFILE_API_TOKEN;
+  const apiUrl = process.env.MEIRO_PROFILE_API_URL || "https://travel.eu1.pipes.meiro.io/profile-api/customer-lookup";
+  const hasIdentifier = Object.values(identity).some(Boolean);
 
-  if (token && process.env.MEIRO_PROFILE_API_URL) {
-    const upstream = await fetch(`${process.env.MEIRO_PROFILE_API_URL}?persona=${encodeURIComponent(persona)}`, {
-      headers: { Authorization: `Bearer ${token}` }
+  if (token && hasIdentifier) {
+    const upstream = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${token}`,
+        "x-api-key": token
+      },
+      body: JSON.stringify({
+        persona,
+        identifiers: {
+          email: identity.email || undefined,
+          phone: identity.phone || undefined,
+          user_id: identity.userId || undefined,
+          meiro_user_id: identity.meiroUserId || undefined
+        },
+        attributes: meiroProfileAttributes
+      })
     });
     const data = await upstream.json();
-    response.status(200).json(data);
+    response.status(200).json(normalizeProfileResponse(data, fallback.fields));
     return;
   }
 
-  response.status(200).json({
-    source: "local-proxy-fallback",
-    persona,
-    fields: {
-      next_trip_destination: persona === "business" ? "Zurich" : persona === "family" ? "Mallorca" : "Lisbon",
-      next_departure_date: "2026-09-12",
-      booking_value: persona === "vip" ? 4820 : 1640,
-      loyalty_tier: persona === "vip" ? "Platinum Calm" : "Standard Adventurer",
-      recommended_add_on_ids: ["addon-lounge-nap", "transfer-emotional-support", "exp-pretend-understand"]
-    }
-  });
+  response.status(200).json({ ...fallback, source: "local-proxy-fallback" });
 }

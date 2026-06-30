@@ -20,6 +20,7 @@ const travelDemoEvents = [
 ];
 
 export function demoControlPage(state) {
+  const fields = state.profile?.fields || {};
   return `
     <section class="page-head dense">
       <div>
@@ -47,8 +48,11 @@ export function demoControlPage(state) {
       <article class="summary-card">
         <h2>Profile API hydration</h2>
         <div><span>Source</span><strong>${state.profile?.source || "pending"}</strong></div>
-        <div><span>next_trip_destination</span><strong>${state.profile?.fields?.next_trip_destination || "pending"}</strong></div>
-        <div><span>recommended_add_on_ids</span><strong>${(state.profile?.fields?.recommended_add_on_ids || []).join(", ") || "pending"}</strong></div>
+        <div><span>email</span><strong>${fields.email || state.booking?.email || "pending checkout identity"}</strong></div>
+        <div><span>first_name</span><strong>${fields.first_name || state.booking?.first_name || "pending"}</strong></div>
+        <div><span>last_purchased_item_destination</span><strong>${fields.last_purchased_item_destination || fields.next_trip_destination || "pending"}</strong></div>
+        <div><span>last_viewed_item_list_name</span><strong>${fields.last_viewed_item_list_name || "pending"}</strong></div>
+        <div><span>total_lifetime_purchase_value</span><strong>${fields.total_lifetime_purchase_value || fields.booking_value || "pending"}</strong></div>
       </article>
       <article class="summary-card tracking-log">
         <h2>Tracking readiness</h2>

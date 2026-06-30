@@ -16,6 +16,16 @@ import { thankYouPage } from "./ui/thankYou.js";
 const app = document.querySelector("#app");
 const routes = ["/", "/search", "/product", "/itinerary", "/checkout", "/thank-you", "/account", "/demo-control"];
 
+function profileIdentity() {
+  return state.booking
+    ? {
+        email: state.booking.email,
+        phone: state.booking.phone,
+        firstName: state.booking.first_name
+      }
+    : {};
+}
+
 configureTracking({
   sharedContext: {
     route_count: routes.length,
@@ -31,7 +41,7 @@ window.addEventListener("demo:tracking", (event) => {
 
 async function boot() {
   if (!state.profile) {
-    const profile = await hydrateProfile(state.personaId);
+    const profile = await hydrateProfile(state.personaId, profileIdentity());
     updateState({ profile });
   }
   render();
@@ -200,7 +210,7 @@ function wireEvents(summary) {
   childrenInput?.addEventListener("input", syncChildAgeFields);
   childrenInput?.addEventListener("change", syncChildAgeFields);
 
-  document.querySelector("[data-checkout-form]")?.addEventListener("submit", (event) => {
+  document.querySelector("[data-checkout-form]")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const payload = buildPurchasePayload(event.currentTarget, state, summary);
     trackEvent("begin_checkout", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, {
@@ -218,7 +228,12 @@ function wireEvents(summary) {
       surname: payload.surname,
       loyaltyTier: payload.loyalty_tier
     });
-    updateState({ booking: payload, checkoutDraft: null });
+    const profile = await hydrateProfile(state.personaId, {
+      email: payload.email,
+      phone: payload.phone,
+      firstName: payload.first_name
+    });
+    updateState({ booking: payload, checkoutDraft: null, profile });
     clearCart();
     history.pushState({}, "", "/thank-you");
     render();
@@ -231,7 +246,7 @@ function wireEvents(summary) {
 
   document.querySelectorAll("[data-persona]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const profile = await hydrateProfile(button.dataset.persona);
+      const profile = await hydrateProfile(button.dataset.persona, profileIdentity());
       setPersona(button.dataset.persona, profile);
       setSharedContext({ persona: button.dataset.persona, loyalty_tier: profile.fields.loyalty_tier });
       trackEvent("select_item", { item_id: button.dataset.persona, item_name: personas[button.dataset.persona].label, item_type: "persona", list_name: "demo_control" });

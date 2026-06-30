@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { localProfile } from "../src/api/profileAttributes.js";
 
 const port = Number(process.env.PORT || 8090);
 const root = process.cwd();
@@ -16,25 +17,14 @@ createServer(async (request, response) => {
   const url = new URL(request.url, `http://${request.headers.host}`);
   if (url.pathname === "/api/profile") {
     const persona = url.searchParams.get("persona") || "anonymous";
-    const fields = {
-      anonymous: ["Lisbon", "2026-09-12", 1640, "Guest", ["transfer-emotional-support", "exp-sunset-networking"]],
-      abandoner: ["Lisbon", "2026-09-12", 1640, "Silver Almost There", ["transfer-emotional-support", "hotel-lisbon-optimistic-view"]],
-      vip: ["Kyoto", "2026-11-02", 4820, "Platinum Calm", ["addon-lounge-nap", "exp-pretend-understand"]],
-      family: ["Mallorca", "2026-08-08", 2450, "Gold Snack Strategist", ["addon-baggage-metaphorical", "transfer-emotional-support"]],
-      business: ["Zurich", "2026-10-03", 1300, "Corporate Smooth", ["addon-lounge-nap", "transfer-emotional-support"]]
-    }[persona] || ["Lisbon", "2026-09-12", 1640, "Guest", ["transfer-emotional-support"]];
+    const identity = {
+      email: url.searchParams.get("email") || "",
+      phone: url.searchParams.get("phone") || "",
+      userId: url.searchParams.get("userId") || "",
+      meiroUserId: url.searchParams.get("meiroUserId") || ""
+    };
     response.writeHead(200, { "content-type": "application/json; charset=utf-8" });
-    response.end(JSON.stringify({
-      source: "local-proxy-fallback",
-      persona,
-      fields: {
-        next_trip_destination: fields[0],
-        next_departure_date: fields[1],
-        booking_value: fields[2],
-        loyalty_tier: fields[3],
-        recommended_add_on_ids: fields[4]
-      }
-    }));
+    response.end(JSON.stringify({ ...localProfile(persona, identity), source: "local-dev-profile-proxy" }));
     return;
   }
   let filePath = path.join(root, decodeURIComponent(url.pathname));

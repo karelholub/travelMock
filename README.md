@@ -2,6 +2,25 @@
 
 Mock travel ecommerce site for Meiro CDP and Engage journey demos.
 
+## Profile API
+
+The app calls `/api/profile` from the browser. On Netlify this is handled by a serverless proxy so the Meiro Profile API key never ships to frontend code.
+
+Set these Netlify environment variables before enabling live Profile API hydration:
+
+- `MEIRO_PROFILE_API_KEY`: Profile API key
+- `MEIRO_PROFILE_API_URL`: optional override, defaults to `https://travel.eu1.pipes.meiro.io/profile-api/customer-lookup`
+
+The proxy currently requests and normalizes these attributes, while preserving any future fields returned by Meiro:
+
+- `Last Purchased Item Destination`
+- `User's Email (from Purchase or Shipping)`
+- `User's First Name (from Shipping)`
+- `Last Viewed Item List Name`
+- `Total Lifetime Purchase Value`
+
+Without an API key or checkout identity, the app returns local demo profile fields.
+
 ## Event Simulator
 
 Generate realistic web-event journeys from the command line:
