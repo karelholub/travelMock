@@ -31,6 +31,7 @@ async function files(dir) {
 
 const sourceFiles = await files("src");
 const sourceText = (await Promise.all(sourceFiles.map((file) => readFile(file, "utf8")))).join("\n");
+const html = await readFile("index.html", "utf8");
 const trackingSchema = await readFile("src/tracking/schema.js", "utf8");
 const checkout = await readFile("src/ui/checkout.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
@@ -48,6 +49,11 @@ for (const event of requiredEvents) {
   assert(trackingSchema.includes(event), `Tracking schema missing ${event}`);
 }
 
+assert(html.includes("https://travel.eu1.pipes.meiro.io/collect/travel-web"), "Meiro collection endpoint missing");
+assert(html.includes("https://travel.eu1.pipes.meiro.io/mpt.js"), "Meiro Pipes tag missing");
+assert(sourceText.includes('mpt("event", "page_view"'), "Meiro page_view event call missing");
+assert(sourceText.includes('mpt("event", name'), "Meiro named event call missing");
+assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
 assert(checkout.includes("email: contact.email"), "Purchase payload must include top-level email");
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");

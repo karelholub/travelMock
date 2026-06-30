@@ -154,7 +154,7 @@ input, select {
   font-weight: 700;
 }
 
-.rail, .page-head, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .empty-itinerary {
+.rail, .page-head, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary {
   margin-top: 28px;
 }
 .section-heading, .page-head {
@@ -210,7 +210,7 @@ input, select {
   font-weight: 700;
 }
 
-.cart-layout, .confirmation, .account-layout, .control-panels {
+.cart-layout, .confirmation, .account-layout, .control-panels, .event-types {
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 18px;
@@ -283,10 +283,26 @@ input, select {
   background: var(--soft);
   overflow-wrap: anywhere;
 }
+.event-chip-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.event-chip-grid code {
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+.compact-events code {
+  font-size: 0.76rem;
+}
 .empty-panel { padding: 32px; margin-top: 24px; }
 
 @media (max-width: 940px) {
-  .search-panel, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .empty-itinerary, .checkout-grid {
+  .search-panel, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
     grid-template-columns: 1fr;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }

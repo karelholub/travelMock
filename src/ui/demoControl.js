@@ -1,4 +1,21 @@
 import { personas } from "../data/personas.js";
+import { meiroBuiltInEventTypes } from "../tracking/schema.js";
+
+const travelDemoEvents = [
+  "page_view",
+  "search",
+  "view_search_results",
+  "view_item_list",
+  "select_item",
+  "view_item",
+  "add_to_cart",
+  "remove_from_cart",
+  "view_cart",
+  "begin_checkout",
+  "add_shipping_info",
+  "add_payment_info",
+  "purchase"
+];
 
 export function demoControlPage(state) {
   return `
@@ -34,6 +51,20 @@ export function demoControlPage(state) {
       <article class="summary-card tracking-log">
         <h2>Tracking readiness</h2>
         ${(state.trackingLog || []).slice(-8).reverse().map((event) => `<code>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
+      </article>
+    </section>
+    <section class="event-types">
+      <article class="summary-card">
+        <h2>Travel demo events sent to Meiro</h2>
+        <div class="event-chip-grid">
+          ${travelDemoEvents.map((event) => `<code>${event}</code>`).join("")}
+        </div>
+      </article>
+      <article class="summary-card">
+        <h2>Available built-in event types</h2>
+        <div class="event-chip-grid compact-events">
+          ${meiroBuiltInEventTypes.map((event) => `<code>${event}</code>`).join("")}
+        </div>
       </article>
     </section>
   `;

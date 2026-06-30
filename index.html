@@ -9,6 +9,12 @@
     <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
     <link rel="apple-touch-icon" href="/assets/logo-mark.svg" />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script>
+      window.__MEIRO_COLLECTION_ENDPOINT__ = "https://travel.eu1.pipes.meiro.io/collect/travel-web";
+      window.mpt = window.mpt || function() { (window.mpt.q = window.mpt.q || []).push(Array.prototype.slice.call(arguments)); };
+      window.mpt("config", { collection_endpoint: window.__MEIRO_COLLECTION_ENDPOINT__ });
+    </script>
+    <script async src="https://travel.eu1.pipes.meiro.io/mpt.js"></script>
   </head>
   <body>
     <div id="app"></div>
