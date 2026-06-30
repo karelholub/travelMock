@@ -1,8 +1,7 @@
-import { products } from "../catalog/products.js";
-import { findProductById } from "../catalog/lookups.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { detailText } from "../utils/profileDisplay.js";
+import { bookedProductsFromBooking } from "./bookingProducts.js";
 import { rail } from "./components.js";
 
 export function thankYouPage(state) {
@@ -74,18 +73,4 @@ export function thankYouPage(state) {
     </section>
     ${rail("Next best actions", recs, "thank-you_post_booking")}
   `;
-}
-
-function bookedProductsFromBooking(booking) {
-  const itemIds = [
-    ...(booking.items || []).map((item) => item.item_id || item.id),
-    ...(booking.line_items || []).map((item) => item.item_id || item.product_id || item.id),
-    ...(booking.package_ids || []),
-    ...(booking.hotel_ids || []),
-    ...(booking.flight_ids || []),
-    ...(booking.add_on_ids || [])
-  ].filter(Boolean);
-  const resolved = [...new Set(itemIds)].map((id) => findProductById(id)).filter(Boolean);
-  if (resolved.length) return resolved;
-  return products.filter((product) => product.destination === booking.destination).slice(0, 3);
 }

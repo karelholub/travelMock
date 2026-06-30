@@ -278,6 +278,12 @@ function wireCheckoutSteps() {
 }
 
 function wireReviewForm() {
+  const npsInput = document.querySelector("[data-nps-input]");
+  const npsOutput = document.querySelector("[data-nps-output]");
+  npsInput?.addEventListener("input", () => {
+    if (npsOutput) npsOutput.textContent = npsInput.value;
+  });
+
   document.querySelector("[data-review-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget).entries());
