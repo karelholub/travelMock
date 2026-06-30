@@ -179,7 +179,7 @@ input, select {
 }
 .product-card { overflow: hidden; display: grid; grid-template-rows: 180px 1fr; }
 .card-image { width: 100%; height: 180px; }
-.product-body { display: grid; gap: 8px; padding: 14px; }
+.product-body { display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 8px; padding: 14px; }
 .product-body h3 { margin: 0; font-size: 1.04rem; }
 .product-body p { margin: 0; font-size: 0.92rem; }
 .card-meta, .card-actions, .summary-card div, .total {
@@ -302,7 +302,15 @@ input, select {
 .empty-panel { padding: 32px; margin-top: 24px; }
 
 @media (max-width: 940px) {
-  .search-panel, .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
+  .search-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+  .search-panel label:first-child,
+  .search-panel button {
+    grid-column: 1 / -1;
+  }
+  .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
     grid-template-columns: 1fr;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -313,9 +321,35 @@ input, select {
 
 @media (max-width: 620px) {
   main { width: min(100% - 20px, 1180px); }
-  .site-header { align-items: flex-start; flex-direction: column; }
+  .site-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
+  .brand img {
+    width: 30px;
+    height: 30px;
+  }
   nav { justify-content: flex-start; }
-  .hero { min-height: 720px; }
+  nav a {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+  .hero { min-height: 680px; }
+  .hero-content { padding: 20px; }
+  .search-panel {
+    gap: 7px;
+    padding: 8px;
+  }
+  .search-panel label {
+    font-size: 0.74rem;
+  }
+  .search-panel input,
+  .search-panel select,
+  .search-panel button {
+    min-height: 39px;
+  }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: 1fr; }
   .cart-row { grid-template-columns: 76px 1fr 34px; }
   .cart-row strong { grid-column: 2 / 3; }
