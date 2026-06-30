@@ -43,6 +43,7 @@ npm run simulate:events -- --profiles=1 --interactions=1 --path=complete --send 
 ```
 
 Debug mode prints the endpoint, event counts, sample payloads, every HTTP response status/header/body snippet, and a final success/failure summary.
+The default sender uses `--transport=mpt-batch`, which posts the same array-style event envelope as the Meiro Pipes Tag (`mpt.js`).
 
 Useful options:
 
@@ -56,6 +57,8 @@ Useful options:
 - `--debug`: print payload samples and HTTP response details
 - `--fail-fast`: stop at the first failed POST
 - `--sample=N`: number of payload samples to print in debug mode
+- `--batch-size=N`: events per HTTP POST when using `mpt-batch`
+- `--transport=mpt-batch|single`: use Meiro Pipes Tag style batches or the legacy raw single-event POST mode
 
 The generated payloads include the fields needed for the travel playbooks: search intent, watched routes, booking start, abandoned booking, purchase, product types, line items, ancillaries, trip completion, and review signals.
 Family-style journeys also include `adult_count`, `child_count`, `child_ages`, and total `pax`.

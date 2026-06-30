@@ -1,6 +1,11 @@
 import { isMeiroBuiltInEventType, trackingEvents } from "./schema.js";
 
 let consentState = { analytics: true, personalization: true, marketing: false };
+const mptConsentState = {
+  storage_persistence: "granted",
+  user_id: "granted",
+  session_id: "granted"
+};
 let sharedContext = {
   app: "elsewhere-travel-demo",
   cdp: "meiro",
@@ -20,7 +25,13 @@ export function configureTracking(config = {}) {
   const collectionEndpoint = config.collectionEndpoint || window.__MEIRO_COLLECTION_ENDPOINT__;
   const mpt = getPipesTag();
   if (mpt && collectionEndpoint) {
-    mpt("config", { collection_endpoint: collectionEndpoint });
+    mpt("config", {
+      collection_endpoint: collectionEndpoint,
+      link_tracking: { enabled: true },
+      tracking_rules: { enabled: true }
+    });
+    mpt("consent", mptConsentState);
+    mpt("set", sharedContext);
   }
   const sdk = getMeiro();
   if (sdk?.init) {
@@ -41,7 +52,7 @@ export function configureTracking(config = {}) {
 export function setSharedContext(context) {
   sharedContext = { ...sharedContext, ...context };
   const mpt = getPipesTag();
-  if (mpt) mpt("config", { context: sharedContext });
+  if (mpt) mpt("set", sharedContext);
   const sdk = getMeiro();
   if (sdk?.setSharedContext) sdk.setSharedContext(sharedContext);
 }
@@ -49,8 +60,14 @@ export function setSharedContext(context) {
 export function setConsent(consent) {
   consentState = { ...consentState, ...consent };
   const payload = { ...consentState, timestamp: new Date().toISOString() };
+  const mptConsent = {
+    storage_persistence: consentState.analytics || consentState.personalization || consentState.marketing ? "granted" : "denied",
+    user_id: consentState.personalization || consentState.marketing ? "granted" : "denied",
+    session_id: consentState.analytics || consentState.personalization ? "granted" : "denied"
+  };
+  Object.assign(mptConsentState, mptConsent);
   const mpt = getPipesTag();
-  if (mpt) mpt("config", { consent: consentState });
+  if (mpt) mpt("consent", mptConsent);
   const sdk = getMeiro();
   if (sdk?.setConsent) sdk.setConsent(payload);
   logLocalEvent("set_consent", payload);
@@ -65,7 +82,7 @@ export function identifyUser(profile) {
     loyalty_tier: profile.loyaltyTier
   };
   const mpt = getPipesTag();
-  if (mpt) mpt("config", { user: payload });
+  if (mpt) mpt("set", payload);
   const sdk = getMeiro();
   if (sdk?.identify) sdk.identify(payload);
   logLocalEvent("identify_user", payload);

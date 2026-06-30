@@ -13,7 +13,16 @@
       window.__MEIRO_COLLECTION_ENDPOINT__ = "https://travel.eu1.pipes.meiro.io/collect/travel-web";
       window.__MEIRO_SEND_CUSTOM_PLAYBOOK_EVENTS__ = false;
       window.mpt = window.mpt || function() { (window.mpt.q = window.mpt.q || []).push(Array.prototype.slice.call(arguments)); };
-      window.mpt("config", { collection_endpoint: window.__MEIRO_COLLECTION_ENDPOINT__ });
+      window.mpt("config", {
+        collection_endpoint: window.__MEIRO_COLLECTION_ENDPOINT__,
+        link_tracking: { enabled: true },
+        tracking_rules: { enabled: true }
+      });
+      window.mpt("consent", {
+        storage_persistence: "granted",
+        user_id: "granted",
+        session_id: "granted"
+      });
     </script>
     <script async src="https://travel.eu1.pipes.meiro.io/mpt.js"></script>
   </head>

@@ -54,6 +54,10 @@ for (const event of requiredEvents) {
 
 assert(html.includes("https://travel.eu1.pipes.meiro.io/collect/travel-web"), "Meiro collection endpoint missing");
 assert(html.includes("https://travel.eu1.pipes.meiro.io/mpt.js"), "Meiro Pipes tag missing");
+assert(html.includes("link_tracking: { enabled: true }"), "Meiro link tracking config missing");
+assert(html.includes("tracking_rules: { enabled: true }"), "Meiro tracking rules config missing");
+assert(html.includes('window.mpt("consent"'), "Meiro consent command missing");
+assert(sourceText.includes('mpt("set", sharedContext'), "Meiro shared context set command missing");
 assert(sourceText.includes('mpt("event", "page_view"'), "Meiro page_view event call missing");
 assert(sourceText.includes('mpt("event", name'), "Meiro named event call missing");
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
@@ -63,7 +67,7 @@ for (const field of ["origin", "region", "depart_date", "pax", "adult_count", "c
 for (const playbookEvent of ["search_performed", "wishlist_added", "booking_started", "booking_confirmed", "trip_completed", "review_submitted", "payment_failed"]) {
   assert(sourceText.includes(playbookEvent), `Travel playbook event coverage missing: ${playbookEvent}`);
 }
-for (const simulatorFeature of ["--profiles", "--interactions", "--path", "--send", "complete", "abandoned", "trackingSearchPayload", "trackingWishlistPayload", "trackingCartPayload"]) {
+for (const simulatorFeature of ["--profiles", "--interactions", "--path", "--send", "--debug", "--transport", "mpt-batch", "toMptCollectorEvent", "complete", "abandoned", "trackingSearchPayload", "trackingWishlistPayload", "trackingCartPayload"]) {
   assert(simulator.includes(simulatorFeature), `Simulator feature missing: ${simulatorFeature}`);
 }
 assert(checkout.includes("email: contact.email"), "Purchase payload must include top-level email");

@@ -23,7 +23,9 @@ const defaults = {
   verbose: false,
   debug: false,
   failFast: false,
-  sample: 3
+  sample: 3,
+  batchSize: 25,
+  transport: "mpt-batch"
 };
 
 const options = parseArgs(process.argv.slice(2));
@@ -73,6 +75,8 @@ function parseArgs(args) {
     else if (arg.startsWith("--delay-ms=")) parsed.delayMs = Number(valueOf(arg));
     else if (arg.startsWith("--seed=")) parsed.seed = Number(valueOf(arg));
     else if (arg.startsWith("--sample=")) parsed.sample = Number(valueOf(arg));
+    else if (arg.startsWith("--batch-size=")) parsed.batchSize = Number(valueOf(arg));
+    else if (arg.startsWith("--transport=")) parsed.transport = valueOf(arg);
     else throw new Error(`Unknown option: ${arg}`);
   }
 
@@ -83,6 +87,8 @@ function parseArgs(args) {
   }
   if (!Number.isFinite(parsed.delayMs) || parsed.delayMs < 0) throw new Error("--delay-ms must be zero or greater");
   if (!Number.isInteger(parsed.sample) || parsed.sample < 0) throw new Error("--sample must be zero or greater");
+  if (!Number.isInteger(parsed.batchSize) || parsed.batchSize < 1) throw new Error("--batch-size must be a positive integer");
+  if (!["mpt-batch", "single"].includes(parsed.transport)) throw new Error("--transport must be mpt-batch or single");
   return parsed;
 }
 
@@ -104,6 +110,8 @@ Options:
   --seed=N                  Deterministic random seed. Default: ${defaults.seed}
   --delay-ms=N              Delay between sends when --send is used. Default: 0
   --sample=N                Number of generated event payload samples to print in --debug mode. Default: ${defaults.sample}
+  --batch-size=N            Events per HTTP POST in mpt-batch transport. Default: ${defaults.batchSize}
+  --transport=TYPE          mpt-batch sends the same array shape as mpt.js; single sends one raw event per POST. Default: ${defaults.transport}
   --send                    Actually POST events. Without this, prints NDJSON dry-run output.
   --include-custom          Also emits custom playbook events such as trip_completed and payment_failed.
   --verbose                 Print each send result to stderr.
@@ -114,6 +122,7 @@ Examples:
   npm run simulate:events -- --profiles=3 --path=mixed
   npm run simulate:events -- --profiles=25 --interactions=2 --path=complete --send
   npm run simulate:events -- --profiles=2 --path=complete --send --debug
+  npm run simulate:events -- --profiles=1 --path=complete --send --debug --fail-fast --batch-size=1
   MEIRO_COLLECTION_ENDPOINT=https://travel.eu1.pipes.meiro.io/collect/travel-web npm run simulate:events -- --profiles=10 --path=abandoned --send
 `);
 }
@@ -405,6 +414,7 @@ async function sendEvents(events, opts) {
   const sendable = events.filter((event) => !event.custom_event || opts.includeCustom);
   const skipped = events.length - sendable.length;
   const stats = {
+    batches: 0,
     attempted: 0,
     sent: 0,
     failed: 0,
@@ -415,15 +425,19 @@ async function sendEvents(events, opts) {
 
   printSendPlan(events, sendable, opts);
 
-  for (const [index, event] of events.entries()) {
-    if (event.custom_event && !opts.includeCustom) {
-      if (opts.verbose) console.error(`skip custom ${event.event_name} for ${event.profile_id}`);
-      continue;
-    }
+  for (const event of events) {
+    if (event.custom_event && !opts.includeCustom && opts.verbose) console.error(`skip custom ${event.event_name} for ${event.profile_id}`);
+  }
 
-    stats.attempted += 1;
-    const requestId = `${String(index + 1).padStart(5, "0")}:${event.profile_id}:${event.session_id}:${event.event_name}`;
-    const body = JSON.stringify(event);
+  const batches = opts.transport === "single"
+    ? sendable.map((event) => [event])
+    : chunk(sendable, opts.batchSize);
+
+  for (const [batchIndex, batch] of batches.entries()) {
+    stats.batches += 1;
+    stats.attempted += batch.length;
+    const requestId = batchRequestId(batch, batchIndex);
+    const body = JSON.stringify(opts.transport === "single" ? batch[0] : batch.map(toMptCollectorEvent));
 
     try {
       const started = Date.now();
@@ -442,13 +456,13 @@ async function sendEvents(events, opts) {
       stats.byStatus.set(statusKey, (stats.byStatus.get(statusKey) || 0) + 1);
 
       if (!response.ok) {
-        stats.failed += 1;
+        stats.failed += batch.length;
         const failure = {
           requestId,
           status: response.status,
           statusText: response.statusText,
-          eventName: event.event_name,
-          profileId: event.profile_id,
+          eventName: batch.map((event) => event.event_name).join(","),
+          profileId: batch.map((event) => event.profile_id).join(","),
           responseText: responseText.slice(0, 700)
         };
         stats.failures.push(failure);
@@ -459,23 +473,23 @@ async function sendEvents(events, opts) {
           return;
         }
       } else {
-        stats.sent += 1;
+        stats.sent += batch.length;
       }
 
       if (opts.verbose) {
-        console.error(`${response.ok ? "sent" : "failed"} ${requestId} status=${response.status} elapsed=${elapsedMs}ms bytes=${body.length}`);
+        console.error(`${response.ok ? "sent" : "failed"} ${requestId} events=${batch.length} status=${response.status} elapsed=${elapsedMs}ms bytes=${body.length}`);
       }
       if (opts.debug) {
         console.error(formatResponseDebug({ requestId, response, responseText, elapsedMs }));
       }
     } catch (error) {
-      stats.failed += 1;
+      stats.failed += batch.length;
       const failure = {
         requestId,
         status: "network-error",
         statusText: "",
-        eventName: event.event_name,
-        profileId: event.profile_id,
+        eventName: batch.map((event) => event.event_name).join(","),
+        profileId: batch.map((event) => event.profile_id).join(","),
         responseText: error instanceof Error ? error.message : String(error)
       };
       stats.failures.push(failure);
@@ -496,6 +510,7 @@ async function sendEvents(events, opts) {
 
 function printSendPlan(events, sendable, opts) {
   console.error(`Simulator mode: ${opts.send ? "send" : "dry-run"}`);
+  console.error(`Transport: ${opts.transport}${opts.transport === "mpt-batch" ? `, batch size ${opts.batchSize}` : ""}`);
   console.error(`Endpoint: ${opts.endpoint}`);
   console.error(`Base URL: ${opts.baseUrl}`);
   console.error(`Generated: ${events.length} events; sendable: ${sendable.length}; custom skipped unless --include-custom: ${events.length - sendable.length}`);
@@ -505,13 +520,13 @@ function printSendPlan(events, sendable, opts) {
     console.error(`Payload samples (${Math.min(opts.sample, sendable.length)}):`);
     sendable.slice(0, opts.sample).forEach((event, index) => {
       console.error(`--- sample ${index + 1}: ${event.event_name} ${event.profile_id} ${event.session_id}`);
-      console.error(JSON.stringify(event, null, 2));
+      console.error(JSON.stringify(opts.transport === "mpt-batch" ? toMptCollectorEvent(event) : event, null, 2));
     });
   }
 }
 
 function printSendSummary(stats, opts) {
-  console.error(`Send summary: attempted=${stats.attempted}, ok=${stats.sent}, failed=${stats.failed}, skipped=${stats.skipped}`);
+  console.error(`Send summary: batches=${stats.batches}, attempted_events=${stats.attempted}, ok_events=${stats.sent}, failed_events=${stats.failed}, skipped_events=${stats.skipped}`);
   console.error(`HTTP status counts: ${formatCounts(Object.fromEntries(stats.byStatus)) || "none"}`);
   if (stats.failures.length) {
     console.error(`Failures (${stats.failures.length}):`);
@@ -521,8 +536,42 @@ function printSendSummary(stats, opts) {
     console.error(`  npm run simulate:events -- --profiles=1 --interactions=1 --path=complete --send --debug --fail-fast --endpoint=${opts.endpoint}`);
   } else {
     console.error(`All attempted events received a 2xx response from ${opts.endpoint}.`);
-    console.error(`If they still do not appear in Meiro, check whether the endpoint expects a different envelope, a delayed ingestion window, or a validation rule rejecting accepted events downstream.`);
+    console.error(`If they still do not appear in Meiro, check the source validation/debug logs and ingestion delay. The default mpt-batch transport mirrors the mpt.js array POST shape.`);
   }
+}
+
+function toMptCollectorEvent(event) {
+  return {
+    type: event.event_name,
+    version: "1.0.0",
+    timestamp: event.timestamp,
+    user_id: event.user_id,
+    session_id: event.session_id,
+    payload: {
+      page_title: "Elsewhere Travel Co.",
+      url: event.page_url,
+      referrer: event.referrer,
+      anonymous_id: event.anonymous_id,
+      profile_id: event.profile_id,
+      source: event.source,
+      collection: event.collection,
+      custom_event: event.custom_event,
+      user_agent: event.user_agent,
+      ...event.payload
+    }
+  };
+}
+
+function chunk(items, size) {
+  const out = [];
+  for (let index = 0; index < items.length; index += size) out.push(items.slice(index, index + size));
+  return out;
+}
+
+function batchRequestId(batch, batchIndex) {
+  const first = batch[0];
+  const eventNames = [...new Set(batch.map((event) => event.event_name))].slice(0, 4).join("+");
+  return `${String(batchIndex + 1).padStart(5, "0")}:${first.profile_id}:${first.session_id}:${eventNames}${batch.length > 1 ? `:${batch.length}events` : ""}`;
 }
 
 function countBy(items, key) {
