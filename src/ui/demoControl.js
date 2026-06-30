@@ -88,6 +88,7 @@ export function demoControlPage(state) {
           ${profileStatus.detail ? signalRow("Status detail", profileStatus.detail) : ""}
           ${signalRow("email", detailText(fields.email || state.booking?.email, "pending checkout identity"))}
           ${signalRow("first_name", detailText(fields.first_name || state.booking?.first_name, "pending"))}
+          ${signalRow("last_name", detailText(fields.last_name || fields.surname || state.booking?.surname, "pending"))}
           ${signalRow("destination", destination)}
           ${signalRow("last_search", detailText(fields.last_search_details || fields.last_search_performed_details))}
           ${signalRow("last_viewed_item", detailText(fields.last_viewed_item))}

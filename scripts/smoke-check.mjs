@@ -89,10 +89,10 @@ for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-section="${checkoutStep}"`), `Checkout section target missing: ${checkoutStep}`);
 }
 assert(sourceText.includes("wireCheckoutSteps") && sourceText.includes("data-checkout-next"), "Checkout progress controls must navigate between steps");
-for (const attribute of ["Abandoned Booking", "Last Viewed Item", "Last Search Details", "Last Booking Started Details", "Last Wishlist Item Added", "Last Viewed Offer Details", "Last Viewed Destination Details", "Last Search Performed Details", "Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
+for (const attribute of ["Abandoned Booking", "Last Viewed Item", "Last Search Details", "Last Booking Started Details", "Last Wishlist Item Added", "Last Viewed Offer Details", "Last Viewed Destination Details", "Last Search Performed Details", "Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "User's Last Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
   assert(profileAttributes.includes(attribute), `Profile API attribute missing: ${attribute}`);
 }
-for (const field of ["abandoned_booking", "last_viewed_item", "last_search_details", "last_booking_started_details", "last_wishlist_item_added", "last_viewed_offer_details", "last_viewed_destination_details", "last_search_performed_details", "last_purchased_item_destination", "email", "first_name", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
+for (const field of ["abandoned_booking", "last_viewed_item", "last_search_details", "last_booking_started_details", "last_wishlist_item_added", "last_viewed_offer_details", "last_viewed_destination_details", "last_search_performed_details", "last_purchased_item_destination", "email", "first_name", "last_name", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
   assert(sourceText.includes(field), `Profile API field must feed visible surfaces: ${field}`);
 }
 assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API proxy route missing");

@@ -177,7 +177,9 @@ function wireCheckoutForm(summary) {
       user_id: payload.user_id,
       email: payload.email,
       phone: payload.phone,
-      firstName: payload.first_name
+      firstName: payload.first_name,
+      surname: payload.surname,
+      lastName: payload.surname
     });
     history.pushState({}, "", "/thank-you");
     updateState({ booking: payload, checkoutDraft: null, profile, cart: { items: [] } });

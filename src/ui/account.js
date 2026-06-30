@@ -22,6 +22,8 @@ export function accountPage(state) {
   const viewedList = detailListName(fields.last_viewed_item_list_name, "homepage_recommended");
   const email = detailText(fields.email || state.booking?.email, "Unknown until checkout");
   const firstName = detailText(fields.first_name || state.booking?.first_name, "Unknown");
+  const lastName = detailText(fields.last_name || fields.surname || state.booking?.surname, "Unknown");
+  const displayName = [firstName, lastName].filter((name) => name && name !== "Unknown").join(" ");
   const tripSignal = detailText(fields.last_interest_trip_type, persona.preferredTripType);
   const source = state.profile?.source || "pending";
   const identity = profileIdentity(state);
@@ -34,7 +36,7 @@ export function accountPage(state) {
     <section class="page-head dense">
       <div>
         <p class="eyebrow">Account</p>
-        <h1>${firstName === "Unknown" ? persona.label : firstName}</h1>
+        <h1>${displayName || persona.label}</h1>
         <p>${persona.label} · ${destination} affinity · ${fields.loyalty_tier || persona.loyaltyTier}</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Demo controls</a>
@@ -63,6 +65,7 @@ export function accountPage(state) {
             <h2>Identity</h2>
             <div><span>Email</span><strong>${email}</strong></div>
             <div><span>First name</span><strong>${firstName}</strong></div>
+            <div><span>Last name</span><strong>${lastName}</strong></div>
             <div><span>Profile source</span><strong>${source}</strong></div>
           </article>
           <article class="summary-card">

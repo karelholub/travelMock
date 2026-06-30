@@ -7,6 +7,8 @@ export function profileIdentity(state) {
     user_id: userId || state.booking.user_id || state.booking.email,
     email: state.booking.email,
     phone: state.booking.phone,
-    firstName: state.booking.first_name
+    firstName: state.booking.first_name,
+    surname: state.booking.surname,
+    lastName: state.booking.last_name || state.booking.surname
   };
 }

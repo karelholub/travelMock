@@ -12,6 +12,7 @@ export const meiroProfileAttributes = [
   "Last Purchased Item Destination",
   "User's Email (from Purchase or Shipping)",
   "User's First Name (from Shipping)",
+  "User's Last Name (from Shipping)",
   "Last Viewed Item List Name",
   "Total Lifetime Purchase Value"
 ];
@@ -28,6 +29,7 @@ const aliases = {
   last_purchased_item_destination: ["last_purchased_item_destination", "lastPurchasedItemDestination", "Last Purchased Item Destination"],
   email: ["email", "user_email", "userEmail", "User's Email (from Purchase or Shipping)"],
   first_name: ["first_name", "firstName", "user_first_name", "User's First Name (from Shipping)"],
+  last_name: ["last_name", "lastName", "surname", "user_last_name", "userLastName", "User's Last Name (from Shipping)", "User's Surname (from Shipping)"],
   last_viewed_item_list_name: ["last_viewed_item_list_name", "lastViewedItemListName", "Last Viewed Item List Name"],
   total_lifetime_purchase_value: ["total_lifetime_purchase_value", "totalLifetimePurchaseValue", "Total Lifetime Purchase Value"]
 };
@@ -151,6 +153,9 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
       ...fallback,
       ...normalized,
       last_purchased_item_destination: detailDestinationValue(normalized.last_purchased_item_destination) || destination,
+      first_name: detailNameValue(normalized.first_name) || fallback.first_name,
+      last_name: detailNameValue(normalized.last_name) || detailNameValue(normalized.surname) || fallback.last_name || fallback.surname,
+      surname: detailNameValue(normalized.last_name) || detailNameValue(normalized.surname) || fallback.surname || fallback.last_name,
       last_viewed_item_list_name: detailListValue(normalized.last_viewed_item_list_name) || fallback.last_viewed_item_list_name,
       total_lifetime_purchase_value: Number.isFinite(value) ? value : fallback.total_lifetime_purchase_value,
       next_trip_destination: detailDestinationValue(normalized.next_trip_destination) || destination,
@@ -181,6 +186,15 @@ function detailListValue(value) {
   if (!unwrapped) return "";
   if (typeof unwrapped === "string") return unwrapped;
   return unwrapped.list_name || unwrapped.listName || unwrapped.name || unwrapped.title || "";
+}
+
+function detailNameValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (!unwrapped) return "";
+  if (typeof unwrapped === "string") return unwrapped;
+  if (Array.isArray(unwrapped)) return detailNameValue(unwrapped[0]);
+  if (typeof unwrapped === "object") return unwrapped.name || unwrapped.value || unwrapped.text || unwrapped.title || "";
+  return String(unwrapped);
 }
 
 function detailNumberValue(value) {
@@ -219,6 +233,8 @@ export function localProfile(personaId = "anonymous", identity = {}) {
       last_purchased_item_destination: persona.preferredDestination,
       email: identity.email || "",
       first_name: identity.firstName || identity.first_name || "Alex",
+      last_name: identity.lastName || identity.last_name || identity.surname || "Somewhere",
+      surname: identity.surname || identity.lastName || identity.last_name || "Somewhere",
       last_viewed_item_list_name: "homepage_recommended",
       total_lifetime_purchase_value: bookingValue,
       abandoned_booking: {
