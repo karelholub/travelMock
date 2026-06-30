@@ -1,4 +1,4 @@
-import { hydrateProfile } from "./api/profileClient.js";
+import { hydrateProfile, meiroUserIdFromCookie } from "./api/profileClient.js";
 import { findProductById } from "./catalog/lookups.js";
 import { personas } from "./data/personas.js";
 import { addToCart, cartSummary, clearCart, rememberProduct, removeFromCart, setPersona, state, subscribe, updateState } from "./state/store.js";
@@ -17,14 +17,15 @@ const app = document.querySelector("#app");
 const routes = ["/", "/search", "/product", "/itinerary", "/checkout", "/thank-you", "/account", "/demo-control"];
 
 function profileIdentity() {
+  const userId = meiroUserIdFromCookie();
   return state.booking
     ? {
-        user_id: state.booking.user_id || state.booking.email,
+        user_id: userId || state.booking.user_id || state.booking.email,
         email: state.booking.email,
         phone: state.booking.phone,
         firstName: state.booking.first_name
       }
-    : {};
+    : { user_id: userId };
 }
 
 configureTracking({
@@ -214,6 +215,7 @@ function wireEvents(summary) {
   document.querySelector("[data-checkout-form]")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const payload = buildPurchasePayload(event.currentTarget, state, summary);
+    payload.user_id = meiroUserIdFromCookie() || payload.user_id || payload.email;
     trackEvent("begin_checkout", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, {
       ...state.search,
       bookingId: payload.booking_id,

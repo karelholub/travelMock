@@ -1,8 +1,17 @@
 import { localProfile, normalizeProfileResponse } from "./profileAttributes.js";
 
+export function meiroUserIdFromCookie() {
+  if (typeof document === "undefined") return "";
+  const cookie = document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("mpt_user_id_js="));
+  return cookie ? decodeURIComponent(cookie.split("=").slice(1).join("=")) : "";
+}
+
 function profileQuery(personaId, identity = {}) {
   const params = new URLSearchParams({ persona: personaId || "anonymous" });
-  const userId = identity.user_id || identity.userId;
+  const userId = identity.user_id || identity.userId || meiroUserIdFromCookie();
   if (userId) params.set("user_id", userId);
   if (identity.email) params.set("email", identity.email);
   if (identity.phone) params.set("phone", identity.phone);

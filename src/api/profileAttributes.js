@@ -54,6 +54,27 @@ function parseDetail(value) {
   }
 }
 
+function unwrapAttributeValue(value) {
+  if (value === undefined || value === null) return value;
+  if (Array.isArray(value)) {
+    const unwrapped = value.map((item) => unwrapAttributeValue(item)).filter((item) => item !== undefined && item !== null && item !== "");
+    return unwrapped.length === 1 ? unwrapped[0] : unwrapped;
+  }
+  if (typeof value !== "object") return parseDetail(value);
+
+  for (const key of ["value", "latest_value", "latestValue", "values", "data"]) {
+    if (Object.hasOwn(value, key)) return unwrapAttributeValue(value[key]);
+  }
+
+  if (Object.hasOwn(value, "name") && Object.hasOwn(value, "id") && Object.keys(value).length <= 3) {
+    return value.name || value.id;
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [key, unwrapAttributeValue(item)])
+  );
+}
+
 function readPath(source, path) {
   return path.split(".").reduce((current, key) => current?.[key], source);
 }
@@ -75,20 +96,17 @@ function flattenAttributes(raw) {
     source.forEach((item) => {
       const name = item.name || item.key || item.id || item.attribute;
       if (!name) return;
-      fields[slugFieldName(name)] = item.value ?? item.values ?? item.latest_value;
-      fields[name] = item.value ?? item.values ?? item.latest_value;
+      const value = unwrapAttributeValue(item.value ?? item.values ?? item.latest_value ?? item);
+      fields[slugFieldName(name)] = value;
+      fields[name] = value;
     });
     return fields;
   }
 
   Object.entries(source).forEach(([key, value]) => {
-    if (value && typeof value === "object" && !Array.isArray(value) && ("value" in value || "latest_value" in value)) {
-      fields[key] = value.value ?? value.latest_value;
-      fields[slugFieldName(key)] = value.value ?? value.latest_value;
-      return;
-    }
-    fields[key] = value;
-    fields[slugFieldName(key)] = value;
+    const unwrapped = unwrapAttributeValue(value);
+    fields[key] = unwrapped;
+    fields[slugFieldName(key)] = unwrapped;
   });
 
   return fields;
@@ -100,14 +118,14 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
 
   Object.entries(aliases).forEach(([target, keys]) => {
     const value = readAny(flattened, keys.map((key) => [key, slugFieldName(key)]).flat());
-    if (value !== undefined) normalized[target] = parseDetail(value);
+    if (value !== undefined) normalized[target] = unwrapAttributeValue(value);
   });
 
   const searchDetails = normalized.last_search_details || normalized.last_search_performed_details || {};
   const destinationDetails = normalized.last_viewed_destination_details || {};
   const offerDetails = normalized.last_viewed_offer_details || {};
   const abandonedBooking = normalized.abandoned_booking || {};
-  const destination = normalized.last_purchased_item_destination
+  const destination = detailDestinationValue(normalized.last_purchased_item_destination)
     || searchDetails.destination
     || destinationDetails.destination
     || offerDetails.destination
@@ -121,13 +139,30 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
     fields: {
       ...fallback,
       ...normalized,
-      next_trip_destination: normalized.next_trip_destination || destination,
+      last_purchased_item_destination: detailDestinationValue(normalized.last_purchased_item_destination) || destination,
+      last_viewed_item_list_name: detailListValue(normalized.last_viewed_item_list_name) || fallback.last_viewed_item_list_name,
+      total_lifetime_purchase_value: Number.isFinite(value) ? value : fallback.total_lifetime_purchase_value,
+      next_trip_destination: detailDestinationValue(normalized.next_trip_destination) || destination,
       last_interest_destination: destination,
       last_interest_trip_type: searchDetails.trip_type || searchDetails.tripType || offerDetails.trip_type || destinationDetails.trip_type || fallback.last_interest_trip_type,
       booking_value: Number.isFinite(value) ? value : fallback.booking_value
     },
     raw
   };
+}
+
+function detailDestinationValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (!unwrapped) return "";
+  if (typeof unwrapped === "string") return unwrapped;
+  return unwrapped.destination || unwrapped.name || unwrapped.title || unwrapped.id || "";
+}
+
+function detailListValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (!unwrapped) return "";
+  if (typeof unwrapped === "string") return unwrapped;
+  return unwrapped.list_name || unwrapped.listName || unwrapped.name || unwrapped.title || "";
 }
 
 export function localProfile(personaId = "anonymous", identity = {}) {
