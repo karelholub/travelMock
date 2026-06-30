@@ -17,6 +17,7 @@ function normalizeSavedState(value) {
       returnDate: "2026-09-18",
       cabinClass: "economy",
       tripType: "city",
+      productCategory: "package",
       ...search,
       adults,
       children,
@@ -39,7 +40,8 @@ export const state = normalizeSavedState(saved) || {
     children: 0,
     childAges: [],
     cabinClass: "economy",
-    tripType: "city"
+    tripType: "city",
+    productCategory: "package"
   },
   cart: { items: [] },
   booking: null,

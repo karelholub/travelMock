@@ -212,6 +212,12 @@ function wireEvents(summary) {
   childrenInput?.addEventListener("input", syncChildAgeFields);
   childrenInput?.addEventListener("change", syncChildAgeFields);
 
+  document.querySelectorAll("[data-search-form] [name='productCategory']").forEach((input) => {
+    input.addEventListener("change", () => {
+      document.querySelectorAll(".search-tab").forEach((tab) => tab.classList.toggle("is-active", tab.contains(input) && input.checked));
+    });
+  });
+
   document.querySelector("[data-checkout-form]")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const payload = buildPurchasePayload(event.currentTarget, state, summary);

@@ -46,40 +46,59 @@ export function rail(title, products, listName, empty = "Recommendations are rec
 export function searchPanel(search) {
   const childCount = Math.max(0, Number(search.children || 0));
   const childAges = Array.isArray(search.childAges) ? search.childAges : [];
+  const productCategory = search.productCategory || "package";
+  const tabs = [
+    ["flight", "Flights"],
+    ["hotel", "Hotels"],
+    ["package", "Packages"],
+    ["transfer", "Transfers"],
+    ["experience", "Experiences"]
+  ];
   return `
     <form class="search-panel" data-search-form>
-      <label>Origin
-        <select name="origin">
-          ${["Prague", "Vienna", "Berlin", "London", "Amsterdam"].map((city) => `<option ${city === (search.origin || "Prague") ? "selected" : ""}>${city}</option>`).join("")}
-        </select>
-      </label>
-      <label>Destination
-        <select name="destination">
-          ${["Lisbon", "Mallorca", "Zurich", "Kyoto", "Reykjavik"].map((city) => `<option ${city === search.destination ? "selected" : ""}>${city}</option>`).join("")}
-        </select>
-      </label>
-      <label>Departure
-        <input name="departureDate" type="date" value="${search.departureDate}" />
-      </label>
-      <label>Return
-        <input name="returnDate" type="date" value="${search.returnDate}" />
-      </label>
-      <label>Adults
-        <input name="adults" type="number" min="1" max="8" value="${search.adults || search.travelers || 1}" />
-      </label>
-      <label>Children
-        <input name="children" type="number" min="0" max="6" value="${childCount}" />
-      </label>
-      <label>Trip type
-        <select name="tripType">
-          ${["city", "family", "business", "culture", "wellness", "leisure"].map((type) => `<option value="${type}" ${type === search.tripType ? "selected" : ""}>${type}</option>`).join("")}
-        </select>
-      </label>
-      <label>Cabin
-        <select name="cabinClass">
-          ${["economy", "premium_economy", "business"].map((type) => `<option value="${type}" ${type === (search.cabinClass || "economy") ? "selected" : ""}>${type.replace("_", " ")}</option>`).join("")}
-        </select>
-      </label>
+      <div class="search-tabs" aria-label="Booking type">
+        ${tabs.map(([value, label]) => `
+          <label class="search-tab ${value === productCategory ? "is-active" : ""}">
+            <input type="radio" name="productCategory" value="${value}" ${value === productCategory ? "checked" : ""} />
+            <span>${label}</span>
+          </label>
+        `).join("")}
+      </div>
+      <div class="search-fields">
+        <label class="field-shell field-route">From
+          <select name="origin">
+            ${["Prague", "Vienna", "Berlin", "London", "Amsterdam"].map((city) => `<option ${city === (search.origin || "Prague") ? "selected" : ""}>${city}</option>`).join("")}
+          </select>
+        </label>
+        <label class="field-shell field-route">To
+          <select name="destination">
+            ${["Lisbon", "Mallorca", "Zurich", "Kyoto", "Reykjavik"].map((city) => `<option ${city === search.destination ? "selected" : ""}>${city}</option>`).join("")}
+          </select>
+        </label>
+        <label class="field-shell">Depart
+          <input name="departureDate" type="date" value="${search.departureDate}" />
+        </label>
+        <label class="field-shell">Return
+          <input name="returnDate" type="date" value="${search.returnDate}" />
+        </label>
+        <label class="field-shell">Adults
+          <input name="adults" type="number" min="1" max="8" value="${search.adults || search.travelers || 1}" />
+        </label>
+        <label class="field-shell">Children
+          <input name="children" type="number" min="0" max="6" value="${childCount}" />
+        </label>
+        <label class="field-shell">Trip mood
+          <select name="tripType">
+            ${["city", "family", "business", "culture", "wellness", "leisure"].map((type) => `<option value="${type}" ${type === search.tripType ? "selected" : ""}>${type}</option>`).join("")}
+          </select>
+        </label>
+        <label class="field-shell">Cabin
+          <select name="cabinClass">
+            ${["economy", "premium_economy", "business"].map((type) => `<option value="${type}" ${type === (search.cabinClass || "economy") ? "selected" : ""}>${type.replace("_", " ")}</option>`).join("")}
+          </select>
+        </label>
+        <button class="primary search-submit" type="submit">Search trips</button>
+      </div>
       <div class="child-age-fields ${childCount > 0 ? "" : "is-hidden"}" data-child-age-fields>
         ${Array.from({ length: childCount }, (_, index) => `
           <label>Child ${index + 1} age
@@ -87,7 +106,10 @@ export function searchPanel(search) {
           </label>
         `).join("")}
       </div>
-      <button class="primary" type="submit">Search trips</button>
+      <div class="search-footnote">
+        <span>No popups, no judgment, just suspiciously relevant offers.</span>
+        <strong>${Number(search.adults || search.travelers || 1) + childCount} travelers</strong>
+      </div>
     </form>
   `;
 }

@@ -1,5 +1,5 @@
 export const trackingEvents = {
-  search: ["origin", "destination", "region", "depart_date", "return_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "trip_type"],
+  search: ["origin", "destination", "region", "depart_date", "return_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "trip_type", "product_category"],
   view_search_results: ["origin", "destination", "region", "result_count", "items"],
   select_item: ["item_id", "item_name", "item_type", "list_name"],
   view_item_list: ["list_name", "items"],
@@ -178,6 +178,7 @@ export function trackingSearchPayload(search) {
     child_ages_csv: travelers.child_ages_csv,
     cabin_class: search.cabinClass || "economy",
     trip_type: search.tripType,
+    product_category: search.productCategory || "package",
     searched_at: new Date().toISOString()
   };
 }
