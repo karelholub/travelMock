@@ -1167,19 +1167,65 @@ input, select {
   grid-template-columns: minmax(0, 1fr) 360px;
 }
 .confirmation-hero {
+  position: relative;
   display: grid;
-  align-content: center;
-  gap: 14px;
-  min-height: 390px;
+  align-content: end;
+  min-height: 520px;
+  overflow: hidden;
   color: white;
-  background: linear-gradient(135deg, var(--navy), #006b68);
+  background: var(--ink);
   border: 0;
   border-radius: 18px;
   box-shadow: var(--shadow);
 }
+.confirmation-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: saturate(1.05) brightness(0.72);
+}
+.confirmation-hero::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(180deg, rgba(17, 24, 23, 0.08) 0%, rgba(17, 24, 23, 0.72) 76%);
+}
+.confirmation-hero-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  max-width: 720px;
+  padding: clamp(20px, 4vw, 42px);
+}
 .confirmation-hero p {
   max-width: 700px;
+  margin: 0;
   color: rgba(255, 255, 255, 0.84);
+}
+.confirmation-hero h1 {
+  margin: 0;
+  color: white;
+}
+.booked-card {
+  display: grid;
+  gap: 4px;
+  width: min(100%, 520px);
+  padding: 13px 14px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  box-shadow: var(--soft-shadow);
+}
+.booked-card span,
+.booked-card small {
+  color: var(--muted);
+  font-weight: 780;
+}
+.booked-card strong {
+  font-size: 1.05rem;
 }
 .post-booking-steps {
   display: grid;

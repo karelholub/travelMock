@@ -1,5 +1,7 @@
+import { products } from "../catalog/products.js";
+import { findProductById } from "../catalog/lookups.js";
 import { recommendationRail } from "../recommendations/strategies.js";
-import { money } from "../utils/format.js";
+import { money, productTypeLabel } from "../utils/format.js";
 import { detailText } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
 
@@ -10,12 +12,25 @@ export function thankYouPage(state) {
   }
   const fields = state.profile?.fields || {};
   const recs = recommendationRail("thank-you", state);
+  const bookedProducts = bookedProductsFromBooking(booking);
+  const heroProduct = bookedProducts[0];
   return `
     <section class="confirmation confirmation-modern">
       <div class="confirmation-hero">
+        ${heroProduct ? `
+          <img class="confirmation-image" src="${heroProduct.image}" alt="${heroProduct.destination} booked trip" />
+        ` : ""}
+        <div class="confirmation-hero-copy">
         <p class="eyebrow">Booking confirmed</p>
         <h1>${booking.booking_id}</h1>
         <p>Your ${booking.destination} trip is confirmed. The post-booking lifecycle has entered its helpful, slightly smug phase.</p>
+        ${heroProduct ? `
+          <article class="booked-card">
+            <span>${productTypeLabel(heroProduct.type)} · ${heroProduct.destination}</span>
+            <strong>${heroProduct.name}</strong>
+            <small>${bookedProducts.length} booked item${bookedProducts.length === 1 ? "" : "s"} · ${money(Number(booking.booking_value || booking.total_value || 0))}</small>
+          </article>
+        ` : ""}
         <div class="post-booking-steps">
           <span class="is-done">Booked</span>
           <span>Pre-trip upsell</span>
@@ -25,6 +40,7 @@ export function thankYouPage(state) {
         <div class="hero-actions">
           <a class="primary" href="/account" data-link>View account</a>
           <a class="secondary" href="/demo-control" data-link>Demo controls</a>
+        </div>
         </div>
       </div>
       <aside class="summary-card confirmation-summary">
@@ -57,4 +73,18 @@ export function thankYouPage(state) {
     </section>
     ${rail("Next best actions", recs, "thank-you_post_booking")}
   `;
+}
+
+function bookedProductsFromBooking(booking) {
+  const itemIds = [
+    ...(booking.items || []).map((item) => item.item_id || item.id),
+    ...(booking.line_items || []).map((item) => item.item_id || item.product_id || item.id),
+    ...(booking.package_ids || []),
+    ...(booking.hotel_ids || []),
+    ...(booking.flight_ids || []),
+    ...(booking.add_on_ids || [])
+  ].filter(Boolean);
+  const resolved = [...new Set(itemIds)].map((id) => findProductById(id)).filter(Boolean);
+  if (resolved.length) return resolved;
+  return products.filter((product) => product.destination === booking.destination).slice(0, 3);
 }

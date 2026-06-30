@@ -34,6 +34,7 @@ const sourceText = (await Promise.all(sourceFiles.map((file) => readFile(file, "
 const html = await readFile("index.html", "utf8");
 const trackingSchema = await readFile("src/tracking/schema.js", "utf8");
 const checkout = await readFile("src/ui/checkout.js", "utf8");
+const thankYou = await readFile("src/ui/thankYou.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
@@ -84,6 +85,7 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
+assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProductsFromBooking"), "Thank-you page must render booked product imagery");
 for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);
   assert(checkout.includes(`data-checkout-section="${checkoutStep}"`), `Checkout section target missing: ${checkoutStep}`);
