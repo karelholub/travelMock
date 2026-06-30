@@ -65,6 +65,7 @@ assert(sourceText.includes('callMpt("event", "page_view"'), "Meiro page_view eve
 assert(sourceText.includes('callMpt("event", name'), "Meiro named event call missing");
 assert(sourceText.includes("page_title: document.title") && sourceText.includes("url: location.href") && sourceText.includes("referrer: document.referrer"), "Meiro page_view payload must use allowed fields");
 assert(netlifyConfig.includes('from = "/*"') && netlifyConfig.includes('to = "/index.html"'), "Netlify SPA fallback redirect missing");
+assert(netlifyConfig.includes('command = "npm run build"'), "Netlify build command must create dist before deploy");
 assert(netlifyConfig.includes('publish = "dist"'), "Netlify publish directory must match build output");
 assert(redirects.includes("/* /index.html 200"), "Published SPA fallback _redirects file missing");
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
