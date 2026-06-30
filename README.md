@@ -36,6 +36,14 @@ npm run simulate:events -- --profiles=25 --interactions=2 --path=complete --send
 npm run simulate:events -- --profiles=25 --path=abandoned --send
 ```
 
+When events do not appear in Meiro, start with a tiny debug batch:
+
+```bash
+npm run simulate:events -- --profiles=1 --interactions=1 --path=complete --send --debug --fail-fast
+```
+
+Debug mode prints the endpoint, event counts, sample payloads, every HTTP response status/header/body snippet, and a final success/failure summary.
+
 Useful options:
 
 - `--profiles=N`: number of synthetic profiles
@@ -45,6 +53,9 @@ Useful options:
 - `--base-url=URL`: set the site URL used in `page_url`
 - `--include-custom`: also send custom playbook events like `trip_completed` and `payment_failed`
 - `--verbose`: print send progress
+- `--debug`: print payload samples and HTTP response details
+- `--fail-fast`: stop at the first failed POST
+- `--sample=N`: number of payload samples to print in debug mode
 
 The generated payloads include the fields needed for the travel playbooks: search intent, watched routes, booking start, abandoned booking, purchase, product types, line items, ancillaries, trip completion, and review signals.
 Family-style journeys also include `adult_count`, `child_count`, `child_ages`, and total `pax`.

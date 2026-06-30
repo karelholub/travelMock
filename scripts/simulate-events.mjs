@@ -20,7 +20,10 @@ const defaults = {
   seed: 42,
   send: false,
   includeCustom: false,
-  verbose: false
+  verbose: false,
+  debug: false,
+  failFast: false,
+  sample: 3
 };
 
 const options = parseArgs(process.argv.slice(2));
@@ -56,6 +59,11 @@ function parseArgs(args) {
     else if (arg === "--send") parsed.send = true;
     else if (arg === "--include-custom") parsed.includeCustom = true;
     else if (arg === "--verbose") parsed.verbose = true;
+    else if (arg === "--debug") {
+      parsed.debug = true;
+      parsed.verbose = true;
+    }
+    else if (arg === "--fail-fast") parsed.failFast = true;
     else if (arg.startsWith("--profiles=")) parsed.profiles = Number(valueOf(arg));
     else if (arg.startsWith("--interactions=")) parsed.interactions = Number(valueOf(arg));
     else if (arg.startsWith("--journeys-per-profile=")) parsed.interactions = Number(valueOf(arg));
@@ -64,6 +72,7 @@ function parseArgs(args) {
     else if (arg.startsWith("--base-url=")) parsed.baseUrl = valueOf(arg);
     else if (arg.startsWith("--delay-ms=")) parsed.delayMs = Number(valueOf(arg));
     else if (arg.startsWith("--seed=")) parsed.seed = Number(valueOf(arg));
+    else if (arg.startsWith("--sample=")) parsed.sample = Number(valueOf(arg));
     else throw new Error(`Unknown option: ${arg}`);
   }
 
@@ -73,6 +82,7 @@ function parseArgs(args) {
     throw new Error("--path must be one of mixed, complete, abandoned, browse, watch, post-trip");
   }
   if (!Number.isFinite(parsed.delayMs) || parsed.delayMs < 0) throw new Error("--delay-ms must be zero or greater");
+  if (!Number.isInteger(parsed.sample) || parsed.sample < 0) throw new Error("--sample must be zero or greater");
   return parsed;
 }
 
@@ -93,13 +103,17 @@ Options:
   --base-url=URL            Site URL used in page_url fields. Default: ${defaults.baseUrl}
   --seed=N                  Deterministic random seed. Default: ${defaults.seed}
   --delay-ms=N              Delay between sends when --send is used. Default: 0
+  --sample=N                Number of generated event payload samples to print in --debug mode. Default: ${defaults.sample}
   --send                    Actually POST events. Without this, prints NDJSON dry-run output.
   --include-custom          Also emits custom playbook events such as trip_completed and payment_failed.
   --verbose                 Print each send result to stderr.
+  --debug                   Print endpoint, event counts, payload samples, response statuses, headers, and response body snippets.
+  --fail-fast               Stop on the first failed POST. By default, continues and prints a failure summary.
 
 Examples:
   npm run simulate:events -- --profiles=3 --path=mixed
   npm run simulate:events -- --profiles=25 --interactions=2 --path=complete --send
+  npm run simulate:events -- --profiles=2 --path=complete --send --debug
   MEIRO_COLLECTION_ENDPOINT=https://travel.eu1.pipes.meiro.io/collect/travel-web npm run simulate:events -- --profiles=10 --path=abandoned --send
 `);
 }
@@ -388,26 +402,157 @@ function envelope(eventName, profile, sessionId, path, payload, timestamp, flags
 }
 
 async function sendEvents(events, opts) {
-  let sent = 0;
-  let skipped = 0;
-  for (const event of events) {
+  const sendable = events.filter((event) => !event.custom_event || opts.includeCustom);
+  const skipped = events.length - sendable.length;
+  const stats = {
+    attempted: 0,
+    sent: 0,
+    failed: 0,
+    skipped,
+    byStatus: new Map(),
+    failures: []
+  };
+
+  printSendPlan(events, sendable, opts);
+
+  for (const [index, event] of events.entries()) {
     if (event.custom_event && !opts.includeCustom) {
-      skipped += 1;
       if (opts.verbose) console.error(`skip custom ${event.event_name} for ${event.profile_id}`);
       continue;
     }
-    const response = await fetch(opts.endpoint, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(event)
-    });
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`POST ${event.event_name} failed with ${response.status}: ${body.slice(0, 300)}`);
+
+    stats.attempted += 1;
+    const requestId = `${String(index + 1).padStart(5, "0")}:${event.profile_id}:${event.session_id}:${event.event_name}`;
+    const body = JSON.stringify(event);
+
+    try {
+      const started = Date.now();
+      const response = await fetch(opts.endpoint, {
+        method: "POST",
+        headers: {
+          accept: "application/json, text/plain, */*",
+          "content-type": "application/json",
+          "x-elsewhere-sim-request-id": requestId
+        },
+        body
+      });
+      const elapsedMs = Date.now() - started;
+      const responseText = await response.text();
+      const statusKey = String(response.status);
+      stats.byStatus.set(statusKey, (stats.byStatus.get(statusKey) || 0) + 1);
+
+      if (!response.ok) {
+        stats.failed += 1;
+        const failure = {
+          requestId,
+          status: response.status,
+          statusText: response.statusText,
+          eventName: event.event_name,
+          profileId: event.profile_id,
+          responseText: responseText.slice(0, 700)
+        };
+        stats.failures.push(failure);
+        console.error(formatFailure(failure));
+        if (opts.failFast) {
+          printSendSummary(stats, opts);
+          process.exitCode = 1;
+          return;
+        }
+      } else {
+        stats.sent += 1;
+      }
+
+      if (opts.verbose) {
+        console.error(`${response.ok ? "sent" : "failed"} ${requestId} status=${response.status} elapsed=${elapsedMs}ms bytes=${body.length}`);
+      }
+      if (opts.debug) {
+        console.error(formatResponseDebug({ requestId, response, responseText, elapsedMs }));
+      }
+    } catch (error) {
+      stats.failed += 1;
+      const failure = {
+        requestId,
+        status: "network-error",
+        statusText: "",
+        eventName: event.event_name,
+        profileId: event.profile_id,
+        responseText: error instanceof Error ? error.message : String(error)
+      };
+      stats.failures.push(failure);
+      console.error(formatFailure(failure));
+      if (opts.failFast) {
+        printSendSummary(stats, opts);
+        process.exitCode = 1;
+        return;
+      }
     }
-    sent += 1;
-    if (opts.verbose) console.error(`sent ${event.event_name} for ${event.profile_id}`);
+
     if (opts.delayMs > 0) await new Promise((resolve) => setTimeout(resolve, opts.delayMs));
   }
-  console.error(`Sent ${sent} events to ${opts.endpoint}${skipped ? `, skipped ${skipped} custom events` : ""}.`);
+
+  printSendSummary(stats, opts);
+  if (stats.failed > 0) process.exitCode = 1;
+}
+
+function printSendPlan(events, sendable, opts) {
+  console.error(`Simulator mode: ${opts.send ? "send" : "dry-run"}`);
+  console.error(`Endpoint: ${opts.endpoint}`);
+  console.error(`Base URL: ${opts.baseUrl}`);
+  console.error(`Generated: ${events.length} events; sendable: ${sendable.length}; custom skipped unless --include-custom: ${events.length - sendable.length}`);
+  console.error(`Event counts: ${formatCounts(countBy(events, "event_name"))}`);
+  console.error(`Sendable counts: ${formatCounts(countBy(sendable, "event_name"))}`);
+  if (opts.debug && opts.sample > 0) {
+    console.error(`Payload samples (${Math.min(opts.sample, sendable.length)}):`);
+    sendable.slice(0, opts.sample).forEach((event, index) => {
+      console.error(`--- sample ${index + 1}: ${event.event_name} ${event.profile_id} ${event.session_id}`);
+      console.error(JSON.stringify(event, null, 2));
+    });
+  }
+}
+
+function printSendSummary(stats, opts) {
+  console.error(`Send summary: attempted=${stats.attempted}, ok=${stats.sent}, failed=${stats.failed}, skipped=${stats.skipped}`);
+  console.error(`HTTP status counts: ${formatCounts(Object.fromEntries(stats.byStatus)) || "none"}`);
+  if (stats.failures.length) {
+    console.error(`Failures (${stats.failures.length}):`);
+    stats.failures.slice(0, 10).forEach((failure) => console.error(formatFailure(failure)));
+    if (stats.failures.length > 10) console.error(`... ${stats.failures.length - 10} more failures omitted`);
+    console.error(`Tip: rerun a tiny batch with --debug --fail-fast, for example:`);
+    console.error(`  npm run simulate:events -- --profiles=1 --interactions=1 --path=complete --send --debug --fail-fast --endpoint=${opts.endpoint}`);
+  } else {
+    console.error(`All attempted events received a 2xx response from ${opts.endpoint}.`);
+    console.error(`If they still do not appear in Meiro, check whether the endpoint expects a different envelope, a delayed ingestion window, or a validation rule rejecting accepted events downstream.`);
+  }
+}
+
+function countBy(items, key) {
+  return items.reduce((counts, item) => {
+    const value = item[key] || "unknown";
+    counts[value] = (counts[value] || 0) + 1;
+    return counts;
+  }, {});
+}
+
+function formatCounts(counts) {
+  return Object.entries(counts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, count]) => `${key}=${count}`)
+    .join(", ");
+}
+
+function formatFailure(failure) {
+  return `POST failed ${failure.requestId} status=${failure.status}${failure.statusText ? ` ${failure.statusText}` : ""} response=${JSON.stringify(failure.responseText)}`;
+}
+
+function formatResponseDebug({ requestId, response, responseText, elapsedMs }) {
+  const headers = {};
+  response.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  return [
+    `response ${requestId}`,
+    `  status=${response.status} ${response.statusText} elapsed=${elapsedMs}ms`,
+    `  headers=${JSON.stringify(headers)}`,
+    `  body=${JSON.stringify(responseText.slice(0, 700))}`
+  ].join("\n");
 }
