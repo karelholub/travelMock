@@ -4,10 +4,11 @@ import { demoControlPage } from "../ui/demoControl.js";
 import { homePage } from "../ui/home.js";
 import { itineraryPage } from "../ui/itinerary.js";
 import { productPage } from "../ui/product.js";
+import { reviewPage } from "../ui/review.js";
 import { searchPage } from "../ui/search.js";
 import { thankYouPage } from "../ui/thankYou.js";
 
-export const routes = ["/", "/search", "/product", "/itinerary", "/checkout", "/thank-you", "/account", "/demo-control"];
+export const routes = ["/", "/search", "/product", "/itinerary", "/checkout", "/thank-you", "/review", "/account", "/demo-control"];
 
 export function routeView(path, state, summary) {
   if (path === "/") return homePage(state);
@@ -16,6 +17,7 @@ export function routeView(path, state, summary) {
   if (path === "/itinerary") return itineraryPage(state, summary);
   if (path === "/checkout") return checkoutPage(state, summary);
   if (path === "/thank-you") return thankYouPage(state);
+  if (path === "/review") return reviewPage(state);
   if (path === "/account") return accountPage(state);
   if (path === "/demo-control") return demoControlPage(state);
   return `<section class="empty-panel"><h1>Route not found</h1><a class="primary" href="/" data-link>Go home</a></section>`;

@@ -14,6 +14,7 @@ export function wireEvents(summary, render) {
   wireSearchForm();
   wireCheckoutForm(summary);
   wireCheckoutSteps();
+  wireReviewForm();
   wireProfileControls();
   wireDemoControls();
 }
@@ -218,6 +219,37 @@ function wireCheckoutSteps() {
 
   sections.forEach((section) => {
     section.addEventListener("focusin", () => setActiveStep(section.dataset.checkoutSection));
+  });
+}
+
+function wireReviewForm() {
+  document.querySelector("[data-review-form]")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.currentTarget).entries());
+    const rating = Number(data.rating || 5);
+    const nps = Number(data.nps || 9);
+    const review = {
+      rating,
+      nps,
+      comment: data.comment || "",
+      favorite_moment: data.favoriteMoment || "",
+      submittedAt: new Date().toISOString()
+    };
+    const lifecyclePayload = trackingLifecyclePayload(state.booking, {
+      destination: state.booking?.destination || state.search.destination,
+      travel_start_date: state.search.departureDate,
+      travel_end_date: state.search.returnDate,
+      pax: state.booking?.traveler_count || state.search.travelers
+    });
+    trackEvent("survey_answer", {
+      ...lifecyclePayload,
+      playbook_event: "review_submitted",
+      rating,
+      nps,
+      comment: review.comment,
+      favorite_moment: review.favorite_moment
+    });
+    updateState({ review });
   });
 }
 

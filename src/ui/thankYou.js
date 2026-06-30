@@ -35,10 +35,11 @@ export function thankYouPage(state) {
           <span class="is-done">Booked</span>
           <span>Pre-trip upsell</span>
           <span>Trip completed</span>
-          <span>Review request</span>
+          <a href="/review" data-link>Review request</a>
         </div>
         <div class="hero-actions">
           <a class="primary" href="/account" data-link>View account</a>
+          <a class="secondary" href="/review" data-link>Write review</a>
           <a class="secondary" href="/demo-control" data-link>Demo controls</a>
         </div>
         </div>

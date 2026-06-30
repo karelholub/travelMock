@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
-const requiredRoutes = ["/", "/search", "/itinerary", "/checkout", "/thank-you", "/account", "/demo-control"];
+const requiredRoutes = ["/", "/search", "/itinerary", "/checkout", "/thank-you", "/review", "/account", "/demo-control"];
 const requiredEvents = [
   "search",
   "view_search_results",
@@ -35,6 +35,7 @@ const html = await readFile("index.html", "utf8");
 const trackingSchema = await readFile("src/tracking/schema.js", "utf8");
 const checkout = await readFile("src/ui/checkout.js", "utf8");
 const thankYou = await readFile("src/ui/thankYou.js", "utf8");
+const review = await readFile("src/ui/review.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
@@ -86,6 +87,7 @@ assert(checkout.includes("phone: contact.phone"), "Purchase payload must include
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
 assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProductsFromBooking"), "Thank-you page must render booked product imagery");
+assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
 for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);
   assert(checkout.includes(`data-checkout-section="${checkoutStep}"`), `Checkout section target missing: ${checkoutStep}`);

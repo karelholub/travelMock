@@ -22,7 +22,7 @@ body {
   background: var(--paper);
 }
 a { color: inherit; text-decoration: none; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 img { display: block; max-width: 100%; object-fit: cover; background: var(--soft); }
 
 .site-header {
@@ -222,7 +222,7 @@ p { color: var(--muted); line-height: 1.55; }
   box-shadow: 0 1px 0 rgba(17, 24, 23, 0.03);
 }
 label { display: grid; gap: 6px; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
-input, select {
+input, select, textarea {
   width: 100%;
   min-height: 42px;
   border: 1px solid var(--line);
@@ -230,6 +230,10 @@ input, select {
   padding: 9px 10px;
   color: var(--ink);
   background: white;
+}
+textarea {
+  resize: vertical;
+  line-height: 1.45;
 }
 .search-panel input,
 .search-panel select {
@@ -1232,7 +1236,8 @@ input, select {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
-.post-booking-steps span {
+.post-booking-steps span,
+.post-booking-steps a {
   min-width: 0;
   padding: 10px;
   color: rgba(255, 255, 255, 0.82);
@@ -1241,6 +1246,10 @@ input, select {
   border-radius: 12px;
   text-align: center;
   font-weight: 820;
+}
+.post-booking-steps a:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
 }
 .post-booking-steps .is-done {
   color: var(--ink);
@@ -1255,6 +1264,91 @@ input, select {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   margin-top: 18px;
+}
+.review-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+.review-card {
+  display: grid;
+  gap: 16px;
+  padding: clamp(18px, 4vw, 30px);
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--soft-shadow);
+}
+.review-card h1,
+.review-card h2 {
+  margin-bottom: 0;
+}
+.rating-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0;
+  border: 0;
+}
+.rating-row legend {
+  width: 100%;
+  color: var(--muted);
+  font-weight: 820;
+}
+.rating-row label {
+  display: inline-flex;
+}
+.rating-row input {
+  position: absolute;
+  width: 0;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.rating-row span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--muted);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-weight: 850;
+  cursor: pointer;
+}
+.rating-row input:checked + span {
+  color: white;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.review-proof {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.review-proof div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.review-proof span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+.review-proof strong {
+  overflow-wrap: anywhere;
+}
+.review-summary {
+  position: sticky;
+  top: 82px;
 }
 .persona-card {
   display: grid;
@@ -1391,7 +1485,7 @@ input, select {
   .child-age-fields {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .results-shell, .product-detail, .offer-hero, .offer-detail-grid, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .checkout-grid, .checkout-flow, .profile-proof-grid {
+  .results-shell, .product-detail, .offer-hero, .offer-detail-grid, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .checkout-grid, .checkout-flow, .profile-proof-grid, .review-shell {
     grid-template-columns: 1fr;
   }
   .filter-panel,
@@ -1617,7 +1711,7 @@ input, select {
     margin-left: 0;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: 1fr; }
-  .account-kpis, .cockpit-strip, .profile-signal-grid, .control-panels, .debug-grid { grid-template-columns: minmax(0, 1fr); }
+  .account-kpis, .cockpit-strip, .profile-signal-grid, .control-panels, .debug-grid, .review-proof { grid-template-columns: minmax(0, 1fr); }
   .cart-row img { width: 76px; height: 68px; }
   .section-heading, .page-head { align-items: flex-start; flex-direction: column; }
   .card-actions { grid-template-columns: 1fr; }
