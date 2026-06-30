@@ -64,6 +64,6 @@ export function homePage(state) {
     </section>
     ${rail("Featured trip starters", heroProducts, "homepage_featured")}
     ${rail("Recommended for this profile", recs, "homepage_recommended")}
-    ${rail("Recently viewed", recommendationRail("homepage", state).slice(0, 4), "homepage_recent")}
+    ${rail("Recently viewed", recs.slice(0, 4), "homepage_recent")}
   `;
 }

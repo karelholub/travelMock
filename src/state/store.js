@@ -50,6 +50,8 @@ export const state = normalizeSavedState(saved) || {
 };
 
 const subscribers = new Set();
+let cachedCartItems = null;
+let cachedCartSummary = null;
 
 export function subscribe(callback) {
   subscribers.add(callback);
@@ -60,6 +62,12 @@ export function updateState(patch) {
   Object.assign(state, typeof patch === "function" ? patch(state) : patch);
   localStorage.setItem("elsewhere-state", JSON.stringify(state));
   subscribers.forEach((callback) => callback(state));
+}
+
+export function appendTrackingLog(detail) {
+  const entry = { name: detail.name, at: new Date().toLocaleTimeString() };
+  state.trackingLog = [...(state.trackingLog || []), entry].slice(-30);
+  localStorage.setItem("elsewhere-state", JSON.stringify(state));
 }
 
 export function setPersona(personaId, profile) {
@@ -83,6 +91,16 @@ export function addToCart(productId, quantity = 1) {
   updateState({ cart: { items: [...state.cart.items] } });
 }
 
+export function addItemsToCart(productIds, quantity = 1) {
+  const itemsByProductId = new Map(state.cart.items.map((item) => [item.productId, { ...item }]));
+  productIds.forEach((productId) => {
+    const current = itemsByProductId.get(productId);
+    if (current) current.quantity += quantity;
+    else itemsByProductId.set(productId, { productId, quantity, addedAt: new Date().toISOString() });
+  });
+  updateState({ cart: { items: [...itemsByProductId.values()] } });
+}
+
 export function removeFromCart(productId) {
   updateState({ cart: { items: state.cart.items.filter((item) => item.productId !== productId) } });
 }
@@ -92,14 +110,18 @@ export function clearCart() {
 }
 
 export function rememberProduct(productId) {
+  if (state.recentProductIds[0] === productId) return;
   updateState({
     recentProductIds: [productId, ...state.recentProductIds.filter((id) => id !== productId)].slice(0, 6)
   });
 }
 
 export function cartSummary() {
+  if (cachedCartItems === state.cart.items && cachedCartSummary) return cachedCartSummary;
   const enriched = enrichCartItems(state.cart.items);
   const total = cartTotal(enriched);
   const count = bookingItemCount(enriched);
-  return { enriched, total, count };
+  cachedCartItems = state.cart.items;
+  cachedCartSummary = { enriched, total, count };
+  return cachedCartSummary;
 }

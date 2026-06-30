@@ -12,10 +12,13 @@ const byTripType = products.reduce((map, product) => {
   return map;
 }, new Map());
 
-const byType = products.reduce((map, product) => {
-  map.set(product.type, [...(map.get(product.type) || []), product.id]);
-  return map;
-}, new Map());
+const highMarginAddOns = products
+  .filter((product) => product.margin >= 0.45)
+  .sort((a, b) => b.margin - a.margin)
+  .slice(0, 6);
+
+const recommendationCache = new Map();
+const searchResultsCache = new Map();
 
 function uniqueProducts(ids, limit = 6) {
   return findProductsByIds([...new Set(ids)]).slice(0, limit);
@@ -55,6 +58,55 @@ function tripTypeFromDetail(detail) {
 
 function profileFields(context) {
   return context.profile?.fields || {};
+}
+
+function boundedCacheSet(cache, key, value) {
+  if (cache.size > 40) cache.clear();
+  cache.set(key, value);
+  return value;
+}
+
+function stableFieldKey(fields) {
+  return JSON.stringify({
+    abandoned_booking: fields.abandoned_booking,
+    last_booking_started_details: fields.last_booking_started_details,
+    last_interest_destination: fields.last_interest_destination,
+    last_interest_trip_type: fields.last_interest_trip_type,
+    last_search_details: fields.last_search_details,
+    last_search_performed_details: fields.last_search_performed_details,
+    last_viewed_destination_details: fields.last_viewed_destination_details,
+    last_viewed_item: fields.last_viewed_item,
+    last_viewed_offer_details: fields.last_viewed_offer_details,
+    last_wishlist_item_added: fields.last_wishlist_item_added,
+    recommended_add_on_ids: fields.recommended_add_on_ids
+  });
+}
+
+function recommendationCacheKey(page, state, extra) {
+  const fields = state.profile?.fields || {};
+  const cartProductIds = (extra.cartProducts || []).map((product) => product.id).join(",");
+  return JSON.stringify({
+    page,
+    personaId: state.personaId,
+    destination: state.search.destination,
+    tripType: state.search.tripType,
+    recentProductIds: state.recentProductIds,
+    cartProductIds,
+    currentProductId: extra.currentProduct?.id,
+    profile: stableFieldKey(fields)
+  });
+}
+
+function searchCacheKey(search, state) {
+  const persona = personas[state.personaId] || personas.anonymous;
+  return JSON.stringify({
+    personaId: state.personaId,
+    personaDestination: persona.preferredDestination,
+    personaTripType: persona.preferredTripType,
+    destination: search.destination,
+    tripType: search.tripType,
+    productCategory: search.productCategory
+  });
 }
 
 export const recommendationStrategies = {
@@ -110,10 +162,7 @@ export const recommendationStrategies = {
     ]);
   },
   high_margin_add_ons() {
-    return products
-      .filter((product) => product.margin >= 0.45)
-      .sort((a, b) => b.margin - a.margin)
-      .slice(0, 6);
+    return highMarginAddOns;
   },
   post_booking_add_ons(context) {
     return recommendationStrategies.package_add_ons(context).concat(recommendationStrategies.high_margin_add_ons(context)).slice(0, 6);
@@ -129,6 +178,8 @@ export const recommendationStrategies = {
 };
 
 export function recommendationRail(page, state, extra = {}) {
+  const cacheKey = recommendationCacheKey(page, state, extra);
+  if (recommendationCache.has(cacheKey)) return recommendationCache.get(cacheKey);
   const persona = personas[state.personaId] || personas.anonymous;
   const cartProducts = extra.cartProducts || [];
   const context = {
@@ -155,13 +206,15 @@ export function recommendationRail(page, state, extra = {}) {
     for (const product of recommendationStrategies[strategy](context)) ids.push(product.id);
   }
   const excluded = new Set(cartProducts.map((product) => product.id));
-  return uniqueProducts(ids.filter((id) => !excluded.has(id)), 8);
+  return boundedCacheSet(recommendationCache, cacheKey, uniqueProducts(ids.filter((id) => !excluded.has(id)), 8));
 }
 
 export function personalizedResults(search, state) {
+  const cacheKey = searchCacheKey(search, state);
+  if (searchResultsCache.has(cacheKey)) return searchResultsCache.get(cacheKey);
   const persona = personas[state.personaId] || personas.anonymous;
   const query = `${search.destination} ${search.tripType}`.toLowerCase();
-  return products
+  const results = products
     .filter((product) => {
       if (!query.trim()) return true;
       return [product.destination, product.tripType, product.type, product.name, product.tags.join(" ")]
@@ -174,6 +227,7 @@ export function personalizedResults(search, state) {
       const bScore = scoreProduct(b, persona, search);
       return bScore - aScore || a.price - b.price;
     });
+  return boundedCacheSet(searchResultsCache, cacheKey, results);
 }
 
 function scoreProduct(product, persona, search) {
