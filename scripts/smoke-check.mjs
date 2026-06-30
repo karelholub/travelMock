@@ -74,10 +74,10 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
-for (const attribute of ["Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
+for (const attribute of ["Abandoned Booking", "Last Viewed Item", "Last Search Details", "Last Booking Started Details", "Last Wishlist Item Added", "Last Viewed Offer Details", "Last Viewed Destination Details", "Last Search Performed Details", "Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "User's First Name (from Shipping)", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
   assert(profileAttributes.includes(attribute), `Profile API attribute missing: ${attribute}`);
 }
-for (const field of ["last_purchased_item_destination", "email", "first_name", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
+for (const field of ["abandoned_booking", "last_viewed_item", "last_search_details", "last_booking_started_details", "last_wishlist_item_added", "last_viewed_offer_details", "last_viewed_destination_details", "last_search_performed_details", "last_purchased_item_destination", "email", "first_name", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
   assert(sourceText.includes(field), `Profile API field must feed visible surfaces: ${field}`);
 }
 assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API proxy route missing");

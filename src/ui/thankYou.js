@@ -1,5 +1,6 @@
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
+import { detailText } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
 
 export function thankYouPage(state) {
@@ -25,6 +26,8 @@ export function thankYouPage(state) {
         <div><span>email</span><strong>${fields.email || booking.email}</strong></div>
         <div><span>first_name</span><strong>${fields.first_name || booking.first_name}</strong></div>
         <div><span>last_purchased_item_destination</span><strong>${fields.last_purchased_item_destination || fields.next_trip_destination || booking.destination}</strong></div>
+        <div><span>last_booking_started_details</span><strong>${detailText(fields.last_booking_started_details, booking.booking_id)}</strong></div>
+        <div><span>last_viewed_offer_details</span><strong>${detailText(fields.last_viewed_offer_details, "none")}</strong></div>
         <div><span>last_viewed_item_list_name</span><strong>${fields.last_viewed_item_list_name || "thank-you_post_booking"}</strong></div>
         <div><span>total_lifetime_purchase_value</span><strong>${money(Number(fields.total_lifetime_purchase_value || fields.booking_value || booking.booking_value))}</strong></div>
         <div><span>recommended_add_on_ids</span><strong>${(fields.recommended_add_on_ids || []).join(", ")}</strong></div>

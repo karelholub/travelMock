@@ -1,5 +1,6 @@
 import { personas } from "../data/personas.js";
 import { meiroBuiltInEventTypes } from "../tracking/schema.js";
+import { detailText } from "../utils/profileDisplay.js";
 
 const travelDemoEvents = [
   "page_view",
@@ -51,6 +52,10 @@ export function demoControlPage(state) {
         <div><span>email</span><strong>${fields.email || state.booking?.email || "pending checkout identity"}</strong></div>
         <div><span>first_name</span><strong>${fields.first_name || state.booking?.first_name || "pending"}</strong></div>
         <div><span>last_purchased_item_destination</span><strong>${fields.last_purchased_item_destination || fields.next_trip_destination || "pending"}</strong></div>
+        <div><span>last_search_details</span><strong>${detailText(fields.last_search_details || fields.last_search_performed_details)}</strong></div>
+        <div><span>last_viewed_item</span><strong>${detailText(fields.last_viewed_item)}</strong></div>
+        <div><span>last_wishlist_item_added</span><strong>${detailText(fields.last_wishlist_item_added)}</strong></div>
+        <div><span>abandoned_booking</span><strong>${detailText(fields.abandoned_booking)}</strong></div>
         <div><span>last_viewed_item_list_name</span><strong>${fields.last_viewed_item_list_name || "pending"}</strong></div>
         <div><span>total_lifetime_purchase_value</span><strong>${fields.total_lifetime_purchase_value || fields.booking_value || "pending"}</strong></div>
       </article>

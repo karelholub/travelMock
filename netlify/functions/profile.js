@@ -51,12 +51,20 @@ async function fetchProfile(apiUrl, apiKey, payload) {
     body: JSON.stringify(payload)
   });
 
-  if (post.status !== 405) return post;
+  if (![400, 405].includes(post.status)) return post;
 
+  const identity = Object.entries(payload.identifiers).find(([, value]) => value);
+  if (!identity) return post;
+
+  const [identifierType, identifierValue] = identity;
   const getUrl = new URL(apiUrl);
-  Object.entries(payload.identifiers).forEach(([key, value]) => {
-    if (value) getUrl.searchParams.set(key, value);
-  });
+  getUrl.searchParams.set("identifier_type", identifierType);
+  getUrl.searchParams.set("identifier_value", identifierValue);
+  payload.attributes.forEach((attribute) => getUrl.searchParams.append("attribute", attribute));
+  const firstGet = await fetch(getUrl, { headers });
+  if (firstGet.ok || firstGet.status !== 400) return firstGet;
+
+  getUrl.searchParams.delete("attribute");
   payload.attributes.forEach((attribute) => getUrl.searchParams.append("attributes", attribute));
   return fetch(getUrl, { headers });
 }

@@ -21,16 +21,68 @@ function uniqueProducts(ids, limit = 6) {
   return findProductsByIds([...new Set(ids)]).slice(0, limit);
 }
 
+function arrayValue(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function productIdsFromDetail(detail) {
+  if (!detail) return [];
+  if (typeof detail === "string") return [detail];
+  return [
+    detail.item_id,
+    detail.itemId,
+    detail.product_id,
+    detail.productId,
+    ...arrayValue(detail.item_ids),
+    ...arrayValue(detail.itemIds),
+    ...arrayValue(detail.product_ids),
+    ...arrayValue(detail.productIds),
+    ...arrayValue(detail.add_on_ids),
+    ...arrayValue(detail.addOnIds)
+  ].filter(Boolean);
+}
+
+function destinationFromDetail(detail) {
+  if (!detail || typeof detail === "string") return "";
+  return detail.destination || detail.destinations?.[0] || "";
+}
+
+function tripTypeFromDetail(detail) {
+  if (!detail || typeof detail === "string") return "";
+  return detail.trip_type || detail.tripType || "";
+}
+
+function profileFields(context) {
+  return context.profile?.fields || {};
+}
+
 export const recommendationStrategies = {
   recently_viewed(context) {
-    return uniqueProducts(context.recentProductIds || []);
+    const fields = profileFields(context);
+    return uniqueProducts([
+      ...productIdsFromDetail(fields.last_viewed_item),
+      ...productIdsFromDetail(fields.last_viewed_offer_details),
+      ...(context.recentProductIds || [])
+    ]);
   },
   same_destination(context) {
-    const destination = context.destination || context.persona.preferredDestination;
+    const fields = profileFields(context);
+    const destination = context.destination
+      || fields.last_interest_destination
+      || destinationFromDetail(fields.last_search_details)
+      || destinationFromDetail(fields.last_search_performed_details)
+      || destinationFromDetail(fields.last_viewed_destination_details)
+      || context.persona.preferredDestination;
     return uniqueProducts(byDestination.get(destination) || []);
   },
   same_trip_type(context) {
-    const tripType = context.tripType || context.persona.preferredTripType;
+    const fields = profileFields(context);
+    const tripType = context.tripType
+      || fields.last_interest_trip_type
+      || tripTypeFromDetail(fields.last_search_details)
+      || tripTypeFromDetail(fields.last_search_performed_details)
+      || context.persona.preferredTripType;
     return uniqueProducts(byTripType.get(tripType) || []);
   },
   flight_to_hotel(context) {
@@ -48,8 +100,14 @@ export const recommendationStrategies = {
     return uniqueProducts((byDestination.get(destination) || []).filter((id) => ["insurance", "experience", "add_on", "transfer"].includes(findProductById(id)?.type)));
   },
   next_best_product(context) {
-    const profileIds = context.profile?.fields?.recommended_add_on_ids || [];
-    return uniqueProducts([...profileIds, ...(byTripType.get(context.persona.preferredTripType) || [])]);
+    const fields = profileFields(context);
+    const profileIds = arrayValue(fields.recommended_add_on_ids);
+    return uniqueProducts([
+      ...productIdsFromDetail(fields.last_wishlist_item_added),
+      ...productIdsFromDetail(fields.last_viewed_offer_details),
+      ...profileIds,
+      ...(byTripType.get(fields.last_interest_trip_type || context.persona.preferredTripType) || [])
+    ]);
   },
   high_margin_add_ons() {
     return products
@@ -61,7 +119,12 @@ export const recommendationStrategies = {
     return recommendationStrategies.package_add_ons(context).concat(recommendationStrategies.high_margin_add_ons(context)).slice(0, 6);
   },
   abandoned_booking_restore(context) {
-    return uniqueProducts(context.persona.cartRestoreIds || []);
+    const fields = profileFields(context);
+    return uniqueProducts([
+      ...productIdsFromDetail(fields.abandoned_booking),
+      ...productIdsFromDetail(fields.last_booking_started_details),
+      ...(context.persona.cartRestoreIds || [])
+    ]);
   }
 };
 

@@ -1,4 +1,5 @@
 import { money, productTypeLabel } from "../utils/format.js";
+import { detailDestination } from "../utils/profileDisplay.js";
 
 export function image(product, className = "card-image") {
   return `<img class="${className}" src="${product.image}" alt="${product.destination} travel view" loading="lazy" />`;
@@ -93,10 +94,14 @@ export function searchPanel(search) {
 
 export function profileProof(profile) {
   const fields = profile?.fields || {};
+  const destination = fields.next_trip_destination
+    || fields.last_purchased_item_destination
+    || detailDestination(fields.last_search_details, fields.last_search_performed_details, fields.last_viewed_destination_details, fields.abandoned_booking)
+    || "Lisbon";
   return `
     <div class="profile-proof">
       <span>Profile API</span>
-      <strong>${fields.first_name ? `${fields.first_name}'s ` : ""}${fields.next_trip_destination || fields.last_purchased_item_destination || "Lisbon"}</strong>
+      <strong>${fields.first_name ? `${fields.first_name}'s ` : ""}${destination}</strong>
       <span>${fields.last_viewed_item_list_name || fields.next_departure_date || "homepage_recommended"}</span>
       <span>${fields.loyalty_tier || "Guest"}</span>
     </div>

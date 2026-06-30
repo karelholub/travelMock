@@ -13,6 +13,14 @@ Set these Netlify environment variables before enabling live Profile API hydrati
 
 The proxy currently requests and normalizes these attributes, while preserving any future fields returned by Meiro:
 
+- `Abandoned Booking`
+- `Last Viewed Item`
+- `Last Search Details`
+- `Last Booking Started Details`
+- `Last Wishlist Item Added`
+- `Last Viewed Offer Details`
+- `Last Viewed Destination Details`
+- `Last Search Performed Details`
 - `Last Purchased Item Destination`
 - `User's Email (from Purchase or Shipping)`
 - `User's First Name (from Shipping)`
