@@ -75,24 +75,24 @@ export function searchPanel(search) {
             ${["Lisbon", "Mallorca", "Zurich", "Kyoto", "Reykjavik"].map((city) => `<option ${city === search.destination ? "selected" : ""}>${city}</option>`).join("")}
           </select>
         </label>
-        <label class="field-shell">Depart
+        <label class="field-shell field-date">Depart
           <input name="departureDate" type="date" value="${search.departureDate}" />
         </label>
-        <label class="field-shell">Return
+        <label class="field-shell field-date">Return
           <input name="returnDate" type="date" value="${search.returnDate}" />
         </label>
-        <label class="field-shell">Adults
+        <label class="field-shell field-traveler">Adults
           <input name="adults" type="number" min="1" max="8" value="${search.adults || search.travelers || 1}" />
         </label>
-        <label class="field-shell">Children
+        <label class="field-shell field-traveler">Children
           <input name="children" type="number" min="0" max="6" value="${childCount}" />
         </label>
-        <label class="field-shell">Trip mood
+        <label class="field-shell field-choice">Trip mood
           <select name="tripType">
             ${["city", "family", "business", "culture", "wellness", "leisure"].map((type) => `<option value="${type}" ${type === search.tripType ? "selected" : ""}>${type}</option>`).join("")}
           </select>
         </label>
-        <label class="field-shell">Cabin
+        <label class="field-shell field-choice">Cabin
           <select name="cabinClass">
             ${["economy", "premium_economy", "business"].map((type) => `<option value="${type}" ${type === (search.cabinClass || "economy") ? "selected" : ""}>${type.replace("_", " ")}</option>`).join("")}
           </select>

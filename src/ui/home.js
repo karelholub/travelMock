@@ -22,6 +22,11 @@ export function homePage(state) {
         <h1>${persona.hero}</h1>
         <p>Flights, hotels, packages, transfers, and excursions in one booking flow, while the CDP quietly connects intent, consent, identity, and mildly ambitious vacation feelings.</p>
         ${searchPanel(state.search)}
+        <div class="hero-metrics" aria-label="Demo capabilities">
+          <div><span>Intent</span><strong>${persona.preferredDestination}</strong></div>
+          <div><span>Traveler mode</span><strong>${persona.travelerKind}</strong></div>
+          <div><span>Ready rails</span><strong>9 strategies</strong></div>
+        </div>
         <div class="hero-deals">
           ${heroProducts.slice(0, 3).map((product) => `
             <a href="/product/${product.slug}" data-link>

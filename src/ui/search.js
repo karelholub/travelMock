@@ -1,5 +1,5 @@
 import { personalizedResults, recommendationRail } from "../recommendations/strategies.js";
-import { money, productTypeLabel } from "../utils/format.js";
+import { compactDate, money, productTypeLabel } from "../utils/format.js";
 import { rail, searchPanel } from "./components.js";
 
 export function searchPage(state) {
@@ -16,6 +16,11 @@ export function searchPage(state) {
       <a class="secondary" href="/demo-control" data-link>Switch persona</a>
     </section>
     ${searchPanel(state.search)}
+    <section class="search-summary-strip">
+      <article><span>Route</span><strong>${state.search.origin || "Prague"} to ${state.search.destination}</strong></article>
+      <article><span>Dates</span><strong>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</strong></article>
+      <article><span>Travelers</span><strong>${Number(state.search.adults || 1) + Number(state.search.children || 0)} people, ${state.search.cabinClass || "economy"}</strong></article>
+    </section>
     <section class="results-shell">
       <aside class="filter-panel">
         <div>
