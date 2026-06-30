@@ -22,8 +22,8 @@ export function productCard(product, options = {}) {
           <strong>${money(product.price)}</strong>
         </div>
         <div class="card-actions">
-          <button class="primary small" data-add="${product.id}">${cta}</button>
-          <button class="secondary small watch-cta ${watched ? "is-watching" : ""}" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
+          <button class="primary small" type="button" data-add="${product.id}">${cta}</button>
+          <button class="secondary small watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary small" href="/product/${product.slug}" data-link>${secondary}</a>
         </div>
       </div>

@@ -28,8 +28,8 @@ export function productPage(state, slug) {
           <span>From</span>
           <strong>${money(product.price)}</strong>
         </div>
-        <button class="primary full" data-add="${product.id}">Add to itinerary</button>
-        <button class="secondary full watch-cta ${watched ? "is-watching" : ""}" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching this price" : "Watch price"}</button>
+        <button class="primary full" type="button" data-add="${product.id}">Add to itinerary</button>
+        <button class="secondary full watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching this price" : "Watch price"}</button>
         <div class="banner">Because you looked at ${product.destination} twice, the algorithm has become quietly invested.</div>
       </aside>
     </section>

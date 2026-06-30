@@ -7,6 +7,7 @@ import { addItemsToCart, addToCart, cartSummary, removeFromCart, setPersona, sta
 import { identifyUser, setConsent, setSharedContext, trackEvent } from "../tracking/index.js";
 import { trackingCartPayload, trackingItem, trackingLifecyclePayload, trackingSearchPayload, trackingWishlistPayload } from "../tracking/schema.js";
 import { buildPurchasePayload } from "../ui/checkout.js";
+import { money } from "../utils/format.js";
 
 export function wireEvents(summary, render) {
   wireNavigation(summary, render);
@@ -71,12 +72,10 @@ function wireCartControls() {
     button.addEventListener("click", () => {
       const product = findProductById(button.dataset.watch);
       if (!product) return;
-      const isNewWatch = watchProduct(product.id);
+      const isNewWatch = !(state.watchedProductIds || []).includes(product.id);
+      showPriceWatchPanel(product, isNewWatch);
+      if (isNewWatch) watchProduct(product.id);
       trackEvent("add_to_wishlist", trackingWishlistPayload(product, state.search));
-      showToast(isNewWatch
-        ? `Watching ${product.name}. We will pretend to be very alert about price changes.`
-        : `${product.name} is already on your watch list. Still vigilant.`
-      );
     });
   });
 
@@ -95,19 +94,57 @@ function wireCartControls() {
   });
 }
 
-function showToast(message) {
-  document.querySelector("[data-toast]")?.remove();
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.dataset.toast = "true";
-  toast.setAttribute("role", "status");
-  toast.textContent = message;
-  document.body.append(toast);
-  window.setTimeout(() => toast.classList.add("is-visible"), 20);
-  window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-    window.setTimeout(() => toast.remove(), 220);
-  }, 3600);
+function showPriceWatchPanel(product, isNewWatch) {
+  document.querySelector("[data-price-watch-panel]")?.remove();
+  const targetPrice = Math.max(1, Math.round(product.price * 0.9));
+  const panel = document.createElement("aside");
+  panel.className = "price-watch-panel";
+  panel.dataset.priceWatchPanel = "true";
+  panel.setAttribute("role", "dialog");
+  panel.setAttribute("aria-live", "polite");
+  panel.setAttribute("aria-label", "Price watch");
+  panel.innerHTML = `
+    <button class="price-watch-close" type="button" data-dismiss-watch-panel aria-label="Close price watch">&times;</button>
+    <span class="eyebrow">${isNewWatch ? "Price watch created" : "Already watching"}</span>
+    <h2>${product.name}</h2>
+    <p>${product.destination} is now on price watch. We will be suspiciously attentive without becoming weird about it.</p>
+    <div class="price-watch-grid">
+      <div>
+        <span>Current</span>
+        <strong>${money(product.price)}</strong>
+      </div>
+      <div>
+        <span>Target</span>
+        <strong data-watch-target-preview>${money(targetPrice)}</strong>
+      </div>
+    </div>
+    <label class="field">
+      <span>Alert below</span>
+      <input data-watch-target type="number" min="1" value="${targetPrice}" />
+    </label>
+    <button class="secondary full is-active" type="button" data-watch-alert-toggle>Email alert on</button>
+  `;
+  document.body.append(panel);
+  window.setTimeout(() => panel.classList.add("is-visible"), 20);
+
+  panel.querySelector("[data-dismiss-watch-panel]")?.addEventListener("click", () => dismissPriceWatchPanel(panel));
+  panel.querySelector("[data-watch-alert-toggle]")?.addEventListener("click", (event) => {
+    event.currentTarget.classList.toggle("is-active");
+    event.currentTarget.textContent = event.currentTarget.classList.contains("is-active")
+      ? "Email alert on"
+      : "Email alert off";
+  });
+  panel.querySelector("[data-watch-target]")?.addEventListener("input", (event) => {
+    const nextTarget = Math.max(1, Number(event.currentTarget.value || 1));
+    const preview = panel.querySelector("[data-watch-target-preview]");
+    if (preview) preview.textContent = money(nextTarget);
+  });
+}
+
+function dismissPriceWatchPanel(panel = document.querySelector("[data-price-watch-panel]")) {
+  if (!panel) return;
+  panel.classList.remove("is-visible");
+  window.setTimeout(() => panel.remove(), 220);
 }
 
 function wireSearchForm() {

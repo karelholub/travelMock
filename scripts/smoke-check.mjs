@@ -88,6 +88,7 @@ assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
 assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProductsFromBooking"), "Thank-you page must render booked product imagery");
 assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
+assert(sourceText.includes("price-watch-panel") && sourceText.includes("data-watch-target") && sourceText.includes("data-watch-alert-toggle"), "Watch price CTA must show an interactive price watch panel");
 for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);
   assert(checkout.includes(`data-checkout-section="${checkoutStep}"`), `Checkout section target missing: ${checkoutStep}`);

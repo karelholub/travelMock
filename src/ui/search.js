@@ -92,8 +92,8 @@ function resultCard(product, index, state) {
           <span>${Math.round(product.margin * 100)}% margin, quietly beloved</span>
         </div>
         <div class="result-actions">
-          <button class="primary" data-add="${product.id}">Add to itinerary</button>
-          <button class="secondary watch-cta ${watched ? "is-watching" : ""}" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
+          <button class="primary" type="button" data-add="${product.id}">Add to itinerary</button>
+          <button class="secondary watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary" href="/product/${product.slug}" data-link>View details</a>
         </div>
       </div>
