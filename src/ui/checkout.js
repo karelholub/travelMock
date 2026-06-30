@@ -6,6 +6,7 @@ export function checkoutPage(state, summary) {
     return `<section class="empty-panel"><h1>Checkout needs an itinerary first</h1><a class="primary" href="/itinerary" data-link>Recover itinerary</a></section>`;
   }
   const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
+  const serviceFee = 29;
   return `
     <section class="page-head dense">
       <div>
@@ -14,34 +15,69 @@ export function checkoutPage(state, summary) {
       </div>
       <strong>${money(summary.total)}</strong>
     </section>
-    <form class="checkout-grid" data-checkout-form>
-      <section class="form-card">
-        <h2>1. Traveler details</h2>
-        <label>First name<input name="firstName" required value="Alex" /></label>
-        <label>Surname<input name="surname" required value="Somewhere" /></label>
-        <label>Date of birth<input name="dob" type="date" value="1988-04-12" /></label>
-        <label>Traveler count<input name="travelerCount" type="number" min="1" value="${travelerCount}" /></label>
-      </section>
-      <section class="form-card">
-        <h2>2. Contact details</h2>
-        <label>Email<input name="email" type="email" required value="alex.somewhere@example.com" /></label>
-        <label>Phone<input name="phone" required value="+420777123456" /></label>
-        <label>Country<input name="country" value="Czech Republic" /></label>
-        <label>Billing address<input name="billingAddress" value="42 Demo Street, Prague" /></label>
-      </section>
-      <section class="form-card">
-        <h2>3. Documents and consent</h2>
-        <label>Passport number<input name="passport" value="MOCK123456" /></label>
-        <label class="check"><input name="marketingConsent" type="checkbox" /> Marketing consent</label>
-        <label class="check"><input name="personalizationConsent" type="checkbox" checked /> Personalization consent</label>
-      </section>
-      <section class="form-card">
-        <h2>4. Payment simulation</h2>
-        <label>Payment type<select name="paymentType"><option>Demo card</option><option>Invoice</option><option>Loyalty points and optimism</option></select></label>
-        <label>Coupon<input name="coupon" value="CALM-QUEUE-10" /></label>
-        <div class="total"><span>Booking value</span><strong>${money(summary.total)}</strong></div>
+    <form class="checkout-flow" data-checkout-form>
+      <div class="checkout-main">
+        <section class="checkout-progress">
+          <span class="is-active">Travelers</span>
+          <span>Contact</span>
+          <span>Add-ons</span>
+          <span>Payment</span>
+        </section>
+        <section class="form-card checkout-section">
+          <div>
+            <span class="eyebrow">Step 1</span>
+            <h2>Traveler details</h2>
+          </div>
+          <div class="form-grid">
+            <label>First name<input name="firstName" required value="Alex" /></label>
+            <label>Surname<input name="surname" required value="Somewhere" /></label>
+            <label>Date of birth<input name="dob" type="date" value="1988-04-12" /></label>
+            <label>Traveler count<input name="travelerCount" type="number" min="1" value="${travelerCount}" /></label>
+          </div>
+        </section>
+        <section class="form-card checkout-section">
+          <div>
+            <span class="eyebrow">Step 2</span>
+            <h2>Contact and documents</h2>
+          </div>
+          <div class="form-grid">
+            <label>Email<input name="email" type="email" required value="alex.somewhere@example.com" /></label>
+            <label>Phone<input name="phone" required value="+420777123456" /></label>
+            <label>Country<input name="country" value="Czech Republic" /></label>
+            <label>Passport number<input name="passport" value="MOCK123456" /></label>
+            <label class="wide">Billing address<input name="billingAddress" value="42 Demo Street, Prague" /></label>
+          </div>
+        </section>
+        <section class="form-card checkout-section">
+          <div>
+            <span class="eyebrow">Step 3</span>
+            <h2>Payment simulation</h2>
+          </div>
+          <div class="form-grid">
+            <label>Payment type<select name="paymentType"><option>Demo card</option><option>Invoice</option><option>Loyalty points and optimism</option></select></label>
+            <label>Coupon<input name="coupon" value="CALM-QUEUE-10" /></label>
+            <label class="check"><input name="marketingConsent" type="checkbox" /> Marketing consent</label>
+            <label class="check"><input name="personalizationConsent" type="checkbox" checked /> Personalization consent</label>
+          </div>
+        </section>
+      </div>
+      <aside class="summary-card checkout-summary">
+        <h2>Booking summary</h2>
+        <div class="checkout-mini-items">
+          ${summary.enriched.map((item) => `
+            <article>
+              <img src="${item.product.image}" alt="${item.product.destination} thumbnail" />
+              <span>${item.product.destination}</span>
+              <strong>${money(item.lineTotal)}</strong>
+            </article>
+          `).join("")}
+        </div>
+        <div><span>Trip value</span><strong>${money(summary.total)}</strong></div>
+        <div><span>Service fee</span><strong>${money(serviceFee)}</strong></div>
+        <div class="total"><span>Due today</span><strong>${money(summary.total + serviceFee)}</strong></div>
+        <p>Purchase event will include email, phone, item array, booking value, and the calm confidence of a completed demo.</p>
         <button class="primary full" type="submit">Confirm booking</button>
-      </section>
+      </aside>
     </form>
   `;
 }
