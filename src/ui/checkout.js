@@ -67,6 +67,7 @@ export function buildPurchasePayload(form, state, summary) {
   return {
     transaction_id: `txn_${Date.now()}`,
     booking_id: draftBookingId,
+    user_id: contact.email,
     email: contact.email,
     phone: contact.phone,
     first_name: data.firstName,

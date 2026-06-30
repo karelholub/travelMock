@@ -20,8 +20,7 @@ function identityFromUrl(url) {
   return {
     email: url.searchParams.get("email") || "",
     phone: url.searchParams.get("phone") || "",
-    userId: url.searchParams.get("userId") || "",
-    meiroUserId: url.searchParams.get("meiroUserId") || ""
+    userId: url.searchParams.get("user_id") || url.searchParams.get("userId") || ""
   };
 }
 
@@ -29,34 +28,36 @@ function lookupPayload(identity, persona) {
   return {
     persona,
     identifiers: {
-      email: identity.email || undefined,
-      phone: identity.phone || undefined,
       user_id: identity.userId || undefined,
-      meiro_user_id: identity.meiroUserId || undefined
+      email: identity.email || undefined
     },
     attributes: meiroProfileAttributes
   };
 }
 
-async function fetchProfile(apiUrl, apiKey, payload) {
-  const headers = {
-    accept: "application/json",
-    "content-type": "application/json",
-    authorization: `Bearer ${apiKey}`,
-    "x-api-key": apiKey
+function identifierCandidates(identifiers) {
+  return [
+    ["user_id", identifiers.user_id],
+    ["email", identifiers.email]
+  ].filter(([, value]) => value);
+}
+
+async function fetchProfileWithIdentifier(apiUrl, headers, payload, identifier) {
+  const [identifierType, identifierValue] = identifier;
+  const identifierPayload = {
+    ...payload,
+    identifiers: {
+      [identifierType]: identifierValue
+    }
   };
   const post = await fetch(apiUrl, {
     method: "POST",
     headers,
-    body: JSON.stringify(payload)
+    body: JSON.stringify(identifierPayload)
   });
 
   if (![400, 405].includes(post.status)) return post;
 
-  const identity = Object.entries(payload.identifiers).find(([, value]) => value);
-  if (!identity) return post;
-
-  const [identifierType, identifierValue] = identity;
   const getUrl = new URL(apiUrl);
   getUrl.searchParams.set("identifier_type", identifierType);
   getUrl.searchParams.set("identifier_value", identifierValue);
@@ -67,6 +68,23 @@ async function fetchProfile(apiUrl, apiKey, payload) {
   getUrl.searchParams.delete("attribute");
   payload.attributes.forEach((attribute) => getUrl.searchParams.append("attributes", attribute));
   return fetch(getUrl, { headers });
+}
+
+async function fetchProfile(apiUrl, apiKey, payload) {
+  const headers = {
+    accept: "application/json",
+    "content-type": "application/json",
+    authorization: `Bearer ${apiKey}`,
+    "x-api-key": apiKey
+  };
+  const candidates = identifierCandidates(payload.identifiers);
+  let lastResponse = null;
+  for (const candidate of candidates) {
+    const response = await fetchProfileWithIdentifier(apiUrl, headers, payload, candidate);
+    if (response.ok || ![404, 422].includes(response.status)) return response;
+    lastResponse = response;
+  }
+  return lastResponse || new Response(null, { status: 400 });
 }
 
 export default async (request) => {

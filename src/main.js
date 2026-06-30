@@ -19,6 +19,7 @@ const routes = ["/", "/search", "/product", "/itinerary", "/checkout", "/thank-y
 function profileIdentity() {
   return state.booking
     ? {
+        user_id: state.booking.user_id || state.booking.email,
         email: state.booking.email,
         phone: state.booking.phone,
         firstName: state.booking.first_name
@@ -222,6 +223,7 @@ function wireEvents(summary) {
     trackEvent("add_payment_info", payload);
     trackEvent("purchase", payload);
     identifyUser({
+      userId: payload.user_id,
       email: payload.email,
       phone: payload.phone,
       firstName: payload.first_name,
@@ -229,6 +231,7 @@ function wireEvents(summary) {
       loyaltyTier: payload.loyalty_tier
     });
     const profile = await hydrateProfile(state.personaId, {
+      user_id: payload.user_id,
       email: payload.email,
       phone: payload.phone,
       firstName: payload.first_name

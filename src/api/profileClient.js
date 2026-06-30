@@ -2,9 +2,10 @@ import { localProfile, normalizeProfileResponse } from "./profileAttributes.js";
 
 function profileQuery(personaId, identity = {}) {
   const params = new URLSearchParams({ persona: personaId || "anonymous" });
-  ["email", "phone", "userId", "meiroUserId"].forEach((key) => {
-    if (identity[key]) params.set(key, identity[key]);
-  });
+  const userId = identity.user_id || identity.userId;
+  if (userId) params.set("user_id", userId);
+  if (identity.email) params.set("email", identity.email);
+  if (identity.phone) params.set("phone", identity.phone);
   return params;
 }
 

@@ -88,6 +88,7 @@ for (const field of ["abandoned_booking", "last_viewed_item", "last_search_detai
 }
 assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API proxy route missing");
 assert(profileFunction.includes("MEIRO_PROFILE_API_KEY"), "Profile API proxy must use env var for API key");
+assert(profileFunction.includes('["user_id", identifiers.user_id]') && profileFunction.includes('["email", identifiers.email]'), "Profile API lookup must use user_id before email identifiers");
 assert(!sourceText.includes("mpp" + "ak_") && !profileFunction.includes("mpp" + "ak_"), "Profile API key must not be committed");
 assert(sourceText.includes("empty-itinerary"), "Empty itinerary recovery surface missing");
 for (const rail of ["homepage", "search", "cart", "product", "thank-you"]) {

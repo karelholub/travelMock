@@ -85,6 +85,7 @@ export function setConsent(consent) {
 
 export function identifyUser(profile) {
   const payload = {
+    user_id: profile.userId || profile.user_id || profile.email,
     email: profile.email,
     phone: profile.phone,
     first_name: profile.firstName,
