@@ -11,27 +11,49 @@ export function thankYouPage(state) {
   const fields = state.profile?.fields || {};
   const recs = recommendationRail("thank-you", state);
   return `
-    <section class="confirmation">
-      <div>
+    <section class="confirmation confirmation-modern">
+      <div class="confirmation-hero">
         <p class="eyebrow">Booking confirmed</p>
         <h1>${booking.booking_id}</h1>
         <p>Your ${booking.destination} trip is confirmed. The post-booking lifecycle has entered its helpful, slightly smug phase.</p>
+        <div class="post-booking-steps">
+          <span class="is-done">Booked</span>
+          <span>Pre-trip upsell</span>
+          <span>Trip completed</span>
+          <span>Review request</span>
+        </div>
         <div class="hero-actions">
           <a class="primary" href="/account" data-link>View account</a>
           <a class="secondary" href="/demo-control" data-link>Demo controls</a>
         </div>
       </div>
-      <aside class="summary-card">
+      <aside class="summary-card confirmation-summary">
+        <h2>Booking snapshot</h2>
+        <div><span>Destination</span><strong>${booking.destination}</strong></div>
+        <div><span>Travelers</span><strong>${booking.traveler_count || booking.pax}</strong></div>
+        <div><span>Booking value</span><strong>${money(Number(booking.booking_value || booking.total_value || 0))}</strong></div>
+        <div><span>Product types</span><strong>${booking.booked_product_types || booking.product_types?.join(", ")}</strong></div>
+      </aside>
+    </section>
+    <section class="profile-proof-grid">
+      <article class="summary-card">
         <h2>Profile API proof</h2>
         <div><span>email</span><strong>${fields.email || booking.email}</strong></div>
         <div><span>first_name</span><strong>${fields.first_name || booking.first_name}</strong></div>
         <div><span>last_purchased_item_destination</span><strong>${fields.last_purchased_item_destination || fields.next_trip_destination || booking.destination}</strong></div>
+      </article>
+      <article class="summary-card">
+        <h2>Lifecycle attributes</h2>
         <div><span>last_booking_started_details</span><strong>${detailText(fields.last_booking_started_details, booking.booking_id)}</strong></div>
         <div><span>last_viewed_offer_details</span><strong>${detailText(fields.last_viewed_offer_details, "none")}</strong></div>
         <div><span>last_viewed_item_list_name</span><strong>${fields.last_viewed_item_list_name || "thank-you_post_booking"}</strong></div>
+      </article>
+      <article class="summary-card">
+        <h2>Next best action</h2>
         <div><span>total_lifetime_purchase_value</span><strong>${money(Number(fields.total_lifetime_purchase_value || fields.booking_value || booking.booking_value))}</strong></div>
         <div><span>recommended_add_on_ids</span><strong>${(fields.recommended_add_on_ids || []).join(", ")}</strong></div>
-      </aside>
+        <div><span>post_booking_rail</span><strong>thank-you_post_booking</strong></div>
+      </article>
     </section>
     ${rail("Next best actions", recs, "thank-you_post_booking")}
   `;

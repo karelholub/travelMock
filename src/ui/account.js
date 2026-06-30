@@ -17,8 +17,20 @@ export function accountPage(state) {
       <div>
         <p class="eyebrow">Account</p>
         <h1>${fields.first_name || persona.label}</h1>
+        <p>${persona.label} · ${destination} affinity · ${fields.loyalty_tier || persona.loyaltyTier}</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Demo controls</a>
+    </section>
+    <section class="loyalty-hero">
+      <div>
+        <span class="eyebrow">Personalization center</span>
+        <h2>${fields.loyalty_tier || persona.loyaltyTier}</h2>
+        <p>Known identity, fresh intent, and just enough travel ambition to make recommendations feel deliberate.</p>
+      </div>
+      <div class="loyalty-actions">
+        <a class="primary" href="/search" data-link>Plan next trip</a>
+        <a class="secondary" href="/itinerary" data-link>Review itinerary</a>
+      </div>
     </section>
     <section class="account-layout">
       <section class="account-main">

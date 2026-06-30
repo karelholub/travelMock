@@ -605,6 +605,116 @@ input, select {
 .detail-copy h1 { font-size: clamp(2.2rem, 4vw, 4.2rem); }
 .price { font-size: 2rem; color: var(--accent); }
 .detail-list { padding-left: 20px; color: var(--muted); line-height: 1.8; }
+.offer-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 18px;
+  align-items: stretch;
+  margin-top: 28px;
+}
+.offer-gallery {
+  position: relative;
+  min-height: 560px;
+  overflow: hidden;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.offer-gallery img {
+  width: 100%;
+  height: 100%;
+}
+.offer-gallery::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(180deg, rgba(17, 24, 23, 0.03), rgba(17, 24, 23, 0.42));
+}
+.offer-badges {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.offer-badges span {
+  padding: 8px 10px;
+  color: white;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  font-weight: 820;
+  backdrop-filter: blur(14px);
+}
+.offer-booking-card {
+  position: sticky;
+  top: 82px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  padding: 22px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--soft-shadow);
+}
+.offer-booking-card h1 {
+  font-size: clamp(2rem, 3.6vw, 3.8rem);
+}
+.offer-price {
+  display: grid;
+  gap: 2px;
+  padding: 14px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.offer-price span {
+  color: var(--muted);
+  font-weight: 760;
+}
+.offer-price strong {
+  color: var(--accent);
+  font-size: 2rem;
+}
+.offer-detail-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 0.9fr;
+  gap: 14px;
+  margin-top: 18px;
+}
+.offer-panel {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--soft-shadow);
+}
+.offer-panel .profile-proof {
+  position: static;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.offer-facts {
+  display: grid;
+  gap: 8px;
+}
+.offer-facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.offer-facts span {
+  color: var(--muted);
+  font-weight: 760;
+}
 .banner {
   padding: 12px;
   border: 1px solid #f0d7b6;
@@ -622,6 +732,35 @@ input, select {
 }
 .account-layout {
   grid-template-columns: minmax(0, 1fr) 320px;
+}
+.loyalty-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 20px;
+  color: white;
+  background: var(--navy);
+  border-radius: 18px;
+  box-shadow: var(--soft-shadow);
+}
+.loyalty-hero h2 {
+  margin-bottom: 6px;
+}
+.loyalty-hero p,
+.loyalty-hero .eyebrow {
+  color: rgba(255, 255, 255, 0.78);
+}
+.loyalty-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.loyalty-actions .secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.28);
 }
 .account-main {
   display: grid;
@@ -856,6 +995,53 @@ input, select {
   border: 1px solid var(--line);
   border-radius: 8px;
 }
+.confirmation-modern {
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+.confirmation-hero {
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  min-height: 390px;
+  color: white;
+  background: linear-gradient(135deg, var(--navy), #006b68);
+  border: 0;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.confirmation-hero p {
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.84);
+}
+.post-booking-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.post-booking-steps span {
+  min-width: 0;
+  padding: 10px;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 820;
+}
+.post-booking-steps .is-done {
+  color: var(--ink);
+  background: white;
+}
+.confirmation-summary {
+  align-content: start;
+  border-radius: 18px;
+}
+.profile-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
 .persona-card {
   display: grid;
   gap: 8px;
@@ -981,13 +1167,21 @@ input, select {
   .child-age-fields {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .results-shell, .product-detail, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .checkout-grid, .checkout-flow {
+  .results-shell, .product-detail, .offer-hero, .offer-detail-grid, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .checkout-grid, .checkout-flow, .profile-proof-grid {
     grid-template-columns: 1fr;
   }
   .filter-panel,
   .booking-summary,
-  .checkout-summary {
+  .checkout-summary,
+  .offer-booking-card {
     position: static;
+  }
+  .offer-gallery {
+    min-height: 420px;
+  }
+  .loyalty-hero {
+    align-items: flex-start;
+    flex-direction: column;
   }
   .filter-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1092,6 +1286,18 @@ input, select {
   .destination-tile,
   .destination-tile:first-child {
     min-height: 220px;
+  }
+  .offer-gallery {
+    min-height: 280px;
+    border-radius: 14px;
+  }
+  .offer-booking-card,
+  .offer-panel,
+  .loyalty-hero {
+    border-radius: 14px;
+  }
+  .post-booking-steps {
+    grid-template-columns: 1fr;
   }
   .filter-panel {
     grid-template-columns: 1fr;

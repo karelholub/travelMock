@@ -10,20 +10,51 @@ export function productPage(state, slug) {
   }
   const recs = recommendationRail("product", state, { currentProduct: product });
   return `
-    <section class="product-detail">
-      <div class="detail-image"><img src="${product.image}" alt="${product.destination} travel product" /></div>
-      <div class="detail-copy">
+    <section class="offer-hero">
+      <div class="offer-gallery">
+        <img src="${product.image}" alt="${product.destination} travel product" />
+        <div class="offer-badges">
+          <span>${productTypeLabel(product.type)}</span>
+          <span>${product.duration}</span>
+          <span>${product.tripType}</span>
+        </div>
+      </div>
+      <aside class="offer-booking-card">
         <p class="eyebrow">${productTypeLabel(product.type)} · ${product.destination}</p>
         <h1>${product.name}</h1>
         <p>${product.tagline}</p>
-        <strong class="price">${money(product.price)}</strong>
+        <div class="offer-price">
+          <span>From</span>
+          <strong>${money(product.price)}</strong>
+        </div>
+        <button class="primary full" data-add="${product.id}">Add to itinerary</button>
+        <button class="secondary full" data-watch="${product.id}">Watch price</button>
+        <div class="banner">Because you looked at ${product.destination} twice, the algorithm has become quietly invested.</div>
+      </aside>
+    </section>
+    <section class="offer-detail-grid">
+      <article class="offer-panel">
+        <span class="eyebrow">Included</span>
+        <h2>What you are actually buying</h2>
         <ul class="detail-list">
           ${product.details.map((detail) => `<li>${detail}</li>`).join("")}
         </ul>
+      </article>
+      <article class="offer-panel">
+        <span class="eyebrow">Why this match</span>
+        <h2>Personalization proof</h2>
+        <p>This offer fits ${product.destination} intent, ${product.tripType} mood, and a detected willingness to believe travel can improve a Tuesday.</p>
         ${profileProof(state.profile)}
-        <div class="banner">Because you looked at ${product.destination} twice, the algorithm has become quietly invested.</div>
-        <button class="primary" data-add="${product.id}">Add to itinerary</button>
-      </div>
+      </article>
+      <article class="offer-panel">
+        <span class="eyebrow">Booking confidence</span>
+        <h2>Useful facts</h2>
+        <div class="offer-facts">
+          <div><span>Margin</span><strong>${Math.round(product.margin * 100)}%</strong></div>
+          <div><span>Destination</span><strong>${product.destination}</strong></div>
+          <div><span>Product type</span><strong>${productTypeLabel(product.type)}</strong></div>
+        </div>
+      </article>
     </section>
     ${rail("Complete the trip", recs, "product_cross_sell")}
   `;
