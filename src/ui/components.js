@@ -1,5 +1,5 @@
 import { money, productTypeLabel } from "../utils/format.js";
-import { detailDestination, detailListName } from "../utils/profileDisplay.js";
+import { detailDestination, detailListName, detailText } from "../utils/profileDisplay.js";
 import { state } from "../state/store.js";
 
 export function image(product, className = "card-image") {
