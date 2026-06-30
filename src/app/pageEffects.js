@@ -11,7 +11,7 @@ let lastAccountProfileKey = "";
 export function runPageEffects(path, state, summary) {
   if (path === "/search") trackSearchResults(state);
   if (path.startsWith("/product/")) trackProductView(path, state);
-  if (path === "/account") hydrateAccountProfile(state);
+  if (path === "/account") refreshAccountProfile(state);
   if (path === "/itinerary") {
     trackEvent("view_cart", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, state.search));
   }
@@ -37,11 +37,20 @@ function trackProductView(path, state) {
   trackEvent("view_item", trackingItem(product, 1, state.search));
 }
 
-async function hydrateAccountProfile(state) {
+export async function refreshAccountProfile(state, options = {}) {
   const identity = profileIdentity(state);
   const lookupKey = JSON.stringify({ personaId: state.personaId, user_id: identity.user_id, email: identity.email });
-  if (lookupKey === lastAccountProfileKey) return;
+  if (!options.force && lookupKey === lastAccountProfileKey) return;
   lastAccountProfileKey = lookupKey;
   const profile = await hydrateProfile(state.personaId, identity);
-  updateState({ profile });
+  const identityType = identity.user_id ? "user_id" : identity.email ? "email" : "none";
+  const identityValue = identity.user_id || identity.email || "";
+  updateState({
+    profile,
+    profileLookup: {
+      checkedAt: new Date().toISOString(),
+      identityType,
+      identityValue
+    }
+  });
 }

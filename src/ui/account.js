@@ -1,7 +1,8 @@
+import { profileIdentity } from "../app/profileIdentity.js";
 import { personas, scenarioNotes } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
-import { detailDestination, detailListName, detailNumber, detailText } from "../utils/profileDisplay.js";
+import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
 
 export function accountPage(state) {
@@ -23,6 +24,11 @@ export function accountPage(state) {
   const firstName = detailText(fields.first_name || state.booking?.first_name, "Unknown");
   const tripSignal = detailText(fields.last_interest_trip_type, persona.preferredTripType);
   const source = state.profile?.source || "pending";
+  const identity = profileIdentity(state);
+  const lookup = state.profileLookup || {};
+  const lookupType = lookup.identityType || (identity.user_id ? "user_id" : identity.email ? "email" : "none");
+  const lookupValue = lookup.identityValue || identity.user_id || identity.email || "";
+  const checkedAt = lookup.checkedAt ? new Date(lookup.checkedAt).toLocaleTimeString() : "loading";
   return `
     <section class="page-head dense">
       <div>
@@ -81,10 +87,13 @@ export function accountPage(state) {
       <aside class="summary-card account-side">
         <h2>Profile API proof</h2>
         <div><span>Source</span><strong>${source}</strong></div>
+        <div><span>Lookup</span><strong>${lookupType} · ${maskIdentifier(lookupValue)}</strong></div>
+        <div><span>Checked</span><strong>${checkedAt}</strong></div>
         <div><span>Destination</span><strong>${destination}</strong></div>
         <div><span>Trip signal</span><strong>${tripSignal}</strong></div>
         <div><span>List</span><strong>${viewedList}</strong></div>
         <div><span>Value</span><strong>${lifetimeValue}</strong></div>
+        <button class="secondary full" type="button" data-refresh-profile>Refresh profile</button>
       </aside>
     </section>
     ${rail("Account recommendations", recommendationRail("account", state), "account_recommendations")}

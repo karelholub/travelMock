@@ -65,3 +65,14 @@ export function detailNumber(value, fallback = 0) {
   }
   return fallback;
 }
+
+export function maskIdentifier(value, fallback = "No identifier yet") {
+  if (!value) return fallback;
+  const text = String(value);
+  if (text.includes("@")) {
+    const [name, domain] = text.split("@");
+    return `${name.slice(0, 2)}***@${domain}`;
+  }
+  if (text.length <= 10) return text;
+  return `${text.slice(0, 8)}...${text.slice(-6)}`;
+}
