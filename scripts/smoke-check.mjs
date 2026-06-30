@@ -40,6 +40,8 @@ const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
 const profileAttributes = await readFile("src/api/profileAttributes.js", "utf8");
 const profileClient = await readFile("src/api/profileClient.js", "utf8");
 const profileFunction = await readFile("netlify/functions/profile.js", "utf8");
+const accountPage = await readFile("src/ui/account.js", "utf8");
+const pageEffects = await readFile("src/app/pageEffects.js", "utf8");
 const netlifyConfig = await readFile("netlify.toml", "utf8");
 const redirects = await readFile("_redirects", "utf8");
 
@@ -92,6 +94,10 @@ assert(profileFunction.includes('path: "/api/profile"'), "Netlify Profile API pr
 assert(profileFunction.includes("MEIRO_PROFILE_API_KEY"), "Profile API proxy must use env var for API key");
 assert(profileFunction.includes('["user_id", identifiers.user_id]') && profileFunction.includes('["email", identifiers.email]'), "Profile API lookup must use user_id before email identifiers");
 assert(profileClient.includes("mpt_user_id_js") && profileClient.includes('params.set("user_id", userId)'), "Profile API client must use Meiro cookie user_id");
+assert(pageEffects.includes('path === "/account"') && pageEffects.includes("hydrateProfile"), "Account page must refresh from Profile API");
+for (const helper of ["detailDestination", "detailListName", "detailNumber", "detailText"]) {
+  assert(accountPage.includes(helper), `Account page must render Profile API values through ${helper}`);
+}
 assert(!sourceText.includes("mpp" + "ak_") && !profileFunction.includes("mpp" + "ak_"), "Profile API key must not be committed");
 assert(sourceText.includes("empty-itinerary"), "Empty itinerary recovery surface missing");
 for (const rail of ["homepage", "search", "cart", "product", "thank-you"]) {

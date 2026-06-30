@@ -1,22 +1,33 @@
 import { personas, scenarioNotes } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
-import { detailText } from "../utils/profileDisplay.js";
+import { detailDestination, detailListName, detailNumber, detailText } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
 
 export function accountPage(state) {
   const persona = personas[state.personaId] || personas.anonymous;
   const fields = state.profile?.fields || {};
-  const lifetimeValue = money(Number(fields.total_lifetime_purchase_value || fields.booking_value || 0));
-  const destination = fields.last_purchased_item_destination || fields.next_trip_destination || persona.preferredDestination;
+  const lifetimeValue = money(detailNumber(fields.total_lifetime_purchase_value ?? fields.booking_value, 0));
+  const destination = detailDestination(
+    fields.last_purchased_item_destination,
+    fields.next_trip_destination,
+    fields.last_search_details,
+    fields.last_search_performed_details,
+    fields.last_viewed_destination_details
+  ) || persona.preferredDestination;
   const lastSearch = detailText(fields.last_search_details || fields.last_search_performed_details, destination);
   const abandoned = detailText(fields.abandoned_booking, "none");
   const wishlist = detailText(fields.last_wishlist_item_added, "none");
+  const viewedList = detailListName(fields.last_viewed_item_list_name, "homepage_recommended");
+  const email = detailText(fields.email || state.booking?.email, "Unknown until checkout");
+  const firstName = detailText(fields.first_name || state.booking?.first_name, "Unknown");
+  const tripSignal = detailText(fields.last_interest_trip_type, persona.preferredTripType);
+  const source = state.profile?.source || "pending";
   return `
     <section class="page-head dense">
       <div>
         <p class="eyebrow">Account</p>
-        <h1>${fields.first_name || persona.label}</h1>
+        <h1>${firstName === "Unknown" ? persona.label : firstName}</h1>
         <p>${persona.label} · ${destination} affinity · ${fields.loyalty_tier || persona.loyaltyTier}</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Demo controls</a>
@@ -43,14 +54,14 @@ export function accountPage(state) {
         <section class="profile-signal-grid">
           <article class="summary-card">
             <h2>Identity</h2>
-            <div><span>Email</span><strong>${fields.email || state.booking?.email || "Unknown until checkout"}</strong></div>
-            <div><span>First name</span><strong>${fields.first_name || state.booking?.first_name || "Unknown"}</strong></div>
-            <div><span>Profile source</span><strong>${state.profile?.source || "pending"}</strong></div>
+            <div><span>Email</span><strong>${email}</strong></div>
+            <div><span>First name</span><strong>${firstName}</strong></div>
+            <div><span>Profile source</span><strong>${source}</strong></div>
           </article>
           <article class="summary-card">
             <h2>Intent</h2>
             <div><span>Last search</span><strong>${lastSearch}</strong></div>
-            <div><span>Last viewed list</span><strong>${fields.last_viewed_item_list_name || "homepage_recommended"}</strong></div>
+            <div><span>Last viewed list</span><strong>${viewedList}</strong></div>
             <div><span>Last wishlist item</span><strong>${wishlist}</strong></div>
           </article>
           <article class="summary-card">
@@ -69,9 +80,10 @@ export function accountPage(state) {
       </section>
       <aside class="summary-card account-side">
         <h2>Profile API proof</h2>
+        <div><span>Source</span><strong>${source}</strong></div>
         <div><span>Destination</span><strong>${destination}</strong></div>
-        <div><span>Trip signal</span><strong>${fields.last_interest_trip_type || persona.preferredTripType}</strong></div>
-        <div><span>List</span><strong>${fields.last_viewed_item_list_name || "homepage_recommended"}</strong></div>
+        <div><span>Trip signal</span><strong>${tripSignal}</strong></div>
+        <div><span>List</span><strong>${viewedList}</strong></div>
         <div><span>Value</span><strong>${lifetimeValue}</strong></div>
       </aside>
     </section>

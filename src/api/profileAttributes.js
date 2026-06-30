@@ -131,7 +131,7 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
     || offerDetails.destination
     || abandonedBooking.destination
     || fallback.next_trip_destination;
-  const value = Number(normalized.total_lifetime_purchase_value ?? fallback.booking_value);
+  const value = detailNumberValue(normalized.total_lifetime_purchase_value ?? fallback.booking_value);
 
   return {
     source: raw.source || fallback.source || "meiro-profile-api",
@@ -155,7 +155,14 @@ function detailDestinationValue(value) {
   const unwrapped = unwrapAttributeValue(value);
   if (!unwrapped) return "";
   if (typeof unwrapped === "string") return unwrapped;
-  return unwrapped.destination || unwrapped.name || unwrapped.title || unwrapped.id || "";
+  if (Array.isArray(unwrapped)) {
+    for (const item of unwrapped) {
+      const destination = detailDestinationValue(item);
+      if (destination) return destination;
+    }
+    return "";
+  }
+  return unwrapped.destination || unwrapped.destinations?.[0] || unwrapped.name || unwrapped.title || unwrapped.id || "";
 }
 
 function detailListValue(value) {
@@ -163,6 +170,20 @@ function detailListValue(value) {
   if (!unwrapped) return "";
   if (typeof unwrapped === "string") return unwrapped;
   return unwrapped.list_name || unwrapped.listName || unwrapped.name || unwrapped.title || "";
+}
+
+function detailNumberValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (unwrapped === undefined || unwrapped === null || unwrapped === "") return NaN;
+  if (typeof unwrapped === "number") return unwrapped;
+  if (typeof unwrapped === "string") return Number(unwrapped.replace(/[^\d.-]/g, ""));
+  if (Array.isArray(unwrapped)) return detailNumberValue(unwrapped[0]);
+  if (typeof unwrapped === "object") {
+    for (const key of ["value", "amount", "total", "booking_value", "bookingValue", "total_value", "totalValue"]) {
+      if (unwrapped[key] !== undefined) return detailNumberValue(unwrapped[key]);
+    }
+  }
+  return NaN;
 }
 
 export function localProfile(personaId = "anonymous", identity = {}) {

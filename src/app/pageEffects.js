@@ -1,12 +1,17 @@
+import { hydrateProfile } from "../api/profileClient.js";
 import { findProductByIdOrSlug } from "../catalog/lookups.js";
 import { personalizedResults } from "../recommendations/strategies.js";
-import { rememberProduct } from "../state/store.js";
+import { rememberProduct, updateState } from "../state/store.js";
 import { trackEvent } from "../tracking/index.js";
 import { trackingCartPayload, trackingItem, trackingSearchPayload } from "../tracking/schema.js";
+import { profileIdentity } from "./profileIdentity.js";
+
+let lastAccountProfileKey = "";
 
 export function runPageEffects(path, state, summary) {
   if (path === "/search") trackSearchResults(state);
   if (path.startsWith("/product/")) trackProductView(path, state);
+  if (path === "/account") hydrateAccountProfile(state);
   if (path === "/itinerary") {
     trackEvent("view_cart", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, state.search));
   }
@@ -30,4 +35,13 @@ function trackProductView(path, state) {
   if (!product) return;
   rememberProduct(product.id);
   trackEvent("view_item", trackingItem(product, 1, state.search));
+}
+
+async function hydrateAccountProfile(state) {
+  const identity = profileIdentity(state);
+  const lookupKey = JSON.stringify({ personaId: state.personaId, user_id: identity.user_id, email: identity.email });
+  if (lookupKey === lastAccountProfileKey) return;
+  lastAccountProfileKey = lookupKey;
+  const profile = await hydrateProfile(state.personaId, identity);
+  updateState({ profile });
 }

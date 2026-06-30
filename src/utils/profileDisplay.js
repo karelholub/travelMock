@@ -1,17 +1,28 @@
 export function detailText(value, fallback = "pending") {
   if (value === undefined || value === null || value === "") return fallback;
-  if (Array.isArray(value)) return value.length ? value.join(", ") : fallback;
+  if (Array.isArray(value)) {
+    const items = value.map((item) => detailText(item, "")).filter(Boolean);
+    return items.length ? items.join(", ") : fallback;
+  }
   if (typeof value !== "object") return String(value);
 
   const preferred = [
     value.booking_id,
+    value.bookingId,
     value.item_name,
+    value.itemName,
     value.item_id,
+    value.itemId,
     value.product_id,
+    value.productId,
     value.destination,
+    value.name,
+    value.title,
     value.route,
     value.trip_type,
-    value.list_name
+    value.tripType,
+    value.list_name,
+    value.listName
   ].filter(Boolean);
 
   if (preferred.length) return preferred.slice(0, 3).join(" · ");
@@ -22,7 +33,12 @@ export function detailDestination(...details) {
   for (const detail of details) {
     if (!detail) continue;
     if (typeof detail === "string") return detail;
-    const destination = detail.destination || detail.destinations?.[0];
+    if (Array.isArray(detail)) {
+      const destination = detailDestination(...detail);
+      if (destination) return destination;
+      continue;
+    }
+    const destination = detail.destination || detail.destinations?.[0] || detail.name || detail.title;
     if (destination) return destination;
   }
   return "";
@@ -32,4 +48,20 @@ export function detailListName(value, fallback = "homepage_recommended") {
   if (!value) return fallback;
   if (typeof value === "string") return value;
   return value.list_name || value.listName || value.name || value.title || detailText(value, fallback);
+}
+
+export function detailNumber(value, fallback = 0) {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (typeof value === "number") return Number.isFinite(value) ? value : fallback;
+  if (typeof value === "string") {
+    const numeric = Number(value.replace(/[^\d.-]/g, ""));
+    return Number.isFinite(numeric) ? numeric : fallback;
+  }
+  if (Array.isArray(value)) return detailNumber(value[0], fallback);
+  if (typeof value === "object") {
+    for (const key of ["value", "amount", "total", "booking_value", "bookingValue", "total_value", "totalValue"]) {
+      if (value[key] !== undefined) return detailNumber(value[key], fallback);
+    }
+  }
+  return fallback;
 }
