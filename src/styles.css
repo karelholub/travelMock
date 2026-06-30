@@ -116,9 +116,9 @@ p { color: var(--muted); line-height: 1.55; }
 
 .search-panel {
   display: grid;
-  gap: 12px;
-  max-width: 1160px;
-  padding: 14px;
+  gap: 14px;
+  max-width: 1180px;
+  padding: 16px;
   margin-top: 26px;
   background: rgba(255,255,255,0.97);
   border: 1px solid rgba(255,255,255,0.76);
@@ -176,19 +176,19 @@ p { color: var(--muted); line-height: 1.55; }
 .search-fields {
   display: grid;
   grid-template-columns:
-    minmax(116px, 1fr)
-    minmax(136px, 1.08fr)
-    repeat(2, minmax(128px, 0.9fr))
-    repeat(2, minmax(76px, 0.58fr))
-    repeat(2, minmax(108px, 0.78fr))
-    minmax(152px, 0.92fr);
-  gap: 8px;
+    minmax(120px, 1fr)
+    minmax(140px, 1.08fr)
+    repeat(2, minmax(128px, 0.92fr))
+    repeat(2, minmax(82px, 0.58fr))
+    repeat(2, minmax(112px, 0.74fr))
+    minmax(154px, 0.86fr);
+  gap: 10px;
   align-items: stretch;
 }
 .field-shell {
   min-width: 0;
   gap: 5px;
-  padding: 9px 10px 10px;
+  padding: 10px 12px 11px;
   color: var(--muted);
   background: white;
   border: 1px solid var(--line);
@@ -201,10 +201,11 @@ p { color: var(--muted); line-height: 1.55; }
 .child-age-fields {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(6, minmax(88px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(116px, 150px));
+  justify-content: start;
+  gap: 10px;
   align-items: end;
-  padding: 10px 0 0;
+  padding: 12px 0 0;
   border-top: 1px solid rgba(220, 229, 223, 0.9);
 }
 .child-age-fields.is-hidden {
@@ -212,6 +213,13 @@ p { color: var(--muted); line-height: 1.55; }
 }
 .child-age-fields label {
   min-width: 0;
+  gap: 5px;
+  padding: 9px 10px 10px;
+  color: var(--muted);
+  background: #fbfefd;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 1px 0 rgba(17, 24, 23, 0.03);
 }
 label { display: grid; gap: 6px; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
 input, select {
@@ -230,6 +238,7 @@ input, select {
   font-weight: 800;
   border: 0;
   border-radius: 0;
+  background: transparent;
 }
 .search-submit {
   min-height: 68px;
