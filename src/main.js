@@ -84,7 +84,10 @@ function routeView(path, summary) {
 function layout(content, summary) {
   return `
     <header class="site-header">
-      <a class="brand" href="/" data-link><span>ET</span> Elsewhere Travel Co.</a>
+      <a class="brand" href="/" data-link>
+        <img src="/assets/logo-mark.svg" alt="" />
+        <span>Elsewhere Travel Co.</span>
+      </a>
       <nav>
         <a href="/search" data-link>Search</a>
         <a href="/itinerary" data-link>Itinerary (${summary.count})</a>

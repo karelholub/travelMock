@@ -35,15 +35,19 @@ img { display: block; max-width: 100%; object-fit: cover; background: var(--soft
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(14px);
 }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; }
-.brand span {
-  display: grid;
-  place-items: center;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+.brand img {
   width: 34px;
   height: 34px;
-  color: white;
-  background: var(--accent);
   border-radius: 8px;
+  background: var(--accent);
+  box-shadow: 0 5px 14px rgba(23, 107, 91, 0.18);
 }
 nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 nav a { padding: 8px 10px; color: var(--muted); border-radius: 8px; }

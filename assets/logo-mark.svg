@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="132" height="132" viewBox="0 0 132 132" role="img" aria-labelledby="title desc">
+  <title id="title">Elsewhere Travel Co. mark</title>
+  <desc id="desc">A compass pointer over a route line.</desc>
+  <rect width="132" height="132" rx="26" fill="#176b5b"/>
+  <path d="M23 86c20-13 43-18 68-14 7 1 14 3 20 5" fill="none" stroke="#ffd889" stroke-width="7" stroke-linecap="round"/>
+  <path d="M96 31 73 103 58 75 30 60 96 31Z" fill="#ffffff"/>
+  <path d="M73 103 96 31 81 83Z" fill="#d5a842"/>
+  <circle cx="66" cy="66" r="46" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="4"/>
+  <circle cx="66" cy="66" r="5" fill="#b9542b"/>
+</svg>
