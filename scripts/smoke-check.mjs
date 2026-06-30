@@ -36,6 +36,7 @@ const trackingSchema = await readFile("src/tracking/schema.js", "utf8");
 const checkout = await readFile("src/ui/checkout.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
+const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -59,6 +60,9 @@ for (const field of ["origin", "region", "depart_date", "pax", "cabin_class", "r
 }
 for (const playbookEvent of ["search_performed", "wishlist_added", "booking_started", "booking_confirmed", "trip_completed", "review_submitted", "payment_failed"]) {
   assert(sourceText.includes(playbookEvent), `Travel playbook event coverage missing: ${playbookEvent}`);
+}
+for (const simulatorFeature of ["--profiles", "--interactions", "--path", "--send", "complete", "abandoned", "trackingSearchPayload", "trackingWishlistPayload", "trackingCartPayload"]) {
+  assert(simulator.includes(simulatorFeature), `Simulator feature missing: ${simulatorFeature}`);
 }
 assert(checkout.includes("email: contact.email"), "Purchase payload must include top-level email");
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
