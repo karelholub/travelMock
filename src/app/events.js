@@ -150,22 +150,7 @@ function dismissPriceWatchPanel(panel = document.querySelector("[data-price-watc
 function wireSearchForm() {
   document.querySelector("[data-search-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-    const adults = Math.max(1, Number(data.adults || 1));
-    const children = Math.max(0, Number(data.children || 0));
-    const childAges = Array.from({ length: children }, (_, index) => Number(data[`childAge${index + 1}`]))
-      .filter((age) => Number.isFinite(age) && age >= 0);
-    const nextSearch = {
-      ...state.search,
-      ...data,
-      adults,
-      children,
-      childAges,
-      travelers: adults + children
-    };
-    trackEvent("search", trackingSearchPayload(nextSearch));
-    history.pushState({}, "", "/search");
-    updateState({ search: nextSearch });
+    applySearchForm(event.currentTarget, { navigateToSearch: true });
   });
 
   const syncChildAgeFields = (event) => {
@@ -183,11 +168,44 @@ function wireSearchForm() {
   childrenInput?.addEventListener("input", syncChildAgeFields);
   childrenInput?.addEventListener("change", syncChildAgeFields);
 
-  document.querySelectorAll("[data-search-form] [name='productCategory']").forEach((input) => {
-    input.addEventListener("change", () => {
-      document.querySelectorAll(".search-tab").forEach((tab) => tab.classList.toggle("is-active", tab.contains(input) && input.checked));
+  document.querySelectorAll("[data-search-form] [data-product-category]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const form = event.currentTarget.form;
+      const valueInput = form?.querySelector("[data-product-category-value]");
+      if (!form || !valueInput) return;
+      valueInput.value = event.currentTarget.dataset.productCategory;
+      form.querySelectorAll("[data-product-category]").forEach((tab) => {
+        const isActive = tab === event.currentTarget;
+        tab.classList.toggle("is-active", isActive);
+        tab.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+      applySearchForm(form, { navigateToSearch: location.pathname !== "/" });
     });
   });
+}
+
+function searchFromForm(form) {
+  const data = Object.fromEntries(new FormData(form).entries());
+  const adults = Math.max(1, Number(data.adults || 1));
+  const children = Math.max(0, Number(data.children || 0));
+  const childAges = Array.from({ length: children }, (_, index) => Number(data[`childAge${index + 1}`]))
+    .filter((age) => Number.isFinite(age) && age >= 0);
+  return {
+    ...state.search,
+    ...data,
+    adults,
+    children,
+    childAges,
+    travelers: adults + children
+  };
+}
+
+function applySearchForm(form, options = {}) {
+  if (!form) return;
+  const nextSearch = searchFromForm(form);
+  trackEvent("search", trackingSearchPayload(nextSearch));
+  if (options.navigateToSearch && location.pathname !== "/search") history.pushState({}, "", "/search");
+  updateState({ search: nextSearch });
 }
 
 function wireCheckoutForm(summary) {

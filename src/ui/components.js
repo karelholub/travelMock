@@ -60,11 +60,11 @@ export function searchPanel(search) {
   return `
     <form class="search-panel" data-search-form>
       <div class="search-tabs" aria-label="Booking type">
+        <input type="hidden" name="productCategory" value="${productCategory}" data-product-category-value />
         ${tabs.map(([value, label]) => `
-          <label class="search-tab ${value === productCategory ? "is-active" : ""}">
-            <input type="radio" name="productCategory" value="${value}" ${value === productCategory ? "checked" : ""} />
+          <button class="search-tab ${value === productCategory ? "is-active" : ""}" type="button" data-product-category="${value}" aria-pressed="${value === productCategory ? "true" : "false"}">
             <span>${label}</span>
-          </label>
+          </button>
         `).join("")}
       </div>
       <div class="search-fields">
