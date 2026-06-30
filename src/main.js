@@ -166,11 +166,39 @@ function wireEvents(summary) {
   document.querySelector("[data-search-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-    updateState({ search: { ...state.search, ...data, travelers: Number(data.travelers || 1) } });
+    const adults = Math.max(1, Number(data.adults || 1));
+    const children = Math.max(0, Number(data.children || 0));
+    const childAges = Array.from({ length: children }, (_, index) => Number(data[`childAge${index + 1}`]))
+      .filter((age) => Number.isFinite(age) && age >= 0);
+    updateState({
+      search: {
+        ...state.search,
+        ...data,
+        adults,
+        children,
+        childAges,
+        travelers: adults + children
+      }
+    });
     trackEvent("search", trackingSearchPayload(state.search));
     history.pushState({}, "", "/search");
     render();
   });
+
+  const syncChildAgeFields = (event) => {
+    const children = Math.max(0, Number(event.currentTarget.value || 0));
+    updateState({
+      search: {
+        ...state.search,
+        children,
+        childAges: (state.search.childAges || []).slice(0, children),
+        travelers: Number(state.search.adults || 1) + children
+      }
+    });
+  };
+  const childrenInput = document.querySelector("[data-search-form] [name='children']");
+  childrenInput?.addEventListener("input", syncChildAgeFields);
+  childrenInput?.addEventListener("change", syncChildAgeFields);
 
   document.querySelector("[data-checkout-form]")?.addEventListener("submit", (event) => {
     event.preventDefault();

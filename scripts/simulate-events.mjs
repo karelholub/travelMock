@@ -253,9 +253,11 @@ function buildSearchContext(rng, interactionIndex) {
   ];
   const base = optionsByDestination[(interactionIndex + Math.floor(rng() * optionsByDestination.length)) % optionsByDestination.length];
   const origin = ["Prague", "Vienna", "Berlin", "London", "Amsterdam"][Math.floor(rng() * 5)];
-  const travelers = base.tripType === "family" ? 4 : base.tripType === "business" ? 1 : 2;
+  const children = base.tripType === "family" ? 2 : rng() > 0.86 ? 1 : 0;
+  const adults = base.tripType === "business" ? 1 : 2;
+  const childAges = Array.from({ length: children }, (_, index) => [4, 8, 12][(interactionIndex + index) % 3]);
   const cabinClass = base.tripType === "business" ? "business" : rng() > 0.78 ? "premium_economy" : "economy";
-  return { ...base, origin, travelers, cabinClass };
+  return { ...base, origin, adults, children, childAges, travelers: adults + children, cabinClass };
 }
 
 function productsForDestination(destination) {
@@ -321,6 +323,10 @@ function buildPurchasePayload({ profile, context, cart, totals, bookingId }) {
     travel_end_date: context.returnDate,
     traveler_count: context.travelers,
     pax: context.travelers,
+    adult_count: context.adults,
+    child_count: context.children,
+    child_ages: context.childAges,
+    child_ages_csv: context.childAges.join(","),
     cabin_class: context.cabinClass,
     trip_type: context.tripType,
     flight_ids: flightIds,

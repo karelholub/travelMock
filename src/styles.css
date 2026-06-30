@@ -89,13 +89,24 @@ p { color: var(--muted); line-height: 1.55; }
 
 .search-panel {
   display: grid;
-  grid-template-columns: repeat(2, minmax(130px, 1.1fr)) repeat(5, minmax(105px, 0.8fr)) auto;
+  grid-template-columns: repeat(2, minmax(125px, 1.1fr)) repeat(6, minmax(92px, 0.8fr)) auto;
   gap: 8px;
   padding: 10px;
   margin-top: 22px;
   background: rgba(255,255,255,0.95);
   border-radius: 8px;
   box-shadow: var(--shadow);
+}
+.child-age-fields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(90px, 1fr));
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(220, 229, 223, 0.9);
+}
+.child-age-fields.is-hidden {
+  display: none;
 }
 label { display: grid; gap: 6px; color: var(--muted); font-size: 0.8rem; font-weight: 700; }
 input, select {
@@ -334,6 +345,9 @@ input, select {
   .search-panel button {
     grid-column: 1 / -1;
   }
+  .child-age-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
     grid-template-columns: 1fr;
   }
@@ -380,6 +394,9 @@ input, select {
   .search-panel select,
   .search-panel button {
     min-height: 39px;
+  }
+  .child-age-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .filters {
     gap: 6px;

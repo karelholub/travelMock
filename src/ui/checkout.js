@@ -5,6 +5,7 @@ export function checkoutPage(state, summary) {
   if (!summary.enriched.length) {
     return `<section class="empty-panel"><h1>Checkout needs an itinerary first</h1><a class="primary" href="/itinerary" data-link>Recover itinerary</a></section>`;
   }
+  const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
   return `
     <section class="page-head dense">
       <div>
@@ -19,7 +20,7 @@ export function checkoutPage(state, summary) {
         <label>First name<input name="firstName" required value="Alex" /></label>
         <label>Surname<input name="surname" required value="Somewhere" /></label>
         <label>Date of birth<input name="dob" type="date" value="1988-04-12" /></label>
-        <label>Traveler count<input name="travelerCount" type="number" min="1" value="${state.search.travelers}" /></label>
+        <label>Traveler count<input name="travelerCount" type="number" min="1" value="${travelerCount}" /></label>
       </section>
       <section class="form-card">
         <h2>2. Contact details</h2>
@@ -59,6 +60,10 @@ export function buildPurchasePayload(form, state, summary) {
   const packageIds = summary.enriched.filter((item) => item.product.type === "package").map((item) => item.product.id);
   const addOnIds = summary.enriched.filter((item) => !["flight", "hotel", "package"].includes(item.product.type)).map((item) => item.product.id);
   const contact = { email: data.email, phone: data.phone };
+  const adultCount = Number(state.search.adults || state.search.travelers || 1);
+  const childCount = Number(state.search.children || 0);
+  const childAges = Array.isArray(state.search.childAges) ? state.search.childAges : [];
+  const travelerCount = Number(data.travelerCount || adultCount + childCount);
   return {
     transaction_id: `txn_${Date.now()}`,
     booking_id: draftBookingId,
@@ -75,8 +80,12 @@ export function buildPurchasePayload(form, state, summary) {
     depart_date: state.search.departureDate,
     travel_start_date: state.search.departureDate,
     travel_end_date: state.search.returnDate,
-    traveler_count: Number(data.travelerCount || state.search.travelers),
-    pax: Number(data.travelerCount || state.search.travelers),
+    traveler_count: travelerCount,
+    pax: travelerCount,
+    adult_count: adultCount,
+    child_count: childCount,
+    child_ages: childAges,
+    child_ages_csv: childAges.join(","),
     cabin_class: state.search.cabinClass || "economy",
     trip_type: state.search.tripType,
     flight_ids: flightIds,

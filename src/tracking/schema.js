@@ -1,5 +1,5 @@
 export const trackingEvents = {
-  search: ["origin", "destination", "region", "depart_date", "return_date", "pax", "cabin_class", "trip_type"],
+  search: ["origin", "destination", "region", "depart_date", "return_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "trip_type"],
   view_search_results: ["origin", "destination", "region", "result_count", "items"],
   select_item: ["item_id", "item_name", "item_type", "list_name"],
   view_item_list: ["list_name", "items"],
@@ -8,8 +8,8 @@ export const trackingEvents = {
   remove_from_cart: ["item_id", "item_name", "item_type", "items", "cart_value"],
   add_to_wishlist: ["item_id", "destination", "region", "route", "saved_price", "saved_at"],
   view_cart: ["items", "line_items", "product_types", "cart_value", "booking_value", "total_value"],
-  begin_checkout: ["booking_id", "destination", "total_value", "currency", "travel_start_date", "travel_end_date", "pax"],
-  add_shipping_info: ["country", "traveler_count", "pax", "items", "booking_value", "total_value"],
+  begin_checkout: ["booking_id", "destination", "total_value", "currency", "travel_start_date", "travel_end_date", "pax", "adult_count", "child_count", "child_ages"],
+  add_shipping_info: ["country", "traveler_count", "pax", "adult_count", "child_count", "child_ages", "items", "booking_value", "total_value"],
   add_payment_info: ["payment_type", "items", "booking_value", "total_value"],
   purchase: [
     "transaction_id",
@@ -25,6 +25,9 @@ export const trackingEvents = {
     "travel_end_date",
     "traveler_count",
     "pax",
+    "adult_count",
+    "child_count",
+    "child_ages",
     "trip_type",
     "line_items",
     "product_types",
@@ -135,8 +138,29 @@ export function normalizedProductType(product) {
   return product.type;
 }
 
+export function travelerBreakdown(search = {}) {
+  const fallbackTravelers = Number(search.travelers || search.pax || 1);
+  const adultCount = Math.max(1, Number(search.adults || search.adultCount || (fallbackTravelers - Number(search.children || search.childCount || 0)) || 1));
+  const childCount = Math.max(0, Number(search.children || search.childCount || 0));
+  const childAges = Array.isArray(search.childAges)
+    ? search.childAges
+    : String(search.childAges || "")
+      .split(",")
+      .map((age) => Number(age.trim()))
+      .filter((age) => Number.isFinite(age) && age >= 0);
+  const normalizedChildAges = childAges.slice(0, childCount);
+  return {
+    adult_count: adultCount,
+    child_count: childCount,
+    child_ages: normalizedChildAges,
+    child_ages_csv: normalizedChildAges.join(","),
+    pax: adultCount + childCount
+  };
+}
+
 export function trackingSearchPayload(search) {
   const origin = search.origin || defaultOrigin;
+  const travelers = travelerBreakdown(search);
   return {
     playbook_event: "search_performed",
     origin,
@@ -146,8 +170,12 @@ export function trackingSearchPayload(search) {
     depart_date: search.departureDate,
     departure_date: search.departureDate,
     return_date: search.returnDate,
-    pax: Number(search.travelers || 1),
-    traveler_count: Number(search.travelers || 1),
+    pax: travelers.pax,
+    traveler_count: travelers.pax,
+    adult_count: travelers.adult_count,
+    child_count: travelers.child_count,
+    child_ages: travelers.child_ages,
+    child_ages_csv: travelers.child_ages_csv,
     cabin_class: search.cabinClass || "economy",
     trip_type: search.tripType,
     searched_at: new Date().toISOString()
@@ -197,7 +225,7 @@ export function trackingCartPayload(enrichedItems, totals, context = {}) {
   const firstItem = lineItems[0];
   const destinations = [...new Set(lineItems.map((item) => item.destination))];
   const productTypes = [...new Set(lineItems.map((item) => item.product_type))];
-  const pax = Number(context.travelers || context.pax || 1);
+  const travelers = travelerBreakdown(context);
   return {
     playbook_event: context.playbookEvent,
     booking_id: context.bookingId,
@@ -209,8 +237,12 @@ export function trackingCartPayload(enrichedItems, totals, context = {}) {
     travel_end_date: context.returnDate || firstItem?.travel_end_date,
     departure_date: context.departureDate || firstItem?.travel_start_date,
     return_date: context.returnDate || firstItem?.travel_end_date,
-    pax,
-    traveler_count: pax,
+    pax: travelers.pax,
+    traveler_count: travelers.pax,
+    adult_count: travelers.adult_count,
+    child_count: travelers.child_count,
+    child_ages: travelers.child_ages,
+    child_ages_csv: travelers.child_ages_csv,
     cabin_class: context.cabinClass || "economy",
     trip_type: context.tripType,
     items: lineItems,

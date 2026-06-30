@@ -3,7 +3,30 @@ import { enrichCartItems, cartTotal, bookingItemCount } from "../catalog/lookups
 
 const saved = JSON.parse(localStorage.getItem("elsewhere-state") || "null");
 
-export const state = saved || {
+function normalizeSavedState(value) {
+  if (!value) return null;
+  const search = value.search || {};
+  const children = Number(search.children || 0);
+  const adults = Number(search.adults || Math.max(1, Number(search.travelers || 2) - children));
+  return {
+    ...value,
+    search: {
+      origin: "Prague",
+      destination: "Lisbon",
+      departureDate: "2026-09-12",
+      returnDate: "2026-09-18",
+      cabinClass: "economy",
+      tripType: "city",
+      ...search,
+      adults,
+      children,
+      childAges: Array.isArray(search.childAges) ? search.childAges.slice(0, children) : [],
+      travelers: adults + children
+    }
+  };
+}
+
+export const state = normalizeSavedState(saved) || {
   personaId: "anonymous",
   profile: null,
   search: {
@@ -12,6 +35,9 @@ export const state = saved || {
     departureDate: "2026-09-12",
     returnDate: "2026-09-18",
     travelers: 2,
+    adults: 2,
+    children: 0,
+    childAges: [],
     cabinClass: "economy",
     tripType: "city"
   },

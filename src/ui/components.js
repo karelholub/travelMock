@@ -43,6 +43,8 @@ export function rail(title, products, listName, empty = "Recommendations are rec
 }
 
 export function searchPanel(search) {
+  const childCount = Math.max(0, Number(search.children || 0));
+  const childAges = Array.isArray(search.childAges) ? search.childAges : [];
   return `
     <form class="search-panel" data-search-form>
       <label>Origin
@@ -61,8 +63,11 @@ export function searchPanel(search) {
       <label>Return
         <input name="returnDate" type="date" value="${search.returnDate}" />
       </label>
-      <label>Travelers
-        <input name="travelers" type="number" min="1" max="8" value="${search.travelers}" />
+      <label>Adults
+        <input name="adults" type="number" min="1" max="8" value="${search.adults || search.travelers || 1}" />
+      </label>
+      <label>Children
+        <input name="children" type="number" min="0" max="6" value="${childCount}" />
       </label>
       <label>Trip type
         <select name="tripType">
@@ -75,6 +80,13 @@ export function searchPanel(search) {
         </select>
       </label>
       <button class="primary" type="submit">Search trips</button>
+      <div class="child-age-fields ${childCount > 0 ? "" : "is-hidden"}" data-child-age-fields>
+        ${Array.from({ length: childCount }, (_, index) => `
+          <label>Child ${index + 1} age
+            <input name="childAge${index + 1}" type="number" min="0" max="17" value="${childAges[index] ?? ""}" />
+          </label>
+        `).join("")}
+      </div>
     </form>
   `;
 }

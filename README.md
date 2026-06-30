@@ -28,3 +28,4 @@ Useful options:
 - `--verbose`: print send progress
 
 The generated payloads include the fields needed for the travel playbooks: search intent, watched routes, booking start, abandoned booking, purchase, product types, line items, ancillaries, trip completion, and review signals.
+Family-style journeys also include `adult_count`, `child_count`, `child_ages`, and total `pax`.
