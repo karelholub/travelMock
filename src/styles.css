@@ -265,11 +265,72 @@ input, select {
   font-weight: 700;
 }
 
-.cart-layout, .confirmation, .account-layout, .control-panels, .event-types {
+.cart-layout, .confirmation, .account-layout, .event-types {
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 18px;
   align-items: start;
+}
+.account-layout {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+.account-main {
+  display: grid;
+  gap: 16px;
+}
+.account-kpis, .cockpit-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.account-kpis article, .cockpit-strip article {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(23,33,31,0.05);
+}
+.account-kpis span, .cockpit-strip span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.account-kpis strong, .cockpit-strip strong {
+  min-width: 0;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+.profile-signal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.account-storyline {
+  padding: 18px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.account-storyline h2 {
+  margin-bottom: 12px;
+}
+.account-side {
+  position: sticky;
+  top: 78px;
+}
+.cockpit-strip {
+  margin-top: 16px;
+}
+.control-panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+  margin-top: 28px;
 }
 .cart-items { display: grid; gap: 12px; }
 .cart-row {
@@ -293,6 +354,16 @@ input, select {
 }
 .summary-card { display: grid; gap: 12px; padding: 16px; }
 .summary-card div, .total { padding-top: 10px; border-top: 1px solid var(--line); }
+.summary-card div span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+.summary-card div strong {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
 .total strong { font-size: 1.35rem; color: var(--accent); }
 .empty-itinerary {
   display: grid;
@@ -316,7 +387,7 @@ input, select {
 .check { display: flex; align-items: center; gap: 8px; }
 .check input { width: auto; min-height: auto; }
 .confirmation { align-items: stretch; }
-.confirmation > div:first-child, .account-layout > section {
+.confirmation > div:first-child {
   padding: 24px;
   background: white;
   border: 1px solid var(--line);
@@ -331,12 +402,80 @@ input, select {
 }
 .persona-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(23,107,91,0.16); }
 .persona-card span, .persona-card small { color: var(--muted); line-height: 1.45; }
+.control-card, .lifecycle-card {
+  align-content: start;
+  min-width: 0;
+}
+.control-card {
+  grid-column: span 3;
+}
+.lifecycle-card {
+  grid-column: span 2;
+}
+.toggle-list {
+  display: grid;
+  min-width: 0;
+  gap: 10px;
+}
+.summary-card .toggle-list {
+  display: grid;
+  width: 100%;
+}
+.control-card > * {
+  min-width: 0;
+}
+.toggle-list label {
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+.profile-debug-card {
+  grid-column: 1 / -1;
+}
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.summary-card .debug-grid {
+  display: grid;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.debug-grid div,
+.summary-card .debug-grid div {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+  align-content: start;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+.debug-grid div span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.debug-grid div strong {
+  text-align: left;
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
 .tracking-log code {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
   padding: 8px;
   border-radius: 8px;
   background: var(--soft);
   overflow-wrap: anywhere;
+}
+.tracking-log code span {
+  color: var(--muted);
+  font-size: 0.75rem;
 }
 .event-chip-grid {
   display: flex;
@@ -373,8 +512,23 @@ input, select {
   .child-age-fields {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .product-detail, .cart-layout, .confirmation, .account-layout, .control-panels, .event-types, .empty-itinerary, .checkout-grid {
+  .product-detail, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .checkout-grid {
     grid-template-columns: 1fr;
+  }
+  .control-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .control-card, .lifecycle-card, .profile-debug-card {
+    grid-column: 1 / -1;
+  }
+  .account-side {
+    position: static;
+  }
+  .account-kpis, .cockpit-strip, .profile-signal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .debug-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .filters select {
     flex-basis: 220px;
@@ -438,6 +592,7 @@ input, select {
     margin-left: 0;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: 1fr; }
+  .account-kpis, .cockpit-strip, .profile-signal-grid, .control-panels, .debug-grid { grid-template-columns: minmax(0, 1fr); }
   .cart-row { grid-template-columns: 76px 1fr 34px; }
   .cart-row strong { grid-column: 2 / 3; }
   .cart-row img { width: 76px; height: 68px; }
