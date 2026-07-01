@@ -646,10 +646,15 @@ textarea {
 }
 .result-actions {
   display: grid;
-  grid-template-columns: minmax(160px, auto) minmax(120px, auto) repeat(2, minmax(88px, auto));
+  grid-template-columns: minmax(160px, auto) minmax(120px, auto) minmax(176px, auto);
   gap: 8px;
   align-items: center;
   justify-content: start;
+}
+.result-utility-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
 }
 .ghost-action {
   min-height: 40px;

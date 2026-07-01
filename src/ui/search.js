@@ -10,13 +10,12 @@ export function searchPage(state) {
   const categoryLabel = state.search.productCategory && state.search.productCategory !== "all"
     ? state.search.productCategory
     : "all products";
-  const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
   return `
     <section class="page-head dense search-head">
       <div>
         <p class="eyebrow">Search results</p>
         <h1>${state.search.destination} trips, sorted by personal relevance</h1>
-        <p>${resultLabel} for ${travelerCount} travelers, with the best itinerary fits first.</p>
+        <p>Best itinerary fits first. Adjust the search when the vacation mood mutates.</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Switch persona</a>
     </section>
@@ -41,7 +40,6 @@ export function searchPage(state) {
         ${personalizationBanner("search", state)}
       </div>
     </section>
-    ${rail("Recently viewed", recommendationRail("search", state).slice(0, 4), "search_recent")}
     ${rail("Recommended for you", recommendationRail("search", state), "search_recommended")}
   `;
 }
@@ -80,8 +78,10 @@ function resultCard(product, index, state) {
         <div class="result-actions">
           <button class="primary" type="button" data-add="${product.id}">Add to itinerary</button>
           <a class="secondary" href="/product/${product.slug}" data-link>View details</a>
-          <button class="ghost-action save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save"}</button>
-          <button class="ghost-action watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
+          <div class="result-utility-actions">
+            <button class="ghost-action save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save"}</button>
+            <button class="ghost-action watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
+          </div>
         </div>
       </div>
     </article>
