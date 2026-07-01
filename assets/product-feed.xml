@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <product_feed generated_at="2026-07-01T00:00:00.000Z" source="elsewhere-travel-demo" site_url="https://travelagentmockup.netlify.app">
-  <products count="12">
+  <products count="30">
   <product>
     <id>flight-lisbon-enlightenment</id>
     <item_id>flight-lisbon-enlightenment</item_id>
@@ -380,6 +380,579 @@
       <detail>Spa entry</detail>
       <detail>Northern lights chase</detail>
       <detail>One expectation alignment dinner</detail>
+    </details>
+  </product>
+  <product>
+    <id>flight-mallorca-snack-window</id>
+    <item_id>flight-mallorca-snack-window</item_id>
+    <sku>flight-mallorca-snack-window</sku>
+    <slug>mallorca-flight-with-snack-window-diplomacy</slug>
+    <title>Mallorca Flight With Snack-Window Diplomacy</title>
+    <name>Mallorca Flight With Snack-Window Diplomacy</name>
+    <description>Boarding order optimized for tiny negotiators.</description>
+    <url>https://travelagentmockup.netlify.app/product/mallorca-flight-with-snack-window-diplomacy</url>
+    <image_url>https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>flight</product_type>
+    <category>flight</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>260</price>
+    <currency>EUR</currency>
+    <margin>0.19</margin>
+    <duration>2h 35m</duration>
+    <departure_date>2026-08-08</departure_date>
+    <return_date>2026-08-15</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>family</tag>
+      <tag>beach</tag>
+      <tag>kids</tag>
+      <tag>flight</tag>
+      <tag>budget</tag>
+    </tags>
+    <details>
+      <detail>Family boarding</detail>
+      <detail>Seat selection included</detail>
+      <detail>Snack timing advice from people with experience</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-mallorca-pool-proximity</id>
+    <item_id>hotel-mallorca-pool-proximity</item_id>
+    <sku>hotel-mallorca-pool-proximity</sku>
+    <slug>pool-proximity-hotel-with-early-breakfast</slug>
+    <title>Pool-Proximity Hotel With Early Breakfast</title>
+    <name>Pool-Proximity Hotel With Early Breakfast</name>
+    <description>Close enough to the pool to hear joy, far enough to nap.</description>
+    <url>https://travelagentmockup.netlify.app/product/pool-proximity-hotel-with-early-breakfast</url>
+    <image_url>https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>1120</price>
+    <currency>EUR</currency>
+    <margin>0.34</margin>
+    <duration>7 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>family</tag>
+      <tag>kids</tag>
+      <tag>beach</tag>
+      <tag>hotel</tag>
+      <tag>package</tag>
+    </tags>
+    <details>
+      <detail>Kids club</detail>
+      <detail>Early breakfast</detail>
+      <detail>Two-room family suite</detail>
+    </details>
+  </product>
+  <product>
+    <id>transfer-mallorca-stroller-tetris</id>
+    <item_id>transfer-mallorca-stroller-tetris</item_id>
+    <sku>transfer-mallorca-stroller-tetris</sku>
+    <slug>mallorca-transfer-with-stroller-tetris</slug>
+    <title>Mallorca Transfer With Stroller Tetris</title>
+    <name>Mallorca Transfer With Stroller Tetris</name>
+    <description>A driver who has seen every suitcase shape.</description>
+    <url>https://travelagentmockup.netlify.app/product/mallorca-transfer-with-stroller-tetris</url>
+    <image_url>https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>transfer</product_type>
+    <category>transfer</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>72</price>
+    <currency>EUR</currency>
+    <margin>0.48</margin>
+    <duration>45 min</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>family</tag>
+      <tag>kids</tag>
+      <tag>transfer</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Child seats</detail>
+      <detail>Flight tracking</detail>
+      <detail>Room for heroic amounts of luggage</detail>
+    </details>
+  </product>
+  <product>
+    <id>exp-mallorca-ice-cream-fieldwork</id>
+    <item_id>exp-mallorca-ice-cream-fieldwork</item_id>
+    <sku>exp-mallorca-ice-cream-fieldwork</sku>
+    <slug>mallorca-ice-cream-fieldwork-expedition</slug>
+    <title>Ice Cream Fieldwork Expedition</title>
+    <name>Ice Cream Fieldwork Expedition</name>
+    <description>A rigorous tasting route with beach-adjacent conclusions.</description>
+    <url>https://travelagentmockup.netlify.app/product/mallorca-ice-cream-fieldwork-expedition</url>
+    <image_url>https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>experience</product_type>
+    <category>experience</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>84</price>
+    <currency>EUR</currency>
+    <margin>0.52</margin>
+    <duration>3 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>family</tag>
+      <tag>kids</tag>
+      <tag>experience</tag>
+      <tag>beach</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Three tasting stops</detail>
+      <detail>Short walking route</detail>
+      <detail>Emergency nap window preserved</detail>
+    </details>
+  </product>
+  <product>
+    <id>flight-kyoto-quiet-anticipation</id>
+    <item_id>flight-kyoto-quiet-anticipation</item_id>
+    <sku>flight-kyoto-quiet-anticipation</sku>
+    <slug>kyoto-flight-with-quiet-anticipation</slug>
+    <title>Kyoto Flight With Quiet Anticipation</title>
+    <name>Kyoto Flight With Quiet Anticipation</name>
+    <description>Long-haul calm for people practicing thoughtful nodding.</description>
+    <url>https://travelagentmockup.netlify.app/product/kyoto-flight-with-quiet-anticipation</url>
+    <image_url>https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>flight</product_type>
+    <category>flight</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>860</price>
+    <currency>EUR</currency>
+    <margin>0.21</margin>
+    <duration>14h 10m</duration>
+    <departure_date>2026-11-02</departure_date>
+    <return_date>2026-11-11</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>culture</tag>
+      <tag>vip</tag>
+      <tag>flight</tag>
+      <tag>couples</tag>
+    </tags>
+    <details>
+      <detail>One-stop route</detail>
+      <detail>Meal preference support</detail>
+      <detail>Jet lag sympathy included</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-kyoto-paper-door-poise</id>
+    <item_id>hotel-kyoto-paper-door-poise</item_id>
+    <sku>hotel-kyoto-paper-door-poise</sku>
+    <slug>kyoto-ryokan-with-paper-door-poise</slug>
+    <title>Ryokan With Paper-Door Poise</title>
+    <name>Ryokan With Paper-Door Poise</name>
+    <description>Traditional calm, modern Wi-Fi, no sudden furniture.</description>
+    <url>https://travelagentmockup.netlify.app/product/kyoto-ryokan-with-paper-door-poise</url>
+    <image_url>https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>1540</price>
+    <currency>EUR</currency>
+    <margin>0.38</margin>
+    <duration>5 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>culture</tag>
+      <tag>vip</tag>
+      <tag>hotel</tag>
+      <tag>couples</tag>
+    </tags>
+    <details>
+      <detail>Tatami room</detail>
+      <detail>Private bath</detail>
+      <detail>Breakfast that deserves attention</detail>
+    </details>
+  </product>
+  <product>
+    <id>transfer-kyoto-politeness-buffer</id>
+    <item_id>transfer-kyoto-politeness-buffer</item_id>
+    <sku>transfer-kyoto-politeness-buffer</sku>
+    <slug>kyoto-station-transfer-politeness-buffer</slug>
+    <title>Station Transfer With Politeness Buffer</title>
+    <name>Station Transfer With Politeness Buffer</name>
+    <description>From platform confusion to quiet arrival.</description>
+    <url>https://travelagentmockup.netlify.app/product/kyoto-station-transfer-politeness-buffer</url>
+    <image_url>https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>transfer</product_type>
+    <category>transfer</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>64</price>
+    <currency>EUR</currency>
+    <margin>0.46</margin>
+    <duration>30 min</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>culture</tag>
+      <tag>transfer</tag>
+      <tag>vip</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Station meet-up</detail>
+      <detail>Luggage assistance</detail>
+      <detail>Hotel check-in timing</detail>
+    </details>
+  </product>
+  <product>
+    <id>addon-kyoto-tea-confidence</id>
+    <item_id>addon-kyoto-tea-confidence</item_id>
+    <sku>addon-kyoto-tea-confidence</sku>
+    <slug>kyoto-tea-ceremony-confidence-upgrade</slug>
+    <title>Tea Ceremony Confidence Upgrade</title>
+    <name>Tea Ceremony Confidence Upgrade</name>
+    <description>For guests who want to look serene on purpose.</description>
+    <url>https://travelagentmockup.netlify.app/product/kyoto-tea-ceremony-confidence-upgrade</url>
+    <image_url>https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>add_on</product_type>
+    <category>add_on</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>52</price>
+    <currency>EUR</currency>
+    <margin>0.61</margin>
+    <duration>90 min</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>culture</tag>
+      <tag>experience</tag>
+      <tag>vip</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Small group</detail>
+      <detail>Etiquette intro</detail>
+      <detail>Gentle correction policy</detail>
+    </details>
+  </product>
+  <product>
+    <id>flight-reykjavik-weather-theatre</id>
+    <item_id>flight-reykjavik-weather-theatre</item_id>
+    <sku>flight-reykjavik-weather-theatre</sku>
+    <slug>reykjavik-flight-to-weather-theatre</slug>
+    <title>Reykjavik Flight to Weather Theatre</title>
+    <name>Reykjavik Flight to Weather Theatre</name>
+    <description>Arrive prepared for drama in three layers.</description>
+    <url>https://travelagentmockup.netlify.app/product/reykjavik-flight-to-weather-theatre</url>
+    <image_url>https://images.unsplash.com/photo-1474302770737-173ee21bab63?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>flight</product_type>
+    <category>flight</category>
+    <destination>Reykjavik</destination>
+    <trip_type>wellness</trip_type>
+    <price>390</price>
+    <currency>EUR</currency>
+    <margin>0.2</margin>
+    <duration>4h 05m</duration>
+    <departure_date>2026-12-04</departure_date>
+    <return_date>2026-12-08</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>wellness</tag>
+      <tag>couples</tag>
+      <tag>flight</tag>
+      <tag>budget</tag>
+    </tags>
+    <details>
+      <detail>Carry-on included</detail>
+      <detail>Northern route</detail>
+      <detail>Weather flexibility suggestions</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-reykjavik-thermal-robe</id>
+    <item_id>hotel-reykjavik-thermal-robe</item_id>
+    <sku>hotel-reykjavik-thermal-robe</sku>
+    <slug>reykjavik-hotel-with-thermal-robe-energy</slug>
+    <title>Hotel With Thermal Robe Energy</title>
+    <name>Hotel With Thermal Robe Energy</name>
+    <description>A lobby designed for post-lag decompression.</description>
+    <url>https://travelagentmockup.netlify.app/product/reykjavik-hotel-with-thermal-robe-energy</url>
+    <image_url>https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Reykjavik</destination>
+    <trip_type>wellness</trip_type>
+    <price>940</price>
+    <currency>EUR</currency>
+    <margin>0.36</margin>
+    <duration>4 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>wellness</tag>
+      <tag>hotel</tag>
+      <tag>vip</tag>
+      <tag>couples</tag>
+    </tags>
+    <details>
+      <detail>Spa access</detail>
+      <detail>Harbor walks nearby</detail>
+      <detail>Breakfast with sturdy optimism</detail>
+    </details>
+  </product>
+  <product>
+    <id>transfer-reykjavik-geothermal</id>
+    <item_id>transfer-reykjavik-geothermal</item_id>
+    <sku>transfer-reykjavik-geothermal</sku>
+    <slug>geothermal-detour-airport-transfer</slug>
+    <title>Geothermal Detour Airport Transfer</title>
+    <name>Geothermal Detour Airport Transfer</name>
+    <description>Because going straight to the hotel lacks imagination.</description>
+    <url>https://travelagentmockup.netlify.app/product/geothermal-detour-airport-transfer</url>
+    <image_url>https://images.unsplash.com/photo-1529963183134-61a90db47eaf?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>transfer</product_type>
+    <category>transfer</category>
+    <destination>Reykjavik</destination>
+    <trip_type>wellness</trip_type>
+    <price>118</price>
+    <currency>EUR</currency>
+    <margin>0.49</margin>
+    <duration>2 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>wellness</tag>
+      <tag>transfer</tag>
+      <tag>add-on</tag>
+      <tag>couples</tag>
+    </tags>
+    <details>
+      <detail>Lagoon stop</detail>
+      <detail>Towel included</detail>
+      <detail>Hotel drop-off after visible relaxation</detail>
+    </details>
+  </product>
+  <product>
+    <id>exp-reykjavik-lights-maybe</id>
+    <item_id>exp-reykjavik-lights-maybe</item_id>
+    <sku>exp-reykjavik-lights-maybe</sku>
+    <slug>northern-lights-maybe-with-hot-chocolate</slug>
+    <title>Northern Lights Maybe, With Hot Chocolate</title>
+    <name>Northern Lights Maybe, With Hot Chocolate</name>
+    <description>Aurora probability managed with warm beverages.</description>
+    <url>https://travelagentmockup.netlify.app/product/northern-lights-maybe-with-hot-chocolate</url>
+    <image_url>https://images.unsplash.com/photo-1483347756197-71ef80e95f73?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>experience</product_type>
+    <category>experience</category>
+    <destination>Reykjavik</destination>
+    <trip_type>wellness</trip_type>
+    <price>142</price>
+    <currency>EUR</currency>
+    <margin>0.57</margin>
+    <duration>4 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>wellness</tag>
+      <tag>experience</tag>
+      <tag>couples</tag>
+      <tag>vip</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Weather monitoring</detail>
+      <detail>Photo guidance</detail>
+      <detail>Backup storytelling if clouds attend</detail>
+    </details>
+  </product>
+  <product>
+    <id>package-lisbon-remote-work-escape</id>
+    <item_id>package-lisbon-remote-work-escape</item_id>
+    <sku>package-lisbon-remote-work-escape</sku>
+    <slug>lisbon-remote-work-escape-with-real-sunlight</slug>
+    <title>Remote-Work Escape With Real Sunlight</title>
+    <name>Remote-Work Escape With Real Sunlight</name>
+    <description>Standups in the morning, pastries during moral recovery.</description>
+    <url>https://travelagentmockup.netlify.app/product/lisbon-remote-work-escape-with-real-sunlight</url>
+    <image_url>https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>package</product_type>
+    <category>package</category>
+    <destination>Lisbon</destination>
+    <trip_type>business</trip_type>
+    <price>1460</price>
+    <currency>EUR</currency>
+    <margin>0.3</margin>
+    <duration>5 nights</duration>
+    <departure_date>2026-09-22</departure_date>
+    <return_date>2026-09-27</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>city</tag>
+      <tag>package</tag>
+      <tag>vip</tag>
+    </tags>
+    <details>
+      <detail>Hotel workspace</detail>
+      <detail>Fast Wi-Fi</detail>
+      <detail>Late checkout after final call</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-lisbon-tile-and-deadline</id>
+    <item_id>hotel-lisbon-tile-and-deadline</item_id>
+    <sku>hotel-lisbon-tile-and-deadline</sku>
+    <slug>lisbon-hotel-for-tiles-and-deadlines</slug>
+    <title>Hotel for Tiles and Deadlines</title>
+    <name>Hotel for Tiles and Deadlines</name>
+    <description>Pretty walls, practical desk, acceptable espresso density.</description>
+    <url>https://travelagentmockup.netlify.app/product/lisbon-hotel-for-tiles-and-deadlines</url>
+    <image_url>https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Lisbon</destination>
+    <trip_type>business</trip_type>
+    <price>760</price>
+    <currency>EUR</currency>
+    <margin>0.33</margin>
+    <duration>4 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>city</tag>
+      <tag>hotel</tag>
+      <tag>vip</tag>
+    </tags>
+    <details>
+      <detail>Desk setup</detail>
+      <detail>Quiet room</detail>
+      <detail>Invoice-ready checkout</detail>
+    </details>
+  </product>
+  <product>
+    <id>addon-lisbon-pastry-priority</id>
+    <item_id>addon-lisbon-pastry-priority</item_id>
+    <sku>addon-lisbon-pastry-priority</sku>
+    <slug>lisbon-pastry-priority-pass</slug>
+    <title>Pastry Priority Pass</title>
+    <name>Pastry Priority Pass</name>
+    <description>Skip the uncertainty. Meet the custard.</description>
+    <url>https://travelagentmockup.netlify.app/product/lisbon-pastry-priority-pass</url>
+    <image_url>https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>add_on</product_type>
+    <category>add_on</category>
+    <destination>Lisbon</destination>
+    <trip_type>city</trip_type>
+    <price>34</price>
+    <currency>EUR</currency>
+    <margin>0.66</margin>
+    <duration>2 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>city</tag>
+      <tag>experience</tag>
+      <tag>add-on</tag>
+      <tag>couples</tag>
+      <tag>budget</tag>
+    </tags>
+    <details>
+      <detail>Two pastry stops</detail>
+      <detail>Coffee pairing</detail>
+      <detail>No spreadsheet required</detail>
+    </details>
+  </product>
+  <product>
+    <id>package-zurich-boardroom-decompression</id>
+    <item_id>package-zurich-boardroom-decompression</item_id>
+    <sku>package-zurich-boardroom-decompression</sku>
+    <slug>zurich-boardroom-decompression-package</slug>
+    <title>Boardroom Decompression Package</title>
+    <name>Boardroom Decompression Package</name>
+    <description>Meetings, mountains, and a controlled amount of silence.</description>
+    <url>https://travelagentmockup.netlify.app/product/zurich-boardroom-decompression-package</url>
+    <image_url>https://images.unsplash.com/photo-1515488764276-beab7607c1e6?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>package</product_type>
+    <category>package</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>1720</price>
+    <currency>EUR</currency>
+    <margin>0.32</margin>
+    <duration>3 nights</duration>
+    <departure_date>2026-10-03</departure_date>
+    <return_date>2026-10-06</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>vip</tag>
+      <tag>package</tag>
+      <tag>city</tag>
+    </tags>
+    <details>
+      <detail>Business hotel</detail>
+      <detail>Airport transfer</detail>
+      <detail>Half-day mountain reset</detail>
+    </details>
+  </product>
+  <product>
+    <id>transfer-zurich-slide-deck</id>
+    <item_id>transfer-zurich-slide-deck</item_id>
+    <sku>transfer-zurich-slide-deck</sku>
+    <slug>zurich-transfer-with-slide-deck-recovery</slug>
+    <title>Transfer With Slide Deck Recovery</title>
+    <name>Transfer With Slide Deck Recovery</name>
+    <description>Quiet car, charging cable, no questions about Q4.</description>
+    <url>https://travelagentmockup.netlify.app/product/zurich-transfer-with-slide-deck-recovery</url>
+    <image_url>https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>transfer</product_type>
+    <category>transfer</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>88</price>
+    <currency>EUR</currency>
+    <margin>0.47</margin>
+    <duration>25 min</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>transfer</tag>
+      <tag>vip</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Premium sedan</detail>
+      <detail>Phone charger</detail>
+      <detail>Invoice-friendly receipt</detail>
+    </details>
+  </product>
+  <product>
+    <id>insurance-calendar-chaos</id>
+    <item_id>insurance-calendar-chaos</item_id>
+    <sku>insurance-calendar-chaos</sku>
+    <slug>calendar-chaos-flex-insurance</slug>
+    <title>Calendar Chaos Flex Insurance</title>
+    <name>Calendar Chaos Flex Insurance</name>
+    <description>For trips rescheduled by people who write &apos;quick sync&apos;.</description>
+    <url>https://travelagentmockup.netlify.app/product/calendar-chaos-flex-insurance</url>
+    <image_url>https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>insurance</product_type>
+    <category>insurance</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>64</price>
+    <currency>EUR</currency>
+    <margin>0.69</margin>
+    <duration>Trip coverage</duration>
+    <availability>available_as_add_on</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>insurance</tag>
+      <tag>add-on</tag>
+      <tag>vip</tag>
+    </tags>
+    <details>
+      <detail>Change protection</detail>
+      <detail>Cancellation support</detail>
+      <detail>Meeting-moved-again tolerance</detail>
     </details>
   </product>
   </products>

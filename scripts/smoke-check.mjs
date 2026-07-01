@@ -77,6 +77,7 @@ assert(netlifyConfig.includes('publish = "dist"'), "Netlify publish directory mu
 assert(redirects.includes("/* /index.html 200"), "Published SPA fallback _redirects file missing");
 assert(buildScript.includes("generate-product-feed.mjs"), "Build must regenerate the product XML feed");
 assert(feedGenerator.includes("products") && feedGenerator.includes("product-feed.xml"), "Product feed generator missing catalog source or output path");
+assert(productFeed.includes('<products count="30">'), "Product XML feed must include the expanded 30-item catalog");
 for (const feedField of ["<product_feed", "<products count=", "<product>", "<id>", "<title>", "<url>", "<image_url>", "<product_type>", "<destination>", "<price>", "<currency>EUR</currency>"]) {
   assert(productFeed.includes(feedField), `Product XML feed missing ${feedField}`);
 }
