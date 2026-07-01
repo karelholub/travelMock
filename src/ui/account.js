@@ -1,5 +1,5 @@
 import { profileIdentity } from "../app/profileIdentity.js";
-import { personas, scenarioNotes } from "../data/personas.js";
+import { personas } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
 import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier, profileApiStatus } from "../utils/profileDisplay.js";
@@ -60,32 +60,26 @@ export function accountPage(state) {
       <div class="account-hero-snapshot" aria-label="Profile summary">
         <article><span>Loyalty</span><strong>${fields.loyalty_tier || persona.loyaltyTier}</strong></article>
         <article><span>Affinity</span><strong>${destination}</strong></article>
-        <article><span>Value</span><strong>${lifetimeValue}</strong></article>
+        <article><span>Status</span><strong>${activeBooking}</strong></article>
+        <article><span>Searches</span><strong>${searchesLast7d} in 7d</strong></article>
       </div>
       <div class="loyalty-actions">
         <a class="primary" href="${primaryAction.href}" data-link>${primaryAction.label}</a>
         <a class="secondary" href="/itinerary" data-link>Review itinerary</a>
       </div>
     </section>
-    ${personalizationBanner("account", state)}
     <section class="account-layout">
       <section class="account-main">
-        <div class="account-kpis">
-          <article><span>Active booking</span><strong>${activeBooking}</strong></article>
-          <article><span>Searches 7d</span><strong>${searchesLast7d}</strong></article>
-          <article><span>Last search</span><strong>${lastSearch}</strong></article>
-          <article><span>Wishlist</span><strong>${wishlist}</strong></article>
-        </div>
         <section class="profile-signal-grid">
           <article class="summary-card account-signal-card">
             <div class="summary-card-head">
               <span class="eyebrow">Known traveler</span>
-              <h2>Identity</h2>
+              <h2>${displayName}</h2>
             </div>
             <div><span>Email</span><strong>${email}</strong></div>
             <div><span>First name</span><strong>${firstName || "Not captured yet"}</strong></div>
             <div><span>Last name</span><strong>${lastName || "Not captured yet"}</strong></div>
-            <p class="signal-note">Profile source: ${source}</p>
+            <div><span>Lifetime value</span><strong>${lifetimeValue}</strong></div>
           </article>
           <article class="summary-card account-signal-card">
             <div class="summary-card-head">
@@ -95,7 +89,7 @@ export function accountPage(state) {
             <div><span>Last search</span><strong>${lastSearch}</strong></div>
             <div><span>Profile activity</span><strong>${profileActivity}</strong></div>
             <div><span>Last viewed list</span><strong>${viewedList}</strong></div>
-            <p class="signal-note">${recommendationReason}</p>
+            <div><span>Wishlist</span><strong>${wishlist}</strong></div>
           </article>
           <article class="summary-card account-signal-card is-recovery">
             <div class="summary-card-head">
@@ -108,20 +102,11 @@ export function accountPage(state) {
             <a class="secondary full" href="${hasAbandonedBooking ? "/itinerary" : "/search"}" data-link>${hasAbandonedBooking ? "Restore itinerary" : "Create fresh intent"}</a>
           </article>
         </section>
-        <section class="account-storyline">
-          <div class="section-heading compact-heading">
-            <h2>Demo paths</h2>
-            <span>Presenter-ready actions from the current profile</span>
-          </div>
-          <div class="account-demo-paths">
-            ${scenarioNotes.slice(0, 6).map((note, index) => `
-              <a href="${demoPathHref(index)}" data-link>
-                <span>${note}</span>
-                <strong>${demoPathLabel(index)}</strong>
-              </a>
-            `).join("")}
-          </div>
+        <section class="account-recommendation-note">
+          <span class="eyebrow">Why these offers</span>
+          <p>${recommendationReason}</p>
         </section>
+        ${personalizationBanner("account", state)}
       </section>
       <aside class="account-side">
         <section class="summary-card profile-proof-card">
@@ -137,20 +122,7 @@ export function accountPage(state) {
           ${profileStatus.detail ? `<p class="signal-note">${profileStatus.detail}</p>` : ""}
           <button class="secondary full" type="button" data-refresh-profile>Refresh profile</button>
         </section>
-        <section class="summary-card account-reason-card">
-          <span class="eyebrow">Why these offers</span>
-          <p>${recommendationReason}</p>
-          <div><span>List</span><strong>${viewedList}</strong></div>
-          <div><span>Value</span><strong>${lifetimeValue}</strong></div>
-        </section>
       </aside>
-    </section>
-    <section class="account-rail-intro">
-      <div>
-        <p class="eyebrow">Next best products</p>
-        <h2>Account recommendations</h2>
-        <p>${recommendationReason}</p>
-      </div>
     </section>
     ${rail("Recommended from profile signals", recommendationRail("account", state), "account_recommendations")}
   `;
@@ -193,12 +165,4 @@ function accountRecommendationReason({ firstName, destination, searchesLast7d, v
   if (hasActiveBooking) return `${name} has an active booking, so transfers, excursions, and calm little add-ons should surface first.`;
   if (searchesLast7d > 0) return `${name} searched ${destination} ${searchesLast7d} time${searchesLast7d === 1 ? "" : "s"} recently, with ${viewedList} as the latest list signal.`;
   return `${name} shows ${destination} affinity, so the account keeps matching offers close at hand.`;
-}
-
-function demoPathHref(index) {
-  return ["/search", "/wishlist", "/itinerary", "/checkout", "/review", "/demo-control"][index] || "/demo-control";
-}
-
-function demoPathLabel(index) {
-  return ["Search", "Wishlist", "Itinerary", "Checkout", "Review", "Control"][index] || "Open";
 }

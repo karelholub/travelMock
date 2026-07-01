@@ -1128,7 +1128,7 @@ textarea {
 }
 .loyalty-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.9fr) auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.9fr) auto;
   gap: 14px;
   align-items: stretch;
   margin-top: 18px;
@@ -1161,7 +1161,7 @@ textarea {
 }
 .account-hero-snapshot {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   min-width: 0;
 }
@@ -1201,17 +1201,14 @@ textarea {
   display: grid;
   gap: 16px;
 }
-.account-kpis, .cockpit-strip {
+.cockpit-strip {
   display: grid;
   gap: 10px;
-}
-.account-kpis {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .cockpit-strip {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
-.account-kpis article, .cockpit-strip article {
+.cockpit-strip article {
   display: grid;
   gap: 6px;
   min-width: 0;
@@ -1221,13 +1218,13 @@ textarea {
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(23,33,31,0.05);
 }
-.account-kpis span, .cockpit-strip span {
+.cockpit-strip span {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
 }
-.account-kpis strong, .cockpit-strip strong {
+.cockpit-strip strong {
   min-width: 0;
   font-size: 1.05rem;
   overflow-wrap: anywhere;
@@ -1268,43 +1265,16 @@ textarea {
   font-size: 0.92rem;
   line-height: 1.45;
 }
-.account-storyline {
+.account-recommendation-note {
   padding: 18px;
   background: white;
   border: 1px solid var(--line);
   border-radius: 8px;
+  box-shadow: var(--soft-shadow);
 }
-.account-storyline h2 {
-  margin-bottom: 0;
-}
-.compact-heading {
-  margin-bottom: 12px;
-}
-.account-demo-paths {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.account-demo-paths a {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-  padding: 12px;
-  background: var(--soft);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-.account-demo-paths a:hover {
-  border-color: #9bd8cb;
-  background: #e7f7f2;
-}
-.account-demo-paths span {
-  color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.35;
-}
-.account-demo-paths strong {
-  color: var(--accent);
+.account-recommendation-note p {
+  max-width: 860px;
+  margin: 4px 0 0;
 }
 .account-side {
   position: sticky;
@@ -1314,28 +1284,6 @@ textarea {
 }
 .profile-proof-card {
   border-color: #b9dff2;
-}
-.account-reason-card {
-  background: #fffdf6;
-  border-color: #f2d590;
-}
-.account-reason-card p {
-  margin: 0;
-}
-.account-rail-intro {
-  margin-top: 22px;
-  padding: 18px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  box-shadow: var(--soft-shadow);
-}
-.account-rail-intro h2 {
-  margin-bottom: 5px;
-}
-.account-rail-intro p {
-  max-width: 780px;
-  margin-bottom: 0;
 }
 .cockpit-strip {
   margin-top: 16px;
@@ -2123,7 +2071,7 @@ textarea {
   .wishlist-actions {
     grid-column: 2;
   }
-  .account-kpis, .cockpit-strip, .profile-signal-grid, .account-demo-paths {
+  .cockpit-strip, .profile-signal-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .debug-grid {
@@ -2253,8 +2201,6 @@ textarea {
     border-radius: 14px;
   }
   .account-hero-snapshot,
-  .account-kpis,
-  .account-demo-paths,
   .profile-signal-grid {
     grid-template-columns: 1fr;
   }
@@ -2373,7 +2319,7 @@ textarea {
     margin-left: 0;
   }
   .rail-grid, .results-grid, .demo-grid, .compact { grid-template-columns: 1fr; }
-  .account-kpis, .cockpit-strip, .profile-signal-grid, .control-panels, .debug-grid, .review-proof { grid-template-columns: minmax(0, 1fr); }
+  .cockpit-strip, .profile-signal-grid, .control-panels, .debug-grid, .review-proof { grid-template-columns: minmax(0, 1fr); }
   .rating-row {
     grid-template-columns: repeat(5, minmax(52px, 1fr));
     overflow-x: auto;
