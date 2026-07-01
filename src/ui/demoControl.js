@@ -1,6 +1,5 @@
 import { profileIdentity } from "../app/profileIdentity.js";
 import { personas } from "../data/personas.js";
-import { meiroBuiltInEventTypes } from "../tracking/schema.js";
 import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier, profileApiStatus } from "../utils/profileDisplay.js";
 import { money } from "../utils/format.js";
 
@@ -64,7 +63,6 @@ export function demoControlPage(state) {
       <div>
         <p class="eyebrow">Demo control</p>
         <h1>Presenter cockpit</h1>
-        <p>Pick a persona, run a customer path, then verify Profile API fields and tracking evidence without hunting through the site.</p>
       </div>
       <a class="secondary" href="/" data-link>Back to shopping</a>
     </section>
@@ -72,7 +70,6 @@ export function demoControlPage(state) {
       <div>
         <span class="eyebrow">Demo script</span>
         <h2>${activePersona.label}: ${destination}</h2>
-        <p>Start with search intent, add or restore itinerary behavior, then prove the profile and events updated.</p>
       </div>
       <div class="demo-script-actions">
         <a class="primary" href="/search" data-link><span>Run search</span><small>intent</small></a>
@@ -93,7 +90,6 @@ export function demoControlPage(state) {
           <span class="persona-scenario">${personaScenario(persona)}</span>
           <strong>${persona.label}</strong>
           <small><span>${persona.preferredDestination}</span><span>${persona.loyaltyTier}</span></small>
-          <span>${persona.hero}</span>
         </button>
       `).join("")}
     </section>
@@ -108,14 +104,12 @@ export function demoControlPage(state) {
           <label class="check"><input type="checkbox" data-consent="personalization" checked /> Personalization</label>
           <label class="check"><input type="checkbox" data-consent="marketing" /> Marketing</label>
         </div>
-        <p class="signal-note">Consent changes are sent to the SDK immediately, so persistence and identity behavior stay demo-safe.</p>
       </article>
       <article class="summary-card tracking-log">
         <div class="summary-card-head">
           <span class="eyebrow">Recent evidence</span>
           <h2>Tracking readiness</h2>
         </div>
-        <p class="control-note">${trackingLog.length ? `${trackingLog.length} recent events captured locally. Latest: ${latestEvent}.` : "No local tracking events yet."}</p>
         ${trackingLog.map((event) => `<code><span>${event.at}</span>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
       </article>
       <article class="summary-card lifecycle-card">
@@ -159,17 +153,11 @@ export function demoControlPage(state) {
         </div>
       </article>
     </section>
-    <section class="event-types">
+    <section class="event-types demo-event-reference">
       <article class="summary-card">
         <h2>Travel demo events sent to Meiro</h2>
         <div class="event-chip-grid">
           ${travelDemoEvents.map((event) => `<code>${event}</code>`).join("")}
-        </div>
-      </article>
-      <article class="summary-card">
-        <h2>Available built-in event types</h2>
-        <div class="event-chip-grid compact-events">
-          ${meiroBuiltInEventTypes.map((event) => `<code>${event}</code>`).join("")}
         </div>
       </article>
     </section>
