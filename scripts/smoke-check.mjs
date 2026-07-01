@@ -46,6 +46,9 @@ const accountPage = await readFile("src/ui/account.js", "utf8");
 const pageEffects = await readFile("src/app/pageEffects.js", "utf8");
 const netlifyConfig = await readFile("netlify.toml", "utf8");
 const redirects = await readFile("_redirects", "utf8");
+const buildScript = await readFile("scripts/build.mjs", "utf8");
+const feedGenerator = await readFile("scripts/generate-product-feed.mjs", "utf8");
+const productFeed = await readFile("assets/product-feed.xml", "utf8");
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -72,6 +75,11 @@ assert(netlifyConfig.includes('from = "/*"') && netlifyConfig.includes('to = "/i
 assert(netlifyConfig.includes('command = "npm run build"'), "Netlify build command must create dist before deploy");
 assert(netlifyConfig.includes('publish = "dist"'), "Netlify publish directory must match build output");
 assert(redirects.includes("/* /index.html 200"), "Published SPA fallback _redirects file missing");
+assert(buildScript.includes("generate-product-feed.mjs"), "Build must regenerate the product XML feed");
+assert(feedGenerator.includes("products") && feedGenerator.includes("product-feed.xml"), "Product feed generator missing catalog source or output path");
+for (const feedField of ["<product_feed", "<products count=", "<product>", "<id>", "<title>", "<url>", "<image_url>", "<product_type>", "<destination>", "<price>", "<currency>EUR</currency>"]) {
+  assert(productFeed.includes(feedField), `Product XML feed missing ${feedField}`);
+}
 assert(sourceText.includes("meiroBuiltInEventTypes"), "Available Meiro event types missing");
 for (const field of ["origin", "region", "depart_date", "pax", "adult_count", "child_count", "child_ages", "cabin_class", "route", "line_items", "product_types", "total_value", "travel_start_date", "travel_end_date", "saved_price", "saved_at"]) {
   assert(trackingSchema.includes(field) || sourceText.includes(field), `Travel playbook field missing: ${field}`);

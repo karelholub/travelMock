@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<product_feed generated_at="2026-07-01T00:00:00.000Z" source="elsewhere-travel-demo" site_url="https://travelagentmockup.netlify.app">
+  <products count="12">
+  <product>
+    <id>flight-lisbon-enlightenment</id>
+    <item_id>flight-lisbon-enlightenment</item_id>
+    <sku>flight-lisbon-enlightenment</sku>
+    <slug>slightly-delayed-enlightenment-flight</slug>
+    <title>Slightly Delayed Enlightenment Flight</title>
+    <name>Slightly Delayed Enlightenment Flight</name>
+    <description>Nonstop, except emotionally.</description>
+    <url>https://travelagentmockup.netlify.app/product/slightly-delayed-enlightenment-flight</url>
+    <image_url>https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>flight</product_type>
+    <category>flight</category>
+    <destination>Lisbon</destination>
+    <trip_type>city</trip_type>
+    <price>320</price>
+    <currency>EUR</currency>
+    <margin>0.18</margin>
+    <duration>3h 05m</duration>
+    <departure_date>2026-09-12</departure_date>
+    <return_date>2026-09-18</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>city</tag>
+      <tag>business</tag>
+      <tag>couples</tag>
+      <tag>budget</tag>
+    </tags>
+    <details>
+      <detail>Carry-on included</detail>
+      <detail>Window-seat optimism available</detail>
+      <detail>Carbon offset with tasteful humility</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-lisbon-optimistic-view</id>
+    <item_id>hotel-lisbon-optimistic-view</item_id>
+    <sku>hotel-lisbon-optimistic-view</sku>
+    <slug>hotel-room-with-optimistic-sea-view</slug>
+    <title>Hotel Room With Optimistic Sea View</title>
+    <name>Hotel Room With Optimistic Sea View</name>
+    <description>If you lean left, the Atlantic appears.</description>
+    <url>https://travelagentmockup.netlify.app/product/hotel-room-with-optimistic-sea-view</url>
+    <image_url>https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Lisbon</destination>
+    <trip_type>city</trip_type>
+    <price>680</price>
+    <currency>EUR</currency>
+    <margin>0.32</margin>
+    <duration>6 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>city</tag>
+      <tag>couples</tag>
+      <tag>vip</tag>
+      <tag>hotel</tag>
+    </tags>
+    <details>
+      <detail>Breakfast buffet</detail>
+      <detail>Late checkout</detail>
+      <detail>Desk for dramatic journaling</detail>
+    </details>
+  </product>
+  <product>
+    <id>package-mallorca-family-patience</id>
+    <item_id>package-mallorca-family-patience</item_id>
+    <sku>package-mallorca-family-patience</sku>
+    <slug>family-trip-engineered-for-snacks</slug>
+    <title>Family Trip Engineered for Snacks</title>
+    <name>Family Trip Engineered for Snacks</name>
+    <description>Naps, pools, and tactical patience.</description>
+    <url>https://travelagentmockup.netlify.app/product/family-trip-engineered-for-snacks</url>
+    <image_url>https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>package</product_type>
+    <category>package</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>2450</price>
+    <currency>EUR</currency>
+    <margin>0.28</margin>
+    <duration>7 nights</duration>
+    <departure_date>2026-08-08</departure_date>
+    <return_date>2026-08-15</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>family</tag>
+      <tag>beach</tag>
+      <tag>package</tag>
+      <tag>kids</tag>
+    </tags>
+    <details>
+      <detail>Family room</detail>
+      <detail>Snack-forward transfers</detail>
+      <detail>Pool proximity: excellent</detail>
+    </details>
+  </product>
+  <product>
+    <id>flight-zurich-breakfast-meeting</id>
+    <item_id>flight-zurich-breakfast-meeting</item_id>
+    <sku>flight-zurich-breakfast-meeting</sku>
+    <slug>meeting-elsewhere-better-breakfast</slug>
+    <title>Meeting Elsewhere, Better Breakfast</title>
+    <name>Meeting Elsewhere, Better Breakfast</name>
+    <description>A business fare with punctual feelings.</description>
+    <url>https://travelagentmockup.netlify.app/product/meeting-elsewhere-better-breakfast</url>
+    <image_url>https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>flight</product_type>
+    <category>flight</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>410</price>
+    <currency>EUR</currency>
+    <margin>0.2</margin>
+    <duration>1h 25m</duration>
+    <departure_date>2026-10-03</departure_date>
+    <return_date>2026-10-05</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>city</tag>
+      <tag>flight</tag>
+      <tag>short-haul</tag>
+    </tags>
+    <details>
+      <detail>Priority boarding</detail>
+      <detail>Invoice-friendly receipt</detail>
+      <detail>Early arrival smugness</detail>
+    </details>
+  </product>
+  <product>
+    <id>hotel-zurich-executive-nap</id>
+    <item_id>hotel-zurich-executive-nap</item_id>
+    <sku>hotel-zurich-executive-nap</sku>
+    <slug>executive-nap-lounge-hotel</slug>
+    <title>Executive Nap Lounge Hotel</title>
+    <name>Executive Nap Lounge Hotel</name>
+    <description>Calendar-compatible comfort.</description>
+    <url>https://travelagentmockup.netlify.app/product/executive-nap-lounge-hotel</url>
+    <image_url>https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>hotel</product_type>
+    <category>hotel</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>890</price>
+    <currency>EUR</currency>
+    <margin>0.35</margin>
+    <duration>2 nights</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>vip</tag>
+      <tag>hotel</tag>
+    </tags>
+    <details>
+      <detail>Quiet floor</detail>
+      <detail>Espresso density: high</detail>
+      <detail>Checkout after the awkward meeting</detail>
+    </details>
+  </product>
+  <product>
+    <id>package-kyoto-pretend-understand</id>
+    <item_id>package-kyoto-pretend-understand</item_id>
+    <sku>package-kyoto-pretend-understand</sku>
+    <slug>guided-tour-places-you-pretend-to-understand</slug>
+    <title>Guided Tour of Places You Pretend to Understand</title>
+    <name>Guided Tour of Places You Pretend to Understand</name>
+    <description>Beautiful, profound, and mostly explained.</description>
+    <url>https://travelagentmockup.netlify.app/product/guided-tour-places-you-pretend-to-understand</url>
+    <image_url>https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>package</product_type>
+    <category>package</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>3180</price>
+    <currency>EUR</currency>
+    <margin>0.31</margin>
+    <duration>9 nights</duration>
+    <departure_date>2026-11-02</departure_date>
+    <return_date>2026-11-11</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>culture</tag>
+      <tag>vip</tag>
+      <tag>package</tag>
+      <tag>couples</tag>
+    </tags>
+    <details>
+      <detail>Temple route</detail>
+      <detail>Local guide</detail>
+      <detail>Tea ceremony with gentle corrections</detail>
+    </details>
+  </product>
+  <product>
+    <id>transfer-emotional-support</id>
+    <item_id>transfer-emotional-support</item_id>
+    <sku>transfer-emotional-support</sku>
+    <slug>airport-transfer-of-emotional-support</slug>
+    <title>Airport Transfer of Emotional Support</title>
+    <name>Airport Transfer of Emotional Support</name>
+    <description>Someone holding a sign solves more than you think.</description>
+    <url>https://travelagentmockup.netlify.app/product/airport-transfer-of-emotional-support</url>
+    <image_url>https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>transfer</product_type>
+    <category>transfer</category>
+    <destination>Lisbon</destination>
+    <trip_type>city</trip_type>
+    <price>58</price>
+    <currency>EUR</currency>
+    <margin>0.44</margin>
+    <duration>35 min</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>transfer</tag>
+      <tag>family</tag>
+      <tag>business</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Meet and greet</detail>
+      <detail>Flight tracking</detail>
+      <detail>Zero taxi-line philosophy</detail>
+    </details>
+  </product>
+  <product>
+    <id>addon-lounge-nap</id>
+    <item_id>addon-lounge-nap</item_id>
+    <sku>addon-lounge-nap</sku>
+    <slug>executive-nap-lounge-access</slug>
+    <title>Executive Nap Lounge Access</title>
+    <name>Executive Nap Lounge Access</name>
+    <description>A chair that understands quarterly pressure.</description>
+    <url>https://travelagentmockup.netlify.app/product/executive-nap-lounge-access</url>
+    <image_url>https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>add_on</product_type>
+    <category>add_on</category>
+    <destination>Zurich</destination>
+    <trip_type>business</trip_type>
+    <price>74</price>
+    <currency>EUR</currency>
+    <margin>0.62</margin>
+    <duration>3 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>business</tag>
+      <tag>vip</tag>
+      <tag>flight</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Fast Wi-Fi</detail>
+      <detail>Quiet pods</detail>
+      <detail>Tiny sandwiches with confidence</detail>
+    </details>
+  </product>
+  <product>
+    <id>addon-baggage-metaphorical</id>
+    <item_id>addon-baggage-metaphorical</item_id>
+    <sku>addon-baggage-metaphorical</sku>
+    <slug>baggage-insurance-against-metaphorical-loss</slug>
+    <title>Baggage Insurance Against Metaphorical Loss</title>
+    <name>Baggage Insurance Against Metaphorical Loss</name>
+    <description>Covers suitcases. The rest is a journey.</description>
+    <url>https://travelagentmockup.netlify.app/product/baggage-insurance-against-metaphorical-loss</url>
+    <image_url>https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>insurance</product_type>
+    <category>insurance</category>
+    <destination>Mallorca</destination>
+    <trip_type>family</trip_type>
+    <price>39</price>
+    <currency>EUR</currency>
+    <margin>0.67</margin>
+    <duration>Trip coverage</duration>
+    <availability>available_as_add_on</availability>
+    <tags>
+      <tag>insurance</tag>
+      <tag>family</tag>
+      <tag>package</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Lost baggage</detail>
+      <detail>Delay cover</detail>
+      <detail>One small existential clause</detail>
+    </details>
+  </product>
+  <product>
+    <id>exp-sunset-networking</id>
+    <item_id>exp-sunset-networking</item_id>
+    <sku>exp-sunset-networking</sku>
+    <slug>sunset-cruise-with-mild-networking-risk</slug>
+    <title>Sunset Cruise With Mild Networking Risk</title>
+    <name>Sunset Cruise With Mild Networking Risk</name>
+    <description>Golden hour, tasteful small talk.</description>
+    <url>https://travelagentmockup.netlify.app/product/sunset-cruise-with-mild-networking-risk</url>
+    <image_url>https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>experience</product_type>
+    <category>experience</category>
+    <destination>Lisbon</destination>
+    <trip_type>leisure</trip_type>
+    <price>96</price>
+    <currency>EUR</currency>
+    <margin>0.5</margin>
+    <duration>2h 30m</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>experience</tag>
+      <tag>couples</tag>
+      <tag>city</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>River cruise</detail>
+      <detail>Welcome drink</detail>
+      <detail>Conversation escape routes</detail>
+    </details>
+  </product>
+  <product>
+    <id>exp-pretend-understand</id>
+    <item_id>exp-pretend-understand</item_id>
+    <sku>exp-pretend-understand</sku>
+    <slug>places-you-pretend-to-understand-afternoon</slug>
+    <title>Afternoon of Places You Pretend to Understand</title>
+    <name>Afternoon of Places You Pretend to Understand</name>
+    <description>A compact cultural confidence booster.</description>
+    <url>https://travelagentmockup.netlify.app/product/places-you-pretend-to-understand-afternoon</url>
+    <image_url>https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>experience</product_type>
+    <category>experience</category>
+    <destination>Kyoto</destination>
+    <trip_type>culture</trip_type>
+    <price>118</price>
+    <currency>EUR</currency>
+    <margin>0.55</margin>
+    <duration>4 hours</duration>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>experience</tag>
+      <tag>culture</tag>
+      <tag>vip</tag>
+      <tag>add-on</tag>
+    </tags>
+    <details>
+      <detail>Local expert</detail>
+      <detail>Quiet streets</detail>
+      <detail>Polite nodding encouraged</detail>
+    </details>
+  </product>
+  <product>
+    <id>package-iceland-configurable-expectations</id>
+    <item_id>package-iceland-configurable-expectations</item_id>
+    <sku>package-iceland-configurable-expectations</sku>
+    <slug>romantic-weekend-configurable-expectations</slug>
+    <title>Romantic Weekend With Configurable Expectations</title>
+    <name>Romantic Weekend With Configurable Expectations</name>
+    <description>Hot springs, cool boundaries.</description>
+    <url>https://travelagentmockup.netlify.app/product/romantic-weekend-configurable-expectations</url>
+    <image_url>https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&amp;fit=crop&amp;w=1400&amp;q=80</image_url>
+    <product_type>package</product_type>
+    <category>package</category>
+    <destination>Reykjavik</destination>
+    <trip_type>wellness</trip_type>
+    <price>1980</price>
+    <currency>EUR</currency>
+    <margin>0.29</margin>
+    <duration>4 nights</duration>
+    <departure_date>2026-12-04</departure_date>
+    <return_date>2026-12-08</return_date>
+    <availability>in_stock</availability>
+    <tags>
+      <tag>wellness</tag>
+      <tag>couples</tag>
+      <tag>package</tag>
+      <tag>vip</tag>
+    </tags>
+    <details>
+      <detail>Spa entry</detail>
+      <detail>Northern lights chase</detail>
+      <detail>One expectation alignment dinner</detail>
+    </details>
+  </product>
+  </products>
+</product_feed>
