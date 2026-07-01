@@ -8,8 +8,10 @@ function normalizeSavedState(value) {
   const search = value.search || {};
   const children = Number(search.children || 0);
   const adults = Number(search.adults || Math.max(1, Number(search.travelers || 2) - children));
+  const productCategory = value.searchPolishVersion ? search.productCategory || "all" : "all";
   return {
     ...value,
+    searchPolishVersion: 1,
     search: {
       origin: "Prague",
       destination: "Lisbon",
@@ -17,8 +19,8 @@ function normalizeSavedState(value) {
       returnDate: "2026-09-18",
       cabinClass: "economy",
       tripType: "city",
-      productCategory: "package",
       ...search,
+      productCategory,
       adults,
       children,
       childAges: Array.isArray(search.childAges) ? search.childAges.slice(0, children) : [],
@@ -30,6 +32,7 @@ function normalizeSavedState(value) {
 }
 
 export const state = normalizeSavedState(saved) || {
+  searchPolishVersion: 1,
   personaId: "anonymous",
   profile: null,
   search: {
@@ -43,7 +46,7 @@ export const state = normalizeSavedState(saved) || {
     childAges: [],
     cabinClass: "economy",
     tripType: "city",
-    productCategory: "package"
+    productCategory: "all"
   },
   cart: { items: [] },
   booking: null,

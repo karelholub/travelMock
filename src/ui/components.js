@@ -51,8 +51,9 @@ export function rail(title, products, listName, empty = "Recommendations are rec
 export function searchPanel(search) {
   const childCount = Math.max(0, Number(search.children || 0));
   const childAges = Array.isArray(search.childAges) ? search.childAges : [];
-  const productCategory = search.productCategory || "package";
+  const productCategory = search.productCategory || "all";
   const tabs = [
+    ["all", "All"],
     ["flight", "Flights"],
     ["hotel", "Hotels"],
     ["package", "Packages"],

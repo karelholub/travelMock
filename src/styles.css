@@ -450,17 +450,19 @@ textarea {
 .search-summary-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 10px;
 }
 .search-summary-strip article {
   display: grid;
-  gap: 4px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
   min-width: 0;
-  padding: 13px 15px;
+  padding: 10px 12px;
   background: white;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 10px;
   box-shadow: var(--soft-shadow);
 }
 .search-summary-strip span {
@@ -478,6 +480,13 @@ textarea {
   gap: 18px;
   align-items: start;
   margin-top: 22px;
+}
+.results-panel {
+  order: 2;
+  min-width: 0;
+}
+.search-filter-panel {
+  order: 1;
 }
 .filter-panel {
   position: sticky;
@@ -504,6 +513,21 @@ textarea {
 .filter-group strong {
   flex: 1 0 100%;
 }
+.signal-chip {
+  min-height: 34px;
+  padding: 7px 10px;
+  color: var(--muted);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.signal-chip.is-active {
+  color: #075448;
+  border-color: #9bd8cb;
+  background: #dff5ee;
+}
 .filter-insight {
   display: grid;
   gap: 5px;
@@ -517,9 +541,6 @@ textarea {
 }
 .filter-insight p {
   margin: 0;
-}
-.results-panel {
-  min-width: 0;
 }
 .results-toolbar {
   display: flex;
@@ -1880,6 +1901,12 @@ textarea {
   }
   .results-shell, .product-detail, .offer-hero, .offer-detail-grid, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .wishlist-layout, .checkout-grid, .checkout-flow, .profile-proof-grid, .review-shell {
     grid-template-columns: 1fr;
+  }
+  .results-panel {
+    order: 1;
+  }
+  .search-filter-panel {
+    order: 2;
   }
   .filter-panel,
   .booking-summary,

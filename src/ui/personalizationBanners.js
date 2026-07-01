@@ -173,7 +173,7 @@ export function personalizationBanner(placement, state, options = {}) {
 
 export function personalizationPopup(state, path) {
   const fields = profileFields(state);
-  if (!state.profile || ["/checkout", "/thank-you", "/review"].includes(path)) return "";
+  if (!state.profile || ["/search", "/checkout", "/thank-you", "/review"].includes(path)) return "";
   const destination = destinationSignal(fields, state.search.destination);
   const addOn = recommendedAddOn(fields);
   const popupId = `${state.personaId}-${destination}-${addOn?.id || "profile"}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");

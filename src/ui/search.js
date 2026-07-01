@@ -7,12 +7,16 @@ export function searchPage(state) {
   const results = personalizedResults(state.search, state);
   const primaryResults = results.slice(0, 6);
   const spotlight = primaryResults[0];
+  const resultLabel = `${results.length} ${results.length === 1 ? "option" : "options"}`;
+  const categoryLabel = state.search.productCategory && state.search.productCategory !== "all"
+    ? state.search.productCategory
+    : "all products";
   return `
     <section class="page-head dense search-head">
       <div>
         <p class="eyebrow">Search results</p>
         <h1>${state.search.destination} trips, sorted by personal relevance</h1>
-        <p>${results.length} options for ${Number(state.search.adults || 1) + Number(state.search.children || 0)} travelers, with suspiciously calm recommendations near the top.</p>
+        <p>${resultLabel} for ${Number(state.search.adults || 1) + Number(state.search.children || 0)} travelers, with suspiciously calm recommendations near the top.</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Switch persona</a>
     </section>
@@ -22,20 +26,32 @@ export function searchPage(state) {
       <article><span>Dates</span><strong>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</strong></article>
       <article><span>Travelers</span><strong>${Number(state.search.adults || 1) + Number(state.search.children || 0)} people, ${state.search.cabinClass || "economy"}</strong></article>
     </section>
-    ${personalizationBanner("search", state)}
     <section class="results-shell">
-      <aside class="filter-panel">
+      <div class="results-panel">
+        <div class="results-toolbar">
+          <div>
+            <span class="eyebrow">Best matches</span>
+            <strong>${categoryLabel} · ${state.search.tripType}</strong>
+          </div>
+          <span>${resultLabel}</span>
+        </div>
+        <section class="results-list">
+          ${primaryResults.length ? primaryResults.map((product, index) => resultCard(product, index, state)).join("") : emptyResults(state)}
+        </section>
+        ${personalizationBanner("search", state)}
+      </div>
+      <aside class="filter-panel search-filter-panel">
         <div>
-          <span class="eyebrow">Refine</span>
-          <h2>Shape the escape</h2>
+          <span class="eyebrow">Signals</span>
+          <h2>Why these offers</h2>
         </div>
         <div class="filter-group">
-          <strong>Trip ingredients</strong>
-          ${["flight", "hotel", "package", "transfer", "experience"].map((filter) => `<button class="chip" data-filter="${filter}">${filter}</button>`).join("")}
+          <strong>Product mix</strong>
+          ${productSignals(results).map((filter) => `<span class="signal-chip ${filter === state.search.productCategory ? "is-active" : ""}">${filter}</span>`).join("")}
         </div>
         <div class="filter-group">
-          <strong>Mood</strong>
-          ${["city", "family", "business", "wellness", "budget"].map((filter) => `<button class="chip" data-filter="${filter}">${filter}</button>`).join("")}
+          <strong>Mood signals</strong>
+          ${moodSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.tripType ? "is-active" : ""}">${filter}</span>`).join("")}
         </div>
         <label>Sort by
           <select data-sort>
@@ -53,22 +69,18 @@ export function searchPage(state) {
           </article>
         ` : ""}
       </aside>
-      <div class="results-panel">
-        <div class="results-toolbar">
-          <div>
-            <span class="eyebrow">Best matches</span>
-            <strong>${state.search.productCategory || "package"} intent · ${state.search.tripType}</strong>
-          </div>
-          <span>${results.length} live-ish fares</span>
-        </div>
-        <section class="results-list">
-          ${primaryResults.length ? primaryResults.map((product, index) => resultCard(product, index, state)).join("") : emptyResults(state)}
-        </section>
-      </div>
     </section>
     ${rail("Recently viewed", recommendationRail("search", state).slice(0, 4), "search_recent")}
     ${rail("Recommended for you", recommendationRail("search", state), "search_recommended")}
   `;
+}
+
+function productSignals(results) {
+  return [...new Set(results.map((product) => product.type))].slice(0, 5);
+}
+
+function moodSignals(results, state) {
+  return [...new Set([state.search.tripType, ...results.map((product) => product.tripType), "vip"].filter(Boolean))].slice(0, 5);
 }
 
 function resultCard(product, index, state) {

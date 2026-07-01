@@ -214,10 +214,10 @@ export function personalizedResults(search, state) {
   if (searchResultsCache.has(cacheKey)) return searchResultsCache.get(cacheKey);
   const persona = personas[state.personaId] || personas.anonymous;
   const query = `${search.destination} ${search.tripType}`.toLowerCase();
-  const productCategory = search.productCategory || "package";
+  const productCategory = search.productCategory || "all";
   const results = products
     .filter((product) => {
-      if (productCategory && product.type !== productCategory) return false;
+      if (productCategory && productCategory !== "all" && product.type !== productCategory) return false;
       if (!query.trim()) return true;
       return [product.destination, product.tripType, product.type, product.name, product.tags.join(" ")]
         .join(" ")

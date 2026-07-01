@@ -101,6 +101,9 @@ assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProdu
 assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
 assert(sourceText.includes("price-watch-panel") && sourceText.includes("data-watch-target") && sourceText.includes("data-watch-alert-toggle"), "Watch price CTA must show an interactive price watch panel");
 assert(wishlist.includes("wishlistPage") && sourceText.includes("data-save") && sourceText.includes("showWishlistModal") && sourceText.includes("data-remove-wishlist"), "Wishlist page and modal controls must exist");
+assert(sourceText.includes('["all", "All"]') && recommendations.includes('productCategory !== "all"'), "Search must support broad all-product results");
+assert(sourceText.includes('["/search", "/checkout", "/thank-you", "/review"].includes(path)'), "Search page must not show the blocking personalization popup");
+assert(sourceText.includes("productSignals(results)") && sourceText.includes("moodSignals(results, state)"), "Search page must show passive signal chips instead of fake filter buttons");
 for (const placement of ["home", "search", "product", "itinerary", "checkout", "account", "thankYou", "wishlist"]) {
   assert(personalizationBanners.includes(`${placement}:`) && sourceText.includes(`personalizationBanner("${placement}"`), `Personalization banner placement missing: ${placement}`);
 }
