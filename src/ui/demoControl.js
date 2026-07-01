@@ -52,8 +52,22 @@ export function demoControlPage(state) {
       <div>
         <p class="eyebrow">Demo control</p>
         <h1>Presenter cockpit</h1>
+        <p>Pick a persona, run a customer path, then verify Profile API fields and tracking evidence without hunting through the site.</p>
       </div>
       <a class="secondary" href="/" data-link>Back to shopping</a>
+    </section>
+    <section class="demo-script-panel">
+      <div>
+        <span class="eyebrow">Demo script</span>
+        <h2>${activePersona.label}: ${destination}</h2>
+        <p>Start with search intent, add or restore itinerary behavior, then prove the profile and events updated.</p>
+      </div>
+      <div class="demo-script-actions">
+        <a class="primary" href="/search" data-link>Run search</a>
+        <button class="secondary" type="button" data-restore-cart>Restore itinerary</button>
+        <a class="secondary" href="/account" data-link>Show profile</a>
+        <a class="secondary" href="/checkout" data-link>Checkout flow</a>
+      </div>
     </section>
     <section class="cockpit-strip">
       <article><span>Persona</span><strong>${activePersona.label}</strong></article>
@@ -61,57 +75,73 @@ export function demoControlPage(state) {
       <article><span>Profile source</span><strong>${state.profile?.source || "pending"}</strong></article>
       <article><span>Recent events</span><strong>${trackingLog.length}</strong></article>
     </section>
-    <section class="demo-grid">
+    <section class="demo-grid persona-picker">
       ${Object.values(personas).map((persona) => `
         <button class="persona-card ${persona.id === state.personaId ? "active" : ""}" data-persona="${persona.id}">
           <strong>${persona.label}</strong>
-          <span>${persona.hero}</span>
           <small>${persona.preferredDestination} · ${persona.loyaltyTier}</small>
+          <span>${persona.hero}</span>
         </button>
       `).join("")}
     </section>
     <section class="control-panels">
       <article class="summary-card control-card">
-        <h2>Consent</h2>
+        <div class="summary-card-head">
+          <span class="eyebrow">SDK controls</span>
+          <h2>Consent</h2>
+        </div>
         <div class="toggle-list">
           <label class="check"><input type="checkbox" data-consent="analytics" checked /> Analytics</label>
           <label class="check"><input type="checkbox" data-consent="personalization" checked /> Personalization</label>
           <label class="check"><input type="checkbox" data-consent="marketing" /> Marketing</label>
         </div>
       </article>
+      <article class="summary-card tracking-log">
+        <div class="summary-card-head">
+          <span class="eyebrow">Recent evidence</span>
+          <h2>Tracking readiness</h2>
+        </div>
+        ${trackingLog.map((event) => `<code><span>${event.at}</span>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
+      </article>
+      <article class="summary-card lifecycle-card">
+        <div class="summary-card-head">
+          <span class="eyebrow">Lifecycle</span>
+          <h2>Simulator</h2>
+        </div>
+        <button class="secondary full" data-lifecycle="trip_completed">Emit trip completed</button>
+        <button class="secondary full" data-lifecycle="review_submitted">Emit 5-star review</button>
+        <button class="secondary full" data-lifecycle="payment_failed">Emit payment failed</button>
+      </article>
       <article class="summary-card profile-debug-card">
-        <h2>Profile API hydration</h2>
-        <span class="status-pill ${profileStatus.tone}">${profileStatus.label}</span>
-        <button class="secondary full" type="button" data-refresh-profile>Refresh profile</button>
-        <div class="debug-grid">
-          ${signalRow("source", state.profile?.source || "pending")}
+        <div class="profile-debug-head">
+          <div class="summary-card-head">
+            <span class="eyebrow">Profile API</span>
+            <h2>Hydration proof</h2>
+          </div>
+          <span class="status-pill ${profileStatus.tone}">${profileStatus.label}</span>
+          <button class="secondary" type="button" data-refresh-profile>Refresh profile</button>
+        </div>
+        <div class="profile-proof-strip">
           ${signalRow("Lookup", `${lookupType} · ${maskIdentifier(lookupValue)}`)}
           ${signalRow("Checked", checkedAt)}
-          ${profileStatus.detail ? signalRow("Status detail", profileStatus.detail) : ""}
           ${signalRow("email", detailText(fields.email || state.booking?.email, "pending checkout identity"))}
           ${signalRow("first_name", detailText(fields.first_name || state.booking?.first_name, "pending"))}
+          ${signalRow("destination", destination)}
+          ${signalRow("lifetime_value", lifetimeValue)}
+        </div>
+        <div class="debug-grid">
+          ${signalRow("source", state.profile?.source || "pending")}
+          ${profileStatus.detail ? signalRow("Status detail", profileStatus.detail) : ""}
           ${signalRow("last_name", detailText(fields.last_name || fields.surname || state.booking?.surname, "pending"))}
           ${signalRow("has_active_booking", activeBooking)}
           ${signalRow("searches_last_7d", searchesLast7d)}
           ${signalRow("profile_activity", detailText(fields.profile_activity))}
-          ${signalRow("destination", destination)}
           ${signalRow("last_search", detailText(fields.last_search_details || fields.last_search_performed_details))}
           ${signalRow("last_viewed_item", detailText(fields.last_viewed_item))}
           ${signalRow("wishlist", detailText(fields.last_wishlist_item_added))}
           ${signalRow("abandoned_booking", detailText(fields.abandoned_booking))}
           ${signalRow("list_name", viewedList)}
-          ${signalRow("lifetime_value", lifetimeValue)}
         </div>
-      </article>
-      <article class="summary-card tracking-log">
-        <h2>Tracking readiness</h2>
-        ${trackingLog.map((event) => `<code><span>${event.at}</span>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
-      </article>
-      <article class="summary-card lifecycle-card">
-        <h2>Lifecycle simulator</h2>
-        <button class="secondary full" data-lifecycle="trip_completed">Emit trip completed</button>
-        <button class="secondary full" data-lifecycle="review_submitted">Emit 5-star review</button>
-        <button class="secondary full" data-lifecycle="payment_failed">Emit payment failed</button>
       </article>
     </section>
     <section class="event-types">

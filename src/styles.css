@@ -1292,15 +1292,51 @@ textarea {
 .profile-proof-card {
   border-color: #b9dff2;
 }
+.demo-script-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 18px;
+  color: white;
+  background: linear-gradient(135deg, #102c2a 0%, #12365a 100%);
+  border-radius: 14px;
+  box-shadow: var(--soft-shadow);
+}
+.demo-script-panel h2 {
+  margin: 3px 0 5px;
+  color: white;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+}
+.demo-script-panel p,
+.demo-script-panel .eyebrow {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+}
+.demo-script-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 8px;
+}
+.demo-script-actions .secondary {
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+}
 .cockpit-strip {
   margin-top: 16px;
 }
 .control-panels {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 0.86fr 1.1fr 1fr;
   gap: 14px;
   align-items: start;
-  margin-top: 28px;
+  margin-top: 18px;
+}
+.event-types {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .cart-items { display: grid; gap: 12px; }
 .itinerary-timeline {
@@ -1886,22 +1922,35 @@ textarea {
 }
 .persona-card {
   display: grid;
-  gap: 8px;
-  padding: 16px;
+  gap: 5px;
+  padding: 12px;
   text-align: left;
   cursor: pointer;
 }
+.persona-picker {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 14px;
+}
 .persona-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(23,107,91,0.16); }
-.persona-card span, .persona-card small { color: var(--muted); line-height: 1.45; }
+.persona-card strong {
+  font-size: 0.98rem;
+}
+.persona-card span, .persona-card small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+.persona-card span {
+  font-size: 0.86rem;
+}
 .control-card, .lifecycle-card {
   align-content: start;
   min-width: 0;
 }
 .control-card {
-  grid-column: span 3;
+  grid-column: auto;
 }
 .lifecycle-card {
-  grid-column: span 2;
+  grid-column: auto;
 }
 .toggle-list {
   display: grid;
@@ -1924,9 +1973,42 @@ textarea {
 .profile-debug-card {
   grid-column: 1 / -1;
 }
+.profile-debug-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+}
+.profile-proof-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.profile-proof-strip div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  background: #edf8ff;
+  border: 1px solid #b9dff2;
+  border-radius: 8px;
+}
+.profile-proof-strip span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 820;
+  text-transform: uppercase;
+}
+.profile-proof-strip strong {
+  min-width: 0;
+  font-size: 0.86rem;
+  overflow-wrap: anywhere;
+}
 .debug-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 .summary-card .debug-grid {
@@ -2063,6 +2145,15 @@ textarea {
   }
   .control-panels {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .demo-script-panel {
+    grid-template-columns: 1fr;
+  }
+  .demo-script-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .profile-proof-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .control-card, .lifecycle-card, .profile-debug-card {
     grid-column: 1 / -1;
@@ -2248,6 +2339,13 @@ textarea {
   .compact-search-panel .field-route,
   .compact-search-panel .search-submit {
     grid-column: span 2;
+  }
+  .demo-script-actions,
+  .profile-proof-strip {
+    grid-template-columns: 1fr;
+  }
+  .profile-debug-head {
+    grid-template-columns: 1fr;
   }
   .personalization-banner {
     align-items: stretch;
