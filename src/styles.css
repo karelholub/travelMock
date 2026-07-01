@@ -1563,6 +1563,8 @@ textarea {
   position: sticky;
   top: 82px;
   border-radius: 14px;
+  align-self: start;
+  max-width: 100%;
 }
 .checkout-summary p {
   margin: 0;
@@ -1572,12 +1574,18 @@ textarea {
 .checkout-mini-items {
   display: grid;
   gap: 8px;
+  max-height: min(300px, 36vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  overscroll-behavior: contain;
 }
 .checkout-mini-items article {
   display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) auto;
+  grid-template-columns: 54px minmax(0, 1fr) max-content;
   gap: 10px;
   align-items: center;
+  min-width: 0;
   padding: 8px;
   background: var(--soft);
   border: 1px solid var(--line);
@@ -1591,6 +1599,17 @@ textarea {
 .checkout-mini-items span {
   color: var(--muted);
   font-weight: 760;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.checkout-mini-items strong {
+  color: var(--ink);
+  font-size: 0.94rem;
+  font-weight: 850;
+  white-space: nowrap;
+  text-align: right;
 }
 .form-card { display: grid; gap: 12px; padding: 16px; }
 .check { display: flex; align-items: center; gap: 8px; }
@@ -2451,10 +2470,11 @@ textarea {
     padding: 14px;
   }
   .checkout-mini-items article {
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: 48px minmax(0, 1fr) max-content;
   }
-  .checkout-mini-items article strong {
-    grid-column: 2;
+  .checkout-mini-items img {
+    width: 48px;
+    height: 40px;
   }
   .filters {
     gap: 6px;
