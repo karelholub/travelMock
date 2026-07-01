@@ -33,7 +33,7 @@ const aliases = {
   last_search_performed_details: ["last_search_performed_details", "lastSearchPerformedDetails", "Last Search Performed Details"],
   last_purchased_item_destination: ["last_purchased_item_destination", "lastPurchasedItemDestination", "Last Purchased Item Destination"],
   email: ["email", "user_email", "userEmail", "User's Email (from Purchase or Shipping)"],
-  first_name: ["first_name", "firstName", "first", "user_first_name", "First name", "First Name", "User's First Name (from Shipping)"],
+  first_name: ["first_name", "firstName", "first", "user_first_name", "user_s_first_name_from_shipping", "First name", "First Name", "User's First Name (from Shipping)"],
   last_name: ["last_name", "lastName", "last", "surname", "user_last_name", "userLastName", "Last name", "Last Name", "User's Last Name (from Shipping)", "User's Surname (from Shipping)"],
   last_viewed_item_list_name: ["last_viewed_item_list_name", "lastViewedItemListName", "Last Viewed Item List Name"],
   total_lifetime_purchase_value: ["total_lifetime_purchase_value", "totalLifetimePurchaseValue", "Total Lifetime Purchase Value"],
@@ -204,7 +204,7 @@ function detailNameValue(value) {
   if (!unwrapped) return "";
   if (typeof unwrapped === "string") return unwrapped;
   if (Array.isArray(unwrapped)) return detailNameValue(unwrapped[0]);
-  if (typeof unwrapped === "object") return unwrapped.name || unwrapped.value || unwrapped.text || unwrapped.title || "";
+  if (typeof unwrapped === "object") return unwrapped.first_name || unwrapped.firstName || unwrapped.name || unwrapped.value || unwrapped.text || unwrapped.title || "";
   return String(unwrapped);
 }
 

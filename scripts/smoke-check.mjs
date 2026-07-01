@@ -107,6 +107,7 @@ assert(sourceText.includes("wireCheckoutSteps") && sourceText.includes("data-che
 for (const attribute of ["Last name", "has_active_booking", "searches_last_7d", "Profile activity", "Abandoned Booking", "Last Viewed Item", "Last Search Details", "Last Booking Started Details", "Last Wishlist Item Added", "Last Viewed Offer Details", "Last Viewed Destination Details", "Last Search Performed Details", "Last Purchased Item Destination", "User's Email (from Purchase or Shipping)", "First name", "Last Viewed Item List Name", "Total Lifetime Purchase Value"]) {
   assert(profileAttributes.includes(attribute), `Profile API attribute missing: ${attribute}`);
 }
+assert(profileAttributes.includes("user_s_first_name_from_shipping") && profileAttributes.includes("unwrapped.first_name"), "Profile API first-name shipping alias must normalize to first_name");
 for (const field of ["abandoned_booking", "last_viewed_item", "last_search_details", "last_booking_started_details", "last_wishlist_item_added", "last_viewed_offer_details", "last_viewed_destination_details", "last_search_performed_details", "last_purchased_item_destination", "email", "first_name", "last_name", "has_active_booking", "searches_last_7d", "profile_activity", "last_viewed_item_list_name", "total_lifetime_purchase_value"]) {
   assert(sourceText.includes(field), `Profile API field must feed visible surfaces: ${field}`);
 }
