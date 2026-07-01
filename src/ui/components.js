@@ -48,10 +48,12 @@ export function rail(title, products, listName, empty = "Recommendations are rec
   `;
 }
 
-export function searchPanel(search) {
+export function searchPanel(search, options = {}) {
   const childCount = Math.max(0, Number(search.children || 0));
   const childAges = Array.isArray(search.childAges) ? search.childAges : [];
   const productCategory = search.productCategory || "all";
+  const compact = options.variant === "compact";
+  const travelerCount = Number(search.adults || search.travelers || 1) + childCount;
   const tabs = [
     ["all", "All"],
     ["flight", "Flights"],
@@ -61,7 +63,13 @@ export function searchPanel(search) {
     ["experience", "Experiences"]
   ];
   return `
-    <form class="search-panel" data-search-form>
+    <form class="search-panel ${compact ? "compact-search-panel" : ""}" data-search-form>
+      ${compact ? `
+        <div class="compact-search-heading">
+          <span class="eyebrow">Modify search</span>
+          <strong>${search.origin || "Prague"} to ${search.destination} · ${travelerCount} travelers</strong>
+        </div>
+      ` : ""}
       <div class="search-tabs" aria-label="Booking type">
         <input type="hidden" name="productCategory" value="${productCategory}" data-product-category-value />
         ${tabs.map(([value, label]) => `
@@ -114,7 +122,7 @@ export function searchPanel(search) {
       </div>
       <div class="search-footnote">
         <span>No popups, no judgment, just suspiciously relevant offers.</span>
-        <strong>${Number(search.adults || search.travelers || 1) + childCount} travelers</strong>
+        <strong>${travelerCount} travelers</strong>
       </div>
     </form>
   `;

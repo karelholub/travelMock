@@ -1,5 +1,5 @@
 import { personalizedResults, recommendationRail } from "../recommendations/strategies.js";
-import { compactDate, money, productTypeLabel } from "../utils/format.js";
+import { money, productTypeLabel } from "../utils/format.js";
 import { rail, searchPanel } from "./components.js";
 import { personalizationBanner } from "./personalizationBanners.js";
 
@@ -16,16 +16,11 @@ export function searchPage(state) {
       <div>
         <p class="eyebrow">Search results</p>
         <h1>${state.search.destination} trips, sorted by personal relevance</h1>
-        <p>${resultLabel} for ${travelerCount} travelers. Search intent, profile data, and sellable add-ons are doing the quiet math.</p>
+        <p>${resultLabel} for ${travelerCount} travelers, with the best itinerary fits first.</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Switch persona</a>
     </section>
-    ${searchPanel(state.search)}
-    <section class="search-context-bar">
-      <span><strong>${state.search.origin || "Prague"} to ${state.search.destination}</strong></span>
-      <span>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</span>
-      <span>${travelerCount} people · ${state.search.cabinClass || "economy"}</span>
-    </section>
+    ${searchPanel(state.search, { variant: "compact" })}
     <section class="results-shell">
       <div class="results-panel">
         <div class="results-toolbar">
@@ -34,6 +29,7 @@ export function searchPage(state) {
             <strong>${categoryLabel} · ${state.search.tripType}</strong>
           </div>
           <div class="search-signal-row" aria-label="Search signals">
+            <span class="signal-label">Matched by</span>
             ${productSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.productCategory ? "is-active" : ""}">${filter}</span>`).join("")}
             ${moodSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.tripType ? "is-active" : ""}">${filter}</span>`).join("")}
           </div>
@@ -79,24 +75,32 @@ function resultCard(product, index, state) {
         <div class="result-meta">
           <span>${product.duration}</span>
           <span>${product.tripType}</span>
-          <span>${Math.round(product.margin * 100)}% margin, quietly beloved</span>
+          <span>${matchSignal(product, index)}</span>
         </div>
         <div class="result-actions">
           <button class="primary" type="button" data-add="${product.id}">Add to itinerary</button>
-          <button class="secondary save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save trip"}</button>
-          <button class="secondary watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary" href="/product/${product.slug}" data-link>View details</a>
+          <button class="ghost-action save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save"}</button>
+          <button class="ghost-action watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
         </div>
       </div>
     </article>
   `;
 }
 
+function matchSignal(product, index) {
+  if (index === 0) return "Best itinerary fit";
+  if (["transfer", "experience", "add_on", "insurance"].includes(product.type)) return "Smart add-on";
+  if (product.tripType === "family") return "Family friendly";
+  if (product.tripType === "business") return "Business ready";
+  return "Good bundle fit";
+}
+
 function emptyResults(state) {
   return `
     <div class="empty-panel">
       <h2>No perfect matches yet</h2>
-      <p>Try ${state.search.destination}, packages, or the courageous “least regret” sort.</p>
+      <p>Try all products, change the destination, or reset the trip mood for a wider set of offers.</p>
       <a class="primary" href="/" data-link>Start from homepage</a>
     </div>
   `;
