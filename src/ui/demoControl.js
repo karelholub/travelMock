@@ -26,6 +26,17 @@ function signalRow(label, value) {
   return `<div><span>${label}</span><strong>${value}</strong></div>`;
 }
 
+function personaScenario(persona) {
+  const scenarios = {
+    anonymous: "Cold start",
+    abandoner: "Cart rescue",
+    vip: "VIP upsell",
+    family: "Family trip",
+    business: "Business path"
+  };
+  return scenarios[persona.id] || "Demo path";
+}
+
 export function demoControlPage(state) {
   const fields = state.profile?.fields || {};
   const activePersona = personas[state.personaId] || personas.anonymous;
@@ -47,6 +58,7 @@ export function demoControlPage(state) {
   const lifetimeValue = money(detailNumber(fields.total_lifetime_purchase_value ?? fields.booking_value, 0));
   const activeBooking = fields.has_active_booking ? "yes" : "no";
   const searchesLast7d = detailNumber(fields.searches_last_7d, 0);
+  const latestEvent = trackingLog[0]?.name || "none yet";
   return `
     <section class="page-head dense">
       <div>
@@ -63,23 +75,24 @@ export function demoControlPage(state) {
         <p>Start with search intent, add or restore itinerary behavior, then prove the profile and events updated.</p>
       </div>
       <div class="demo-script-actions">
-        <a class="primary" href="/search" data-link>Run search</a>
-        <button class="secondary" type="button" data-restore-cart>Restore itinerary</button>
-        <a class="secondary" href="/account" data-link>Show profile</a>
-        <a class="secondary" href="/checkout" data-link>Checkout flow</a>
+        <a class="primary" href="/search" data-link><span>Run search</span><small>intent</small></a>
+        <button class="secondary" type="button" data-restore-cart><span>Restore itinerary</span><small>abandonment</small></button>
+        <a class="secondary" href="/account" data-link><span>Show profile</span><small>Profile API</small></a>
+        <a class="secondary" href="/checkout" data-link><span>Checkout flow</span><small>purchase</small></a>
       </div>
     </section>
     <section class="cockpit-strip">
       <article><span>Persona</span><strong>${activePersona.label}</strong></article>
       <article><span>Destination</span><strong>${destination}</strong></article>
       <article><span>Profile source</span><strong>${state.profile?.source || "pending"}</strong></article>
-      <article><span>Recent events</span><strong>${trackingLog.length}</strong></article>
+      <article><span>Latest event</span><strong>${latestEvent}</strong></article>
     </section>
     <section class="demo-grid persona-picker">
       ${Object.values(personas).map((persona) => `
         <button class="persona-card ${persona.id === state.personaId ? "active" : ""}" data-persona="${persona.id}">
+          <span class="persona-scenario">${personaScenario(persona)}</span>
           <strong>${persona.label}</strong>
-          <small>${persona.preferredDestination} · ${persona.loyaltyTier}</small>
+          <small><span>${persona.preferredDestination}</span><span>${persona.loyaltyTier}</span></small>
           <span>${persona.hero}</span>
         </button>
       `).join("")}
@@ -95,12 +108,14 @@ export function demoControlPage(state) {
           <label class="check"><input type="checkbox" data-consent="personalization" checked /> Personalization</label>
           <label class="check"><input type="checkbox" data-consent="marketing" /> Marketing</label>
         </div>
+        <p class="signal-note">Consent changes are sent to the SDK immediately, so persistence and identity behavior stay demo-safe.</p>
       </article>
       <article class="summary-card tracking-log">
         <div class="summary-card-head">
           <span class="eyebrow">Recent evidence</span>
           <h2>Tracking readiness</h2>
         </div>
+        <p class="control-note">${trackingLog.length ? `${trackingLog.length} recent events captured locally. Latest: ${latestEvent}.` : "No local tracking events yet."}</p>
         ${trackingLog.map((event) => `<code><span>${event.at}</span>${event.name}</code>`).join("") || "<p>No events yet. Click around and enjoy the evidence.</p>"}
       </article>
       <article class="summary-card lifecycle-card">
@@ -108,9 +123,9 @@ export function demoControlPage(state) {
           <span class="eyebrow">Lifecycle</span>
           <h2>Simulator</h2>
         </div>
-        <button class="secondary full" data-lifecycle="trip_completed">Emit trip completed</button>
-        <button class="secondary full" data-lifecycle="review_submitted">Emit 5-star review</button>
-        <button class="secondary full" data-lifecycle="payment_failed">Emit payment failed</button>
+        <button class="secondary full lifecycle-button" data-lifecycle="trip_completed"><span>Emit trip completed</span><small>post-booking lifecycle</small></button>
+        <button class="secondary full lifecycle-button" data-lifecycle="review_submitted"><span>Emit 5-star review</span><small>review journey</small></button>
+        <button class="secondary full lifecycle-button" data-lifecycle="payment_failed"><span>Emit payment failed</span><small>payment recovery</small></button>
       </article>
       <article class="summary-card profile-debug-card">
         <div class="profile-debug-head">
