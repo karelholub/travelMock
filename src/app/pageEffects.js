@@ -11,7 +11,7 @@ let lastAccountProfileKey = "";
 export function runPageEffects(path, state, summary) {
   if (path === "/search") trackSearchResults(state);
   if (path.startsWith("/product/")) trackProductView(path, state);
-  if (path === "/account") refreshAccountProfile(state);
+  if (path === "/account" || path === "/checkout") refreshProfile(state);
   if (path === "/itinerary") {
     trackEvent("view_cart", trackingCartPayload(summary.enriched, { total: summary.total, count: summary.count }, state.search));
   }
@@ -37,7 +37,7 @@ function trackProductView(path, state) {
   trackEvent("view_item", trackingItem(product, 1, state.search));
 }
 
-export async function refreshAccountProfile(state, options = {}) {
+export async function refreshProfile(state, options = {}) {
   const identity = profileIdentity(state);
   const lookupKey = JSON.stringify({ personaId: state.personaId, user_id: identity.user_id, email: identity.email });
   if (!options.force && lookupKey === lastAccountProfileKey) return;

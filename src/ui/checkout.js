@@ -7,6 +7,7 @@ export function checkoutPage(state, summary) {
   if (!summary.enriched.length) {
     return `<section class="empty-panel"><h1>Checkout needs an itinerary first</h1><a class="primary" href="/itinerary" data-link>Recover itinerary</a></section>`;
   }
+  const defaults = checkoutProfileDefaults(state);
   const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
   const serviceFee = 29;
   const addOnItems = summary.enriched.filter((item) => ["transfer", "experience", "insurance", "add_on"].includes(item.product.type));
@@ -33,10 +34,10 @@ export function checkoutPage(state, summary) {
             <h2>Traveler details</h2>
           </div>
           <div class="form-grid">
-            <label>First name<input name="firstName" required value="Alex" /></label>
-            <label>Surname<input name="surname" required value="Somewhere" /></label>
-            <label>Date of birth<input name="dob" type="date" value="1988-04-12" /></label>
-            <label>Traveler count<input name="travelerCount" type="number" min="1" value="${travelerCount}" /></label>
+            <label>First name<input name="firstName" required value="${attr(defaults.firstName)}" /></label>
+            <label>Surname<input name="surname" required value="${attr(defaults.surname)}" /></label>
+            <label>Date of birth<input name="dob" type="date" value="${attr(defaults.dob)}" /></label>
+            <label>Traveler count<input name="travelerCount" type="number" min="1" value="${defaults.travelerCount || travelerCount}" /></label>
           </div>
           <button class="secondary step-next" type="button" data-checkout-next="contact">Continue to contact</button>
         </section>
@@ -46,11 +47,11 @@ export function checkoutPage(state, summary) {
             <h2>Contact and documents</h2>
           </div>
           <div class="form-grid">
-            <label>Email<input name="email" type="email" required value="alex.somewhere@example.com" /></label>
-            <label>Phone<input name="phone" required value="+420777123456" /></label>
-            <label>Country<input name="country" value="Czech Republic" /></label>
-            <label>Passport number<input name="passport" value="MOCK123456" /></label>
-            <label class="wide">Billing address<input name="billingAddress" value="42 Demo Street, Prague" /></label>
+            <label>Email<input name="email" type="email" required value="${attr(defaults.email)}" /></label>
+            <label>Phone<input name="phone" required value="${attr(defaults.phone)}" /></label>
+            <label>Country<input name="country" value="${attr(defaults.country)}" /></label>
+            <label>Passport number<input name="passport" value="${attr(defaults.passport)}" /></label>
+            <label class="wide">Billing address<input name="billingAddress" value="${attr(defaults.billingAddress)}" /></label>
           </div>
           <button class="secondary step-next" type="button" data-checkout-next="addons">Continue to add-ons</button>
         </section>
@@ -175,4 +176,52 @@ export function buildPurchasePayload(form, state, summary) {
     personalization_consent: data.personalizationConsent === "on",
     item_count: cartPayload.item_count
   };
+}
+
+function checkoutProfileDefaults(state) {
+  const fields = state.profile?.fields || {};
+  const composition = fields.traveler_composition || {};
+  const adults = numberValue(composition.adults ?? composition.adult_count ?? state.search.adults ?? state.search.travelers ?? 1);
+  const children = numberValue(composition.children ?? composition.child_count ?? state.search.children ?? 0);
+  return {
+    firstName: textValue(fields.first_name || state.booking?.first_name, "Alex"),
+    surname: textValue(fields.last_name || fields.surname || state.booking?.surname, "Somewhere"),
+    dob: textValue(fields.date_of_birth || fields.dob || state.booking?.dob, "1988-04-12"),
+    travelerCount: Math.max(1, adults + children),
+    email: textValue(fields.email || state.booking?.email, "alex.somewhere@example.com"),
+    phone: textValue(fields.phone || state.booking?.phone, "+420777123456"),
+    country: textValue(fields.country || state.booking?.country, "Czech Republic"),
+    passport: textValue(fields.passport_number || state.booking?.passport, "MOCK123456"),
+    billingAddress: textValue(fields.billing_address || state.booking?.billing_address, "42 Demo Street, Prague")
+  };
+}
+
+function textValue(value, fallback = "") {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (Array.isArray(value)) return textValue(value[0], fallback);
+  if (typeof value !== "object") return String(value);
+  return textValue(
+    value.value
+      ?? value.text
+      ?? value.name
+      ?? value.title
+      ?? value.email
+      ?? value.phone
+      ?? value.first_name
+      ?? value.last_name,
+    fallback
+  );
+}
+
+function numberValue(value, fallback = 0) {
+  const numeric = Number(textValue(value, fallback));
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+
+function attr(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

@@ -97,6 +97,7 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
+assert(checkout.includes("checkoutProfileDefaults") && checkout.includes("state.profile?.fields") && checkout.includes("fields.first_name") && checkout.includes("fields.email"), "Checkout form must prefill known customer values from Profile API fields");
 assert(checkout.includes("buildMissedSalesOpportunities") && checkout.includes("...missedSales"), "Purchase payload must include missed sales opportunities");
 for (const field of ["missed_sales_opportunities", "missed_sales_opportunity_count", "missed_sales_opportunity_value", "missed_sales_opportunity_ids", "missed_sales_opportunity_types", "missed_sales_followup_reasons"]) {
   assert(trackingSchema.includes(field), `Purchase schema missing missed sales field: ${field}`);
@@ -135,7 +136,7 @@ assert(profileFunction.includes('"X-API-Token": apiKey'), "Profile API proxy mus
 assert(profileFunction.includes('getUrl.searchParams.set("identifier_type", identifierType)') && profileFunction.includes('getUrl.searchParams.set("identifier_value", identifierValue)'), "Profile API proxy must use identifier_type and identifier_value query params");
 assert(profileFunction.includes('["user_id", identifiers.user_id]') && profileFunction.includes('["email", identifiers.email]'), "Profile API lookup must use user_id before email identifiers");
 assert(profileClient.includes("mpt_user_id_js") && profileClient.includes('params.set("user_id", userId)'), "Profile API client must use Meiro cookie user_id");
-assert(pageEffects.includes('path === "/account"') && pageEffects.includes("hydrateProfile"), "Account page must refresh from Profile API");
+assert(pageEffects.includes('path === "/account" || path === "/checkout"') && pageEffects.includes("hydrateProfile"), "Account and checkout pages must refresh from Profile API");
 for (const helper of ["detailDestination", "detailListName", "detailNumber", "detailText"]) {
   assert(accountPage.includes(helper), `Account page must render Profile API values through ${helper}`);
 }

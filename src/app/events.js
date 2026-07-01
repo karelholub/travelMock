@@ -1,7 +1,7 @@
 import { hydrateProfile, meiroUserIdFromCookie } from "../api/profileClient.js";
 import { findProductById } from "../catalog/lookups.js";
 import { personas } from "../data/personas.js";
-import { refreshAccountProfile } from "./pageEffects.js";
+import { refreshProfile } from "./pageEffects.js";
 import { profileIdentity } from "./profileIdentity.js";
 import { addItemsToCart, addToCart, cartSummary, removeFromCart, removeSavedProduct, saveProduct, setPersona, state, updateState, watchProduct } from "../state/store.js";
 import { identifyUser, setConsent, setSharedContext, trackEvent } from "../tracking/index.js";
@@ -392,7 +392,7 @@ function wireReviewForm() {
 function wireProfileControls() {
   document.querySelector("[data-refresh-profile]")?.addEventListener("click", async () => {
     trackEvent("select_item", { item_id: "profile_api_refresh", item_name: "Refresh profile", item_type: "profile_api", list_name: "account" });
-    await refreshAccountProfile(state, { force: true });
+    await refreshProfile(state, { force: true });
   });
 }
 
