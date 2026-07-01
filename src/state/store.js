@@ -1,5 +1,5 @@
 import { personas } from "../data/personas.js";
-import { enrichCartItems, cartTotal, bookingItemCount } from "../catalog/lookups.js";
+import { enrichCartItems, cartTotal, bookingItemCount, findProductsByIds } from "../catalog/lookups.js";
 
 const saved = JSON.parse(localStorage.getItem("elsewhere-state") || "null");
 
@@ -24,7 +24,8 @@ function normalizeSavedState(value) {
       childAges: Array.isArray(search.childAges) ? search.childAges.slice(0, children) : [],
       travelers: adults + children
     },
-    watchedProductIds: Array.isArray(value.watchedProductIds) ? value.watchedProductIds : []
+    watchedProductIds: Array.isArray(value.watchedProductIds) ? value.watchedProductIds : [],
+    savedProductIds: Array.isArray(value.savedProductIds) ? value.savedProductIds : []
   };
 }
 
@@ -48,6 +49,7 @@ export const state = normalizeSavedState(saved) || {
   booking: null,
   recentProductIds: [...personas.anonymous.recentProductIds],
   watchedProductIds: [],
+  savedProductIds: [],
   trackingLog: []
 };
 
@@ -122,6 +124,20 @@ export function watchProduct(productId) {
   if (state.watchedProductIds.includes(productId)) return false;
   updateState({ watchedProductIds: [productId, ...state.watchedProductIds].slice(0, 20) });
   return true;
+}
+
+export function saveProduct(productId) {
+  if (state.savedProductIds.includes(productId)) return false;
+  updateState({ savedProductIds: [productId, ...state.savedProductIds].slice(0, 40) });
+  return true;
+}
+
+export function removeSavedProduct(productId) {
+  updateState({ savedProductIds: state.savedProductIds.filter((id) => id !== productId) });
+}
+
+export function wishlistProducts() {
+  return findProductsByIds(state.savedProductIds || []);
 }
 
 export function cartSummary() {

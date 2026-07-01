@@ -1,7 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
-const requiredRoutes = ["/", "/search", "/itinerary", "/checkout", "/thank-you", "/review", "/account", "/demo-control"];
+const requiredRoutes = ["/", "/search", "/itinerary", "/wishlist", "/checkout", "/thank-you", "/review", "/account", "/demo-control"];
 const requiredEvents = [
   "search",
   "view_search_results",
@@ -36,6 +36,7 @@ const trackingSchema = await readFile("src/tracking/schema.js", "utf8");
 const checkout = await readFile("src/ui/checkout.js", "utf8");
 const thankYou = await readFile("src/ui/thankYou.js", "utf8");
 const review = await readFile("src/ui/review.js", "utf8");
+const wishlist = await readFile("src/ui/wishlist.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
@@ -98,6 +99,7 @@ assert(checkout.includes("booking_value"), "Booking payload must include booking
 assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProductsFromBooking"), "Thank-you page must render booked product imagery");
 assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
 assert(sourceText.includes("price-watch-panel") && sourceText.includes("data-watch-target") && sourceText.includes("data-watch-alert-toggle"), "Watch price CTA must show an interactive price watch panel");
+assert(wishlist.includes("wishlistPage") && sourceText.includes("data-save") && sourceText.includes("showWishlistModal") && sourceText.includes("data-remove-wishlist"), "Wishlist page and modal controls must exist");
 assert(sourceText.includes("data-product-category") && sourceText.includes("data-product-category-value"), "Search category pills must update the searchable product category");
 for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);

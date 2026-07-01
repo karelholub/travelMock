@@ -71,6 +71,7 @@ export function searchPage(state) {
 
 function resultCard(product, index, state) {
   const watched = (state.watchedProductIds || []).includes(product.id);
+  const saved = (state.savedProductIds || []).includes(product.id);
   return `
     <article class="product-card result-card" data-product-id="${product.id}">
       <a class="result-image" href="/product/${product.slug}" data-link>
@@ -93,6 +94,7 @@ function resultCard(product, index, state) {
         </div>
         <div class="result-actions">
           <button class="primary" type="button" data-add="${product.id}">Add to itinerary</button>
+          <button class="secondary save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save trip"}</button>
           <button class="secondary watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary" href="/product/${product.slug}" data-link>View details</a>
         </div>

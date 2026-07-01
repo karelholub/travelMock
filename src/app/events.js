@@ -3,7 +3,7 @@ import { findProductById } from "../catalog/lookups.js";
 import { personas } from "../data/personas.js";
 import { refreshAccountProfile } from "./pageEffects.js";
 import { profileIdentity } from "./profileIdentity.js";
-import { addItemsToCart, addToCart, cartSummary, removeFromCart, setPersona, state, updateState, watchProduct } from "../state/store.js";
+import { addItemsToCart, addToCart, cartSummary, removeFromCart, removeSavedProduct, saveProduct, setPersona, state, updateState, watchProduct } from "../state/store.js";
 import { identifyUser, setConsent, setSharedContext, trackEvent } from "../tracking/index.js";
 import { trackingCartPayload, trackingItem, trackingLifecyclePayload, trackingSearchPayload, trackingWishlistPayload } from "../tracking/schema.js";
 import { buildPurchasePayload } from "../ui/checkout.js";
@@ -79,6 +79,31 @@ function wireCartControls() {
     });
   });
 
+  document.querySelectorAll("[data-save]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const product = findProductById(button.dataset.save);
+      if (!product) return;
+      const isNewSave = saveProduct(product.id);
+      showWishlistModal(product, isNewSave);
+      trackEvent("add_to_wishlist", trackingWishlistPayload(product, state.search));
+    });
+  });
+
+  document.querySelectorAll("[data-remove-wishlist]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const product = findProductById(button.dataset.removeWishlist);
+      removeSavedProduct(button.dataset.removeWishlist);
+      if (product) {
+        trackEvent("select_item", {
+          item_id: product.id,
+          item_name: product.name,
+          item_type: "wishlist_remove",
+          list_name: "wishlist"
+        });
+      }
+    });
+  });
+
   document.querySelectorAll("[data-remove]").forEach((button) => {
     button.addEventListener("click", () => {
       const product = findProductById(button.dataset.remove);
@@ -92,6 +117,55 @@ function wireCartControls() {
       }
     });
   });
+}
+
+function showWishlistModal(product, isNewSave) {
+  document.querySelector("[data-wishlist-modal]")?.remove();
+  const modal = document.createElement("aside");
+  modal.className = "wishlist-modal";
+  modal.dataset.wishlistModal = "true";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "false");
+  modal.setAttribute("aria-label", "Wishlist");
+  modal.innerHTML = `
+    <button class="wishlist-modal-close" type="button" data-dismiss-wishlist-modal aria-label="Close wishlist">&times;</button>
+    <img src="${product.image}" alt="${product.destination} saved trip" />
+    <div>
+      <span class="eyebrow">${isNewSave ? "Saved to wishlist" : "Already saved"}</span>
+      <h2>${product.name}</h2>
+      <p>${product.destination} is now available for comparison, recovery journeys, and a follow-up email that pretends to be casual.</p>
+      <div class="wishlist-modal-actions">
+        <a class="primary small" href="/wishlist" data-link>Open wishlist</a>
+        <button class="secondary small" type="button" data-add="${product.id}">Add to itinerary</button>
+      </div>
+    </div>
+  `;
+  document.body.append(modal);
+  window.setTimeout(() => modal.classList.add("is-visible"), 20);
+
+  modal.querySelector("[data-dismiss-wishlist-modal]")?.addEventListener("click", () => dismissWishlistModal(modal));
+  modal.querySelector("[data-link]")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    dismissWishlistModal(modal);
+    history.pushState({}, "", event.currentTarget.getAttribute("href"));
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+  modal.querySelector("[data-add]")?.addEventListener("click", () => {
+    addToCart(product.id);
+    const next = cartSummary();
+    trackEvent("add_to_cart", {
+      ...trackingItem(product, 1, state.search),
+      ancillary_type: ["transfer", "experience", "insurance", "add_on"].includes(product.type) ? product.type : undefined,
+      ...trackingCartPayload(next.enriched, { total: next.total, count: next.count }, state.search)
+    });
+    dismissWishlistModal(modal);
+  });
+}
+
+function dismissWishlistModal(modal = document.querySelector("[data-wishlist-modal]")) {
+  if (!modal) return;
+  modal.classList.remove("is-visible");
+  window.setTimeout(() => modal.remove(), 220);
 }
 
 function showPriceWatchPanel(product, isNewWatch) {

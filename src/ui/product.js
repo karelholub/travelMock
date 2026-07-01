@@ -10,6 +10,7 @@ export function productPage(state, slug) {
   }
   const recs = recommendationRail("product", state, { currentProduct: product });
   const watched = (state.watchedProductIds || []).includes(product.id);
+  const saved = (state.savedProductIds || []).includes(product.id);
   return `
     <section class="offer-hero">
       <div class="offer-gallery">
@@ -29,6 +30,7 @@ export function productPage(state, slug) {
           <strong>${money(product.price)}</strong>
         </div>
         <button class="primary full" type="button" data-add="${product.id}">Add to itinerary</button>
+        <button class="secondary full save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved to wishlist" : "Save to wishlist"}</button>
         <button class="secondary full watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching this price" : "Watch price"}</button>
         <div class="banner">Because you looked at ${product.destination} twice, the algorithm has become quietly invested.</div>
       </aside>

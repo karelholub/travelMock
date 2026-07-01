@@ -10,6 +10,7 @@ export function productCard(product, options = {}) {
   const cta = options.cta || "Add";
   const secondary = options.secondary || "Details";
   const watched = options.watchedProductIds?.includes(product.id);
+  const saved = (state.savedProductIds || []).includes(product.id);
   return `
     <article class="product-card" data-product-id="${product.id}">
       <a href="/product/${product.slug}" data-link>${image(product)}</a>
@@ -23,6 +24,7 @@ export function productCard(product, options = {}) {
         </div>
         <div class="card-actions">
           <button class="primary small" type="button" data-add="${product.id}">${cta}</button>
+          <button class="secondary small save-cta ${saved ? "is-saved" : ""}" type="button" data-save="${product.id}" aria-pressed="${saved ? "true" : "false"}">${saved ? "Saved" : "Save"}</button>
           <button class="secondary small watch-cta ${watched ? "is-watching" : ""}" type="button" data-watch="${product.id}" aria-pressed="${watched ? "true" : "false"}">${watched ? "Watching" : "Watch price"}</button>
           <a class="secondary small" href="/product/${product.slug}" data-link>${secondary}</a>
         </div>
