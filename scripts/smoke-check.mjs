@@ -97,6 +97,11 @@ assert(checkout.includes("email: contact.email"), "Purchase payload must include
 assert(checkout.includes("phone: contact.phone"), "Purchase payload must include top-level phone");
 assert(checkout.includes("items:"), "Booking payload must include items array");
 assert(checkout.includes("booking_value"), "Booking payload must include booking value");
+assert(checkout.includes("buildMissedSalesOpportunities") && checkout.includes("...missedSales"), "Purchase payload must include missed sales opportunities");
+for (const field of ["missed_sales_opportunities", "missed_sales_opportunity_count", "missed_sales_opportunity_value", "missed_sales_opportunity_ids", "missed_sales_opportunity_types", "missed_sales_followup_reasons"]) {
+  assert(trackingSchema.includes(field), `Purchase schema missing missed sales field: ${field}`);
+}
+assert(sourceText.includes("opportunity_type") && sourceText.includes("followup_reason") && sourceText.includes("transport") && sourceText.includes("insurance"), "Missed sales opportunities must include detailed transport and insurance follow-up data");
 assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProductsFromBooking"), "Thank-you page must render booked product imagery");
 assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
 assert(sourceText.includes("price-watch-panel") && sourceText.includes("data-watch-target") && sourceText.includes("data-watch-alert-toggle"), "Watch price CTA must show an interactive price watch panel");

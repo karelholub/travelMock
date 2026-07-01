@@ -33,7 +33,13 @@ export const trackingEvents = {
     "product_types",
     "items",
     "booking_value",
-    "total_value"
+    "total_value",
+    "missed_sales_opportunities",
+    "missed_sales_opportunity_count",
+    "missed_sales_opportunity_value",
+    "missed_sales_opportunity_ids",
+    "missed_sales_opportunity_types",
+    "missed_sales_followup_reasons"
   ],
   trip_completed: ["booking_id", "destination", "region", "travel_end_date"],
   review_submitted: ["booking_id", "rating"],

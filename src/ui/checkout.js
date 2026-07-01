@@ -1,4 +1,5 @@
 import { trackingCartPayload } from "../tracking/schema.js";
+import { buildMissedSalesOpportunities } from "../tracking/opportunities.js";
 import { money } from "../utils/format.js";
 import { personalizationBanner } from "./personalizationBanners.js";
 
@@ -127,6 +128,7 @@ export function buildPurchasePayload(form, state, summary) {
   const childCount = Number(state.search.children || 0);
   const childAges = Array.isArray(state.search.childAges) ? state.search.childAges : [];
   const travelerCount = Number(data.travelerCount || adultCount + childCount);
+  const missedSales = buildMissedSalesOpportunities(summary.enriched, state.search);
   return {
     transaction_id: `txn_${Date.now()}`,
     booking_id: draftBookingId,
@@ -166,6 +168,7 @@ export function buildPurchasePayload(form, state, summary) {
     line_items: cartPayload.line_items,
     product_types: cartPayload.product_types,
     booked_product_types: cartPayload.booked_product_types,
+    ...missedSales,
     payment_type: data.paymentType,
     country: data.country,
     marketing_consent: data.marketingConsent === "on",

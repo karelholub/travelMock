@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { products } from "../src/catalog/products.js";
+import { buildMissedSalesOpportunities } from "../src/tracking/opportunities.js";
 import {
   destinationRegion,
   trackingCartPayload,
@@ -327,6 +328,7 @@ function buildPurchasePayload({ profile, context, cart, totals, bookingId }) {
   const hotelIds = cart.filter((item) => item.product.type === "hotel").map((item) => item.product.id);
   const packageIds = cart.filter((item) => item.product.type === "package").map((item) => item.product.id);
   const addOnIds = cart.filter((item) => !["flight", "hotel", "package"].includes(item.product.type)).map((item) => item.product.id);
+  const missedSales = buildMissedSalesOpportunities(cart, context);
 
   return {
     transaction_id: `txn_sim_${bookingId.toLowerCase()}`,
@@ -370,6 +372,7 @@ function buildPurchasePayload({ profile, context, cart, totals, bookingId }) {
     line_items: cartPayload.line_items,
     product_types: cartPayload.product_types,
     booked_product_types: cartPayload.booked_product_types,
+    ...missedSales,
     item_count: cartPayload.item_count
   };
 }
