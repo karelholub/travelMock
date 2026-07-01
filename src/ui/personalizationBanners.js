@@ -12,6 +12,8 @@ function firstName(fields) {
 
 function destinationSignal(fields, fallback = "Lisbon") {
   return detailDestination(
+    fields.top_destination,
+    fields.destination_affinities,
     fields.last_purchased_item_destination,
     fields.next_trip_destination,
     fields.last_search_details,
@@ -61,7 +63,8 @@ const placementConfig = {
     },
     body(fields) {
       const list = detailText(fields.last_viewed_item_list_name, "homepage recommendations");
-      return `Using destination affinity, recent list ${list}, and live profile fields to shape the first screen.`;
+      const stage = detailText(fields.booking_lifecycle_stage, "fresh intent");
+      return `Using ${stage}, destination affinity, recent list ${list}, and live profile fields to shape the first screen.`;
     },
     cta: { label: "View profile proof", href: "/account" }
   },
@@ -73,7 +76,8 @@ const placementConfig = {
       return `Results are biased toward ${destination} because the profile keeps mentioning it.`;
     },
     body(fields) {
-      return `Last search: ${detailText(fields.last_search_details || fields.last_search_performed_details, "fresh search")}. Recent activity: ${activityText(fields.profile_activity)}.`;
+      const tripTypes = detailText(fields.preferred_trip_types, "profile trip type");
+      return `Last search: ${detailText(fields.last_search_details || fields.last_search_performed_details, "fresh search")}. Preferred trip types: ${tripTypes}.`;
     },
     cta: { label: "Open wishlist", href: "/wishlist" }
   },
@@ -97,7 +101,7 @@ const placementConfig = {
       return `${firstName(fields)}, this itinerary lines up with your abandoned booking story.`;
     },
     body(fields) {
-      return `Abandoned booking: ${detailText(fields.abandoned_booking, "none yet")}. Booking started: ${detailText(fields.last_booking_started_details, "not started")}.`;
+      return `Abandoned cart: ${detailText(fields.abandoned_cart_items || fields.abandoned_booking, "none yet")}. Stage: ${detailText(fields.booking_lifecycle_stage, "planning")}.`;
     },
     cta: { label: "Continue booking", href: "/checkout" }
   },
@@ -109,7 +113,7 @@ const placementConfig = {
       return value ? `Lifetime value ${money(value)} says this booking deserves less friction.` : "Profile data is pre-warming the booking flow.";
     },
     body(fields) {
-      return `Known identity: ${detailText(fields.email, "pending email")} · ${firstName(fields)} ${detailText(fields.last_name || fields.surname, "")}`.trim();
+      return `Known identity: ${detailText(fields.email, "pending email")} · ${firstName(fields)} ${detailText(fields.last_name || fields.surname, "")} · ${detailText(fields.vip_status, "standard")}`.trim();
     },
     cta: { label: "Review account", href: "/account" }
   },
@@ -120,7 +124,7 @@ const placementConfig = {
       return `Profile fields are powering visible personalization, not hiding in a debug panel.`;
     },
     body(fields) {
-      return `Destination ${destinationSignal(fields)} · wishlist ${itemName(fields.last_wishlist_item_added, "none")} · searches last 7 days ${detailText(fields.searches_last_7d, "0")}.`;
+      return `Destination ${destinationSignal(fields)} · lifecycle ${detailText(fields.booking_lifecycle_stage, "planning")} · searches last 7 days ${detailText(fields.searches_last_7d, "0")}.`;
     },
     cta: { label: "Search with profile", href: "/search" }
   },
@@ -132,7 +136,7 @@ const placementConfig = {
       return addOn ? `Next best action: ${addOn.name}.` : "Next best action is ready for post-booking journeys.";
     },
     body(fields, state) {
-      return `Purchased destination ${detailText(fields.last_purchased_item_destination || state.booking?.destination, "pending")} now feeds post-booking add-ons and review timing.`;
+      return `Purchased destination ${detailText(fields.last_purchased_item_destination || state.booking?.destination, "pending")} now feeds ${detailText(fields.active_itinerary_items, "post-booking add-ons")} and review timing.`;
     },
     cta: { label: "See next actions", href: "/demo-control" }
   },
@@ -182,7 +186,7 @@ export function personalizationPopup(state, path) {
       <button class="personalization-popup-close" type="button" data-dismiss-personalization aria-label="Close personalization banner">&times;</button>
       <span class="eyebrow">Personalized by Profile API</span>
       <h2>${firstName(fields)}, ${destination} is the current signal.</h2>
-      <p>${addOn ? `Recommended add-on: ${addOn.name} for ${money(addOn.price)}.` : `Recent profile activity suggests ${detailText(fields.last_interest_trip_type || state.search.tripType, "travel")} intent.`}</p>
+      <p>${addOn ? `Recommended add-on: ${addOn.name} for ${money(addOn.price)}.` : `Recent profile activity suggests ${detailText(fields.booking_lifecycle_stage || fields.last_interest_trip_type || state.search.tripType, "travel")} intent.`}</p>
       <div class="personalization-popup-actions">
         <a class="primary small" href="/search" data-link>Use this signal</a>
         <a class="secondary small" href="/account" data-link>Profile proof</a>

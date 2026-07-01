@@ -5,6 +5,12 @@ export function detailText(value, fallback = "pending") {
     return items.length ? items.join(", ") : fallback;
   }
   if (typeof value !== "object") return String(value);
+  if (value.adults !== undefined || value.children !== undefined) {
+    const adults = Number(value.adults || value.adult_count || 0);
+    const children = Number(value.children || value.child_count || 0);
+    const ages = Array.isArray(value.children_ages || value.childAges) ? value.children_ages || value.childAges : [];
+    return `${adults || 1} adult${adults === 1 ? "" : "s"}${children ? `, ${children} child${children === 1 ? "" : "ren"}${ages.length ? ` (${ages.join(", ")})` : ""}` : ""}`;
+  }
 
   const preferred = [
     value.booking_id,

@@ -11,6 +11,8 @@ export function accountPage(state) {
   const fields = state.profile?.fields || {};
   const lifetimeValue = money(detailNumber(fields.total_lifetime_purchase_value ?? fields.booking_value, 0));
   const destination = detailDestination(
+    fields.top_destination,
+    fields.destination_affinities,
     fields.last_purchased_item_destination,
     fields.next_trip_destination,
     fields.last_search_details,
@@ -26,13 +28,21 @@ export function accountPage(state) {
   const lastName = detailText(fields.last_name || fields.surname || state.booking?.surname, "");
   const displayName = [firstName, lastName].filter(Boolean).join(" ") || persona.label;
   const hasActiveBooking = Boolean(fields.has_active_booking);
-  const hasAbandonedBooking = hasSignal(fields.abandoned_booking);
+  const hasAbandonedBooking = hasSignal(fields.abandoned_cart_items) || hasSignal(fields.abandoned_booking);
   const activeBooking = hasActiveBooking ? "Active" : "No active booking";
   const searchesLast7d = detailNumber(fields.searches_last_7d, 0);
   const profileActivity = detailText(fields.profile_activity, "No recent profile activity");
-  const tripSignal = detailText(fields.last_interest_trip_type, persona.preferredTripType);
+  const tripSignal = detailText(fields.preferred_trip_types || fields.last_interest_trip_type, persona.preferredTripType);
   const bookingStarted = detailText(fields.last_booking_started_details, "No booking started");
   const viewedOffer = detailText(fields.last_viewed_offer_details, "No offer viewed");
+  const lifecycleStage = detailText(fields.booking_lifecycle_stage, hasActiveBooking ? "post_booking" : "planning");
+  const originAirport = detailText(fields.preferred_origin_airport, state.search.origin || "Prague");
+  const travelerComposition = detailText(fields.traveler_composition, `${state.search.adults || 1} adults`);
+  const watchedPrice = detailText(fields.watched_price_destination, "No watch yet");
+  const priceSensitivity = detailText(fields.price_sensitivity, "medium");
+  const dealAffinity = detailText(fields.deal_affinity, "medium");
+  const lifetimeBookings = detailNumber(fields.lifetime_booking_count, 0);
+  const vipStatus = detailText(fields.vip_status, fields.loyalty_tier || persona.loyaltyTier);
   const source = state.profile?.source || "pending";
   const identity = profileIdentity(state);
   const lookup = state.profileLookup || {};
@@ -47,7 +57,7 @@ export function accountPage(state) {
       <div>
         <p class="eyebrow">Account</p>
         <h1>${displayName || persona.label}</h1>
-        <p>${persona.label} · ${destination} affinity · ${fields.loyalty_tier || persona.loyaltyTier}</p>
+        <p>${persona.label} · ${destination} affinity · ${fields.loyalty_tier || persona.loyaltyTier} · ${lifecycleStage}</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Demo controls</a>
     </section>
@@ -60,8 +70,8 @@ export function accountPage(state) {
       <div class="account-hero-snapshot" aria-label="Profile summary">
         <article><span>Loyalty</span><strong>${fields.loyalty_tier || persona.loyaltyTier}</strong></article>
         <article><span>Affinity</span><strong>${destination}</strong></article>
-        <article><span>Status</span><strong>${activeBooking}</strong></article>
-        <article><span>Searches</span><strong>${searchesLast7d} in 7d</strong></article>
+        <article><span>Lifecycle</span><strong>${lifecycleStage}</strong></article>
+        <article><span>VIP</span><strong>${vipStatus}</strong></article>
       </div>
       <div class="loyalty-actions">
         <a class="primary" href="${primaryAction.href}" data-link>${primaryAction.label}</a>
@@ -80,13 +90,17 @@ export function accountPage(state) {
             <div><span>First name</span><strong>${firstName || "Not captured yet"}</strong></div>
             <div><span>Last name</span><strong>${lastName || "Not captured yet"}</strong></div>
             <div><span>Lifetime value</span><strong>${lifetimeValue}</strong></div>
+            <div><span>Bookings</span><strong>${lifetimeBookings}</strong></div>
           </article>
           <article class="summary-card account-signal-card">
             <div class="summary-card-head">
               <span class="eyebrow">Recent intent</span>
               <h2>${destination}</h2>
             </div>
+            <div><span>Origin airport</span><strong>${originAirport}</strong></div>
             <div><span>Last search</span><strong>${lastSearch}</strong></div>
+            <div><span>Trip types</span><strong>${tripSignal}</strong></div>
+            <div><span>Product categories</span><strong>${detailText(fields.preferred_product_categories, "not ranked yet")}</strong></div>
             <div><span>Profile activity</span><strong>${profileActivity}</strong></div>
             <div><span>Last viewed list</span><strong>${viewedList}</strong></div>
             <div><span>Wishlist</span><strong>${wishlist}</strong></div>
@@ -96,10 +110,23 @@ export function accountPage(state) {
               <span class="eyebrow">Recovery</span>
               <h2>${hasAbandonedBooking ? "Trip waiting" : "No panic detected"}</h2>
             </div>
+            <div><span>Lifecycle</span><strong>${lifecycleStage}</strong></div>
+            <div><span>Active itinerary</span><strong>${detailText(fields.active_itinerary_items, "none")}</strong></div>
+            <div><span>Abandoned cart</span><strong>${detailText(fields.abandoned_cart_items, "none")}</strong></div>
             <div><span>Abandoned booking</span><strong>${abandoned}</strong></div>
             <div><span>Booking started</span><strong>${bookingStarted}</strong></div>
             <div><span>Viewed offer</span><strong>${viewedOffer}</strong></div>
             <a class="secondary full" href="${hasAbandonedBooking ? "/itinerary" : "/search"}" data-link>${hasAbandonedBooking ? "Restore itinerary" : "Create fresh intent"}</a>
+          </article>
+          <article class="summary-card account-signal-card">
+            <div class="summary-card-head">
+              <span class="eyebrow">Commercial signals</span>
+              <h2>${dealAffinity} deal affinity</h2>
+            </div>
+            <div><span>Price sensitivity</span><strong>${priceSensitivity}</strong></div>
+            <div><span>Watched price</span><strong>${watchedPrice}</strong></div>
+            <div><span>Traveler mix</span><strong>${travelerComposition}</strong></div>
+            <div><span>Destination affinities</span><strong>${detailText(fields.destination_affinities, destination)}</strong></div>
           </article>
         </section>
         <section class="account-recommendation-note">

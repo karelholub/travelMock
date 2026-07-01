@@ -1,5 +1,5 @@
 import { money, productTypeLabel } from "../utils/format.js";
-import { detailDestination, detailListName, detailText } from "../utils/profileDisplay.js";
+import { detailDestination, detailText } from "../utils/profileDisplay.js";
 import { state } from "../state/store.js";
 
 export function image(product, className = "card-image") {
@@ -131,6 +131,8 @@ export function searchPanel(search, options = {}) {
 export function profileProof(profile) {
   const fields = profile?.fields || {};
   const destination = detailDestination(
+    fields.top_destination,
+    fields.destination_affinities,
     fields.next_trip_destination,
     fields.last_purchased_item_destination,
     fields.last_search_details,
@@ -144,8 +146,8 @@ export function profileProof(profile) {
     <div class="profile-proof">
       <span>Profile API</span>
       <strong>${firstName ? `${firstName}'s ` : ""}${destination}</strong>
-      <span>${detailListName(fields.last_viewed_item_list_name || fields.next_departure_date)}</span>
-      <span>${fields.loyalty_tier || "Guest"}</span>
+      <span>${detailText(fields.booking_lifecycle_stage || fields.last_viewed_item_list_name || fields.next_departure_date)}</span>
+      <span>${fields.loyalty_tier || fields.vip_status || "Guest"}</span>
     </div>
   `;
 }

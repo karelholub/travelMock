@@ -1,6 +1,21 @@
 import { personas } from "../data/personas.js";
 
 export const meiroProfileAttributes = [
+  "preferred_origin_airport",
+  "lifetime_booking_count",
+  "vip_status",
+  "loyalty_tier",
+  "watched_price_destination",
+  "deal_affinity",
+  "price_sensitivity",
+  "active_itinerary_items",
+  "abandoned_cart_items",
+  "booking_lifecycle_stage",
+  "traveler_composition",
+  "preferred_product_categories",
+  "preferred_trip_types",
+  "destination_affinities",
+  "top_destination",
   "Last name",
   "has_active_booking",
   "searches_last_7d",
@@ -39,7 +54,22 @@ const aliases = {
   total_lifetime_purchase_value: ["total_lifetime_purchase_value", "totalLifetimePurchaseValue", "Total Lifetime Purchase Value"],
   has_active_booking: ["has_active_booking", "hasActiveBooking", "Has Active Booking"],
   searches_last_7d: ["searches_last_7d", "searchesLast7d", "Searches Last 7d", "Searches last 7d"],
-  profile_activity: ["profile_activity", "profileActivity", "Profile activity", "Profile Activity"]
+  profile_activity: ["profile_activity", "profileActivity", "Profile activity", "Profile Activity"],
+  preferred_origin_airport: ["preferred_origin_airport", "preferredOriginAirport", "Preferred Origin Airport"],
+  lifetime_booking_count: ["lifetime_booking_count", "lifetimeBookingCount", "Lifetime Booking Count"],
+  vip_status: ["vip_status", "vipStatus", "VIP Status"],
+  loyalty_tier: ["loyalty_tier", "loyaltyTier", "Loyalty Tier"],
+  watched_price_destination: ["watched_price_destination", "watchedPriceDestination", "Watched Price Destination"],
+  deal_affinity: ["deal_affinity", "dealAffinity", "Deal Affinity"],
+  price_sensitivity: ["price_sensitivity", "priceSensitivity", "Price Sensitivity"],
+  active_itinerary_items: ["active_itinerary_items", "activeItineraryItems", "Active Itinerary Items"],
+  abandoned_cart_items: ["abandoned_cart_items", "abandonedCartItems", "Abandoned Cart Items"],
+  booking_lifecycle_stage: ["booking_lifecycle_stage", "bookingLifecycleStage", "Booking Lifecycle Stage"],
+  traveler_composition: ["traveler_composition", "travelerComposition", "Traveler Composition"],
+  preferred_product_categories: ["preferred_product_categories", "preferredProductCategories", "Preferred Product Categories"],
+  preferred_trip_types: ["preferred_trip_types", "preferredTripTypes", "Preferred Trip Types"],
+  destination_affinities: ["destination_affinities", "destinationAffinities", "Destination Affinities"],
+  top_destination: ["top_destination", "topDestination", "Top Destination"]
 };
 
 export function slugFieldName(value) {
@@ -136,6 +166,8 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
   const offerDetails = normalized.last_viewed_offer_details || {};
   const abandonedBooking = normalized.abandoned_booking || {};
   const destination = detailDestinationValue(normalized.last_purchased_item_destination)
+    || detailDestinationValue(normalized.top_destination)
+    || topAffinityDestination(normalized.destination_affinities)
     || searchDetails.destination
     || destinationDetails.destination
     || offerDetails.destination
@@ -169,9 +201,24 @@ export function normalizeProfileResponse(raw = {}, fallback = {}) {
       profile_activity: normalized.profile_activity || fallback.profile_activity,
       last_viewed_item_list_name: detailListValue(normalized.last_viewed_item_list_name) || fallback.last_viewed_item_list_name,
       total_lifetime_purchase_value: Number.isFinite(value) ? value : fallback.total_lifetime_purchase_value,
-      next_trip_destination: detailDestinationValue(normalized.next_trip_destination) || destination,
+      preferred_origin_airport: detailTextValue(normalized.preferred_origin_airport) || fallback.preferred_origin_airport,
+      lifetime_booking_count: detailNumberValue(normalized.lifetime_booking_count) || fallback.lifetime_booking_count || 0,
+      vip_status: detailTextValue(normalized.vip_status) || fallback.vip_status,
+      loyalty_tier: detailTextValue(normalized.loyalty_tier) || fallback.loyalty_tier,
+      watched_price_destination: detailDestinationValue(normalized.watched_price_destination) || fallback.watched_price_destination,
+      deal_affinity: detailTextValue(normalized.deal_affinity) || fallback.deal_affinity,
+      price_sensitivity: detailTextValue(normalized.price_sensitivity) || fallback.price_sensitivity,
+      active_itinerary_items: detailArrayWithFallback(normalized.active_itinerary_items, fallback.active_itinerary_items),
+      abandoned_cart_items: detailArrayWithFallback(normalized.abandoned_cart_items, fallback.abandoned_cart_items),
+      booking_lifecycle_stage: detailTextValue(normalized.booking_lifecycle_stage) || fallback.booking_lifecycle_stage,
+      traveler_composition: normalized.traveler_composition || fallback.traveler_composition,
+      preferred_product_categories: detailArrayWithFallback(normalized.preferred_product_categories, fallback.preferred_product_categories),
+      preferred_trip_types: detailArrayWithFallback(normalized.preferred_trip_types, fallback.preferred_trip_types),
+      destination_affinities: detailArrayWithFallback(normalized.destination_affinities, fallback.destination_affinities),
+      top_destination: detailDestinationValue(normalized.top_destination) || topAffinityDestination(normalized.destination_affinities) || fallback.top_destination || destination,
+      next_trip_destination: detailDestinationValue(normalized.next_trip_destination) || detailDestinationValue(normalized.top_destination) || destination,
       last_interest_destination: destination,
-      last_interest_trip_type: searchDetails.trip_type || searchDetails.tripType || offerDetails.trip_type || destinationDetails.trip_type || fallback.last_interest_trip_type,
+      last_interest_trip_type: firstArrayValue(normalized.preferred_trip_types) || searchDetails.trip_type || searchDetails.tripType || offerDetails.trip_type || destinationDetails.trip_type || fallback.last_interest_trip_type,
       booking_value: Number.isFinite(value) ? value : fallback.booking_value
     },
     raw
@@ -206,6 +253,39 @@ function detailNameValue(value) {
   if (Array.isArray(unwrapped)) return detailNameValue(unwrapped[0]);
   if (typeof unwrapped === "object") return unwrapped.first_name || unwrapped.firstName || unwrapped.name || unwrapped.value || unwrapped.text || unwrapped.title || "";
   return String(unwrapped);
+}
+
+function detailTextValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (unwrapped === undefined || unwrapped === null || unwrapped === "") return "";
+  if (typeof unwrapped === "string") return unwrapped;
+  if (typeof unwrapped === "number" || typeof unwrapped === "boolean") return String(unwrapped);
+  if (Array.isArray(unwrapped)) return detailTextValue(unwrapped[0]);
+  if (typeof unwrapped === "object") return unwrapped.value || unwrapped.name || unwrapped.title || unwrapped.label || unwrapped.id || "";
+  return String(unwrapped);
+}
+
+function detailArrayValue(value) {
+  const unwrapped = unwrapAttributeValue(value);
+  if (unwrapped === undefined || unwrapped === null || unwrapped === "") return [];
+  return Array.isArray(unwrapped) ? unwrapped : [unwrapped];
+}
+
+function detailArrayWithFallback(value, fallback = []) {
+  const items = detailArrayValue(value);
+  return items.length ? items : detailArrayValue(fallback);
+}
+
+function firstArrayValue(value) {
+  const items = detailArrayValue(value);
+  return detailTextValue(items[0]);
+}
+
+function topAffinityDestination(value) {
+  const affinities = detailArrayValue(value);
+  if (!affinities.length) return "";
+  const sorted = [...affinities].sort((a, b) => detailNumberValue(b.score ?? b.value ?? b.affinity) - detailNumberValue(a.score ?? a.value ?? a.affinity));
+  return detailDestinationValue(sorted[0]);
 }
 
 function detailNumberValue(value) {
@@ -312,7 +392,28 @@ export function localProfile(personaId = "anonymous", identity = {}) {
       last_interest_trip_type: persona.preferredTripType,
       next_departure_date: persona.id === "business" ? "2026-10-03" : persona.id === "vip" ? "2026-11-02" : persona.id === "family" ? "2026-08-08" : "2026-09-12",
       booking_value: bookingValue,
+      preferred_origin_airport: persona.id === "business" ? "PRG" : "PRG",
+      lifetime_booking_count: persona.id === "vip" ? 9 : persona.id === "business" ? 5 : persona.id === "family" ? 3 : 1,
+      vip_status: persona.id === "vip" ? "vip" : persona.id === "business" ? "priority" : "standard",
       loyalty_tier: persona.loyaltyTier,
+      watched_price_destination: persona.preferredDestination,
+      deal_affinity: persona.budgetAffinity === "value" ? "high" : persona.id === "vip" ? "low" : "medium",
+      price_sensitivity: persona.budgetAffinity === "value" ? "high" : persona.budgetAffinity === "premium" ? "low" : "medium",
+      active_itinerary_items: persona.id === "abandoner" ? [] : persona.cartRestoreIds.slice(0, 2),
+      abandoned_cart_items: persona.id === "abandoner" ? persona.cartRestoreIds : [],
+      booking_lifecycle_stage: persona.id === "abandoner" ? "checkout_abandoned" : persona.id === "anonymous" ? "searching" : "post_booking",
+      traveler_composition: {
+        adults: persona.id === "business" ? 1 : 2,
+        children: persona.id === "family" ? 2 : 0,
+        children_ages: persona.id === "family" ? [6, 8] : []
+      },
+      preferred_product_categories: persona.id === "business" ? ["flight", "hotel", "transfer"] : persona.id === "family" ? ["package", "experience", "transfer"] : ["package", "hotel", "experience"],
+      preferred_trip_types: [persona.preferredTripType],
+      destination_affinities: [
+        { destination: persona.preferredDestination, score: 0.92 },
+        { destination: persona.id === "business" ? "Zurich" : "Lisbon", score: 0.61 }
+      ],
+      top_destination: persona.preferredDestination,
       recommended_add_on_ids: addOns
     }
   };
