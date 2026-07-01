@@ -6,25 +6,25 @@ import { personalizationBanner } from "./personalizationBanners.js";
 export function searchPage(state) {
   const results = personalizedResults(state.search, state);
   const primaryResults = results.slice(0, 6);
-  const spotlight = primaryResults[0];
   const resultLabel = `${results.length} ${results.length === 1 ? "option" : "options"}`;
   const categoryLabel = state.search.productCategory && state.search.productCategory !== "all"
     ? state.search.productCategory
     : "all products";
+  const travelerCount = Number(state.search.adults || 1) + Number(state.search.children || 0);
   return `
     <section class="page-head dense search-head">
       <div>
         <p class="eyebrow">Search results</p>
         <h1>${state.search.destination} trips, sorted by personal relevance</h1>
-        <p>${resultLabel} for ${Number(state.search.adults || 1) + Number(state.search.children || 0)} travelers, with suspiciously calm recommendations near the top.</p>
+        <p>${resultLabel} for ${travelerCount} travelers. Search intent, profile data, and sellable add-ons are doing the quiet math.</p>
       </div>
       <a class="secondary" href="/demo-control" data-link>Switch persona</a>
     </section>
     ${searchPanel(state.search)}
-    <section class="search-summary-strip">
-      <article><span>Route</span><strong>${state.search.origin || "Prague"} to ${state.search.destination}</strong></article>
-      <article><span>Dates</span><strong>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</strong></article>
-      <article><span>Travelers</span><strong>${Number(state.search.adults || 1) + Number(state.search.children || 0)} people, ${state.search.cabinClass || "economy"}</strong></article>
+    <section class="search-context-bar">
+      <span><strong>${state.search.origin || "Prague"} to ${state.search.destination}</strong></span>
+      <span>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</span>
+      <span>${travelerCount} people · ${state.search.cabinClass || "economy"}</span>
     </section>
     <section class="results-shell">
       <div class="results-panel">
@@ -33,54 +33,29 @@ export function searchPage(state) {
             <span class="eyebrow">Best matches</span>
             <strong>${categoryLabel} · ${state.search.tripType}</strong>
           </div>
-          <span>${resultLabel}</span>
+          <div class="search-signal-row" aria-label="Search signals">
+            ${productSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.productCategory ? "is-active" : ""}">${filter}</span>`).join("")}
+            ${moodSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.tripType ? "is-active" : ""}">${filter}</span>`).join("")}
+          </div>
+          <span class="result-count">${resultLabel}</span>
         </div>
         <section class="results-list">
           ${primaryResults.length ? primaryResults.map((product, index) => resultCard(product, index, state)).join("") : emptyResults(state)}
         </section>
         ${personalizationBanner("search", state)}
       </div>
-      <aside class="filter-panel search-filter-panel">
-        <div>
-          <span class="eyebrow">Signals</span>
-          <h2>Why these offers</h2>
-        </div>
-        <div class="filter-group">
-          <strong>Product mix</strong>
-          ${productSignals(results).map((filter) => `<span class="signal-chip ${filter === state.search.productCategory ? "is-active" : ""}">${filter}</span>`).join("")}
-        </div>
-        <div class="filter-group">
-          <strong>Mood signals</strong>
-          ${moodSignals(results, state).map((filter) => `<span class="signal-chip ${filter === state.search.tripType ? "is-active" : ""}">${filter}</span>`).join("")}
-        </div>
-        <label>Sort by
-          <select data-sort>
-            <option>recommended</option>
-            <option>price</option>
-            <option>shortest flight</option>
-            <option>least regret</option>
-          </select>
-        </label>
-        ${spotlight ? `
-          <article class="filter-insight">
-            <span>Top signal</span>
-            <strong>${spotlight.destination}</strong>
-            <p>${spotlight.tagline}</p>
-          </article>
-        ` : ""}
-      </aside>
     </section>
     ${rail("Recently viewed", recommendationRail("search", state).slice(0, 4), "search_recent")}
     ${rail("Recommended for you", recommendationRail("search", state), "search_recommended")}
   `;
 }
 
-function productSignals(results) {
-  return [...new Set(results.map((product) => product.type))].slice(0, 5);
+function productSignals(results, state) {
+  return [...new Set([state.search.productCategory, ...results.map((product) => product.type)].filter((value) => value && value !== "all"))].slice(0, 4);
 }
 
 function moodSignals(results, state) {
-  return [...new Set([state.search.tripType, ...results.map((product) => product.tripType), "vip"].filter(Boolean))].slice(0, 5);
+  return [...new Set([state.search.tripType, ...results.map((product) => product.tripType)].filter(Boolean))].slice(0, 3);
 }
 
 function resultCard(product, index, state) {

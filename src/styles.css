@@ -447,46 +447,43 @@ textarea {
 .search-head p {
   max-width: 680px;
 }
-.search-summary-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 10px;
-}
-.search-summary-strip article {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+.search-context-bar {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  min-width: 0;
+  margin-top: 10px;
   padding: 10px 12px;
+  color: var(--muted);
   background: white;
   border: 1px solid var(--line);
   border-radius: 10px;
   box-shadow: var(--soft-shadow);
 }
-.search-summary-strip span {
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 850;
-  text-transform: uppercase;
+.search-context-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding-right: 10px;
+  border-right: 1px solid var(--line);
+  font-size: 0.92rem;
+  font-weight: 750;
 }
-.search-summary-strip strong {
-  overflow-wrap: anywhere;
+.search-context-bar span:last-child {
+  border-right: 0;
+}
+.search-context-bar strong {
+  color: var(--ink);
 }
 .results-shell {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
-  margin-top: 22px;
+  margin-top: 14px;
 }
 .results-panel {
-  order: 2;
   min-width: 0;
-}
-.search-filter-panel {
-  order: 1;
 }
 .filter-panel {
   position: sticky;
@@ -557,14 +554,24 @@ textarea {
 .results-toolbar span {
   color: var(--muted);
 }
+.search-signal-row {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.result-count {
+  white-space: nowrap;
+}
 .results-list {
   display: grid;
   gap: 14px;
 }
 .result-card {
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
   grid-template-rows: auto;
-  min-height: 230px;
+  min-height: 224px;
 }
 .result-image {
   position: relative;
@@ -1881,8 +1888,14 @@ textarea {
     grid-column: span 2;
     min-height: 58px;
   }
-  .search-summary-strip {
-    grid-template-columns: 1fr;
+  .search-context-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .search-context-bar span {
+    width: 100%;
+    padding-right: 0;
+    border-right: 0;
   }
   .destination-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1901,12 +1914,6 @@ textarea {
   }
   .results-shell, .product-detail, .offer-hero, .offer-detail-grid, .cart-layout, .confirmation, .account-layout, .event-types, .empty-itinerary, .wishlist-layout, .checkout-grid, .checkout-flow, .profile-proof-grid, .review-shell {
     grid-template-columns: 1fr;
-  }
-  .results-panel {
-    order: 1;
-  }
-  .search-filter-panel {
-    order: 2;
   }
   .filter-panel,
   .booking-summary,
@@ -1927,13 +1934,6 @@ textarea {
   .loyalty-hero {
     align-items: flex-start;
     flex-direction: column;
-  }
-  .filter-panel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .filter-panel > label,
-  .filter-insight {
-    grid-column: 1 / -1;
   }
   .result-card {
     grid-template-columns: 220px minmax(0, 1fr);
@@ -2093,6 +2093,12 @@ textarea {
   .result-title-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+  .search-signal-row {
+    justify-content: flex-start;
+  }
+  .result-count {
+    white-space: normal;
   }
   .result-card {
     grid-template-columns: 1fr;
