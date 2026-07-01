@@ -2,6 +2,7 @@ import { findProductByIdOrSlug } from "../catalog/lookups.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { profileProof, rail } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function productPage(state, slug) {
   const product = findProductByIdOrSlug(slug);
@@ -35,6 +36,7 @@ export function productPage(state, slug) {
         <div class="banner">Because you looked at ${product.destination} twice, the algorithm has become quietly invested.</div>
       </aside>
     </section>
+    ${personalizationBanner("product", state, { product })}
     <section class="offer-detail-grid">
       <article class="offer-panel">
         <span class="eyebrow">Included</span>

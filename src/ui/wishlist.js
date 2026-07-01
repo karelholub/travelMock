@@ -2,6 +2,7 @@ import { findProductsByIds } from "../catalog/lookups.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { productCard, rail } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function wishlistPage(state) {
   const savedProducts = findProductsByIds(state.savedProductIds || []);
@@ -17,6 +18,7 @@ export function wishlistPage(state) {
       </div>
       <a class="primary" href="/search" data-link>Find more trips</a>
     </section>
+    ${personalizationBanner("wishlist", state)}
     <section class="wishlist-layout">
       <div class="wishlist-list">
         ${savedProducts.map((product) => `
@@ -72,6 +74,7 @@ function emptyWishlist(state, recs) {
         ${recs.slice(0, 3).map((product) => productCard(product, { cta: "Add" })).join("")}
       </div>
     </section>
+    ${personalizationBanner("wishlist", state)}
     ${rail("Save-worthy ideas", recs, "wishlist_empty_recovery")}
   `;
 }

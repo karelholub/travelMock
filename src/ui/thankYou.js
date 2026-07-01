@@ -3,6 +3,7 @@ import { money, productTypeLabel } from "../utils/format.js";
 import { detailText } from "../utils/profileDisplay.js";
 import { bookedProductsFromBooking } from "./bookingProducts.js";
 import { rail } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function thankYouPage(state) {
   const booking = state.booking;
@@ -51,6 +52,7 @@ export function thankYouPage(state) {
         <div><span>Product types</span><strong>${booking.booked_product_types || booking.product_types?.join(", ")}</strong></div>
       </aside>
     </section>
+    ${personalizationBanner("thankYou", state)}
     <section class="profile-proof-grid">
       <article class="summary-card">
         <h2>Profile API proof</h2>

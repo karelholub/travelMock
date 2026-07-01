@@ -1,6 +1,7 @@
 import { personalizedResults, recommendationRail } from "../recommendations/strategies.js";
 import { compactDate, money, productTypeLabel } from "../utils/format.js";
 import { rail, searchPanel } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function searchPage(state) {
   const results = personalizedResults(state.search, state);
@@ -21,6 +22,7 @@ export function searchPage(state) {
       <article><span>Dates</span><strong>${compactDate(state.search.departureDate)} to ${compactDate(state.search.returnDate)}</strong></article>
       <article><span>Travelers</span><strong>${Number(state.search.adults || 1) + Number(state.search.children || 0)} people, ${state.search.cabinClass || "economy"}</strong></article>
     </section>
+    ${personalizationBanner("search", state)}
     <section class="results-shell">
       <aside class="filter-panel">
         <div>

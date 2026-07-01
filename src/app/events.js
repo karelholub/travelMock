@@ -17,6 +17,7 @@ export function wireEvents(summary, render) {
   wireCheckoutSteps();
   wireReviewForm();
   wireProfileControls();
+  wirePersonalizationBanners();
   wireDemoControls();
 }
 
@@ -392,6 +393,35 @@ function wireProfileControls() {
   document.querySelector("[data-refresh-profile]")?.addEventListener("click", async () => {
     trackEvent("select_item", { item_id: "profile_api_refresh", item_name: "Refresh profile", item_type: "profile_api", list_name: "account" });
     await refreshAccountProfile(state, { force: true });
+  });
+}
+
+function wirePersonalizationBanners() {
+  document.querySelectorAll("[data-personalization-banner]").forEach((banner) => {
+    banner.querySelectorAll("a, button").forEach((control) => {
+      control.addEventListener("click", () => {
+        trackEvent("select_item", {
+          item_id: banner.dataset.personalizationBanner,
+          item_name: "Personalization banner action",
+          item_type: "personalization_banner",
+          list_name: location.pathname
+        });
+      });
+    });
+  });
+
+  document.querySelectorAll("[data-personalization-popup]").forEach((popup) => {
+    const storageKey = `elsewhere-dismissed-popup-${popup.dataset.personalizationPopup}`;
+    if (sessionStorage.getItem(storageKey)) {
+      popup.remove();
+      return;
+    }
+    window.setTimeout(() => popup.classList.add("is-visible"), 260);
+    popup.querySelector("[data-dismiss-personalization]")?.addEventListener("click", () => {
+      sessionStorage.setItem(storageKey, "1");
+      popup.classList.remove("is-visible");
+      window.setTimeout(() => popup.remove(), 220);
+    });
   });
 }
 

@@ -8,6 +8,7 @@ import { reviewPage } from "../ui/review.js";
 import { searchPage } from "../ui/search.js";
 import { thankYouPage } from "../ui/thankYou.js";
 import { wishlistPage } from "../ui/wishlist.js";
+import { personalizationPopup } from "../ui/personalizationBanners.js";
 
 export const routes = ["/", "/search", "/product", "/itinerary", "/wishlist", "/checkout", "/thank-you", "/review", "/account", "/demo-control"];
 
@@ -25,7 +26,7 @@ export function routeView(path, state, summary) {
   return `<section class="empty-panel"><h1>Route not found</h1><a class="primary" href="/" data-link>Go home</a></section>`;
 }
 
-export function layout(content, summary, state) {
+export function layout(content, summary, state, path = "/") {
   const savedCount = state.savedProductIds?.length || 0;
   return `
     <header class="site-header">
@@ -42,5 +43,6 @@ export function layout(content, summary, state) {
       </nav>
     </header>
     <main>${content}</main>
+    ${personalizationPopup(state, path)}
   `;
 }

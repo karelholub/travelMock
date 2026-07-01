@@ -2,6 +2,7 @@ import { personas } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { productCard, rail } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function itineraryPage(state, summary) {
   if (!summary.enriched.length) return emptyItinerary(state);
@@ -15,6 +16,7 @@ export function itineraryPage(state, summary) {
       </div>
       <a class="primary" href="/checkout" data-link>Checkout</a>
     </section>
+    ${personalizationBanner("itinerary", state)}
     <section class="cart-layout">
       <div class="cart-items itinerary-timeline">
         ${summary.enriched.map((item, index) => `
@@ -69,6 +71,7 @@ function emptyItinerary(state) {
         ${recs.slice(0, 3).map((product) => productCard(product, { cta: "Add" })).join("")}
       </div>
     </section>
+    ${personalizationBanner("itinerary", state)}
     ${rail("Trip starters", recs, "cart_empty_recovery")}
   `;
 }

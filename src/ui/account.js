@@ -4,6 +4,7 @@ import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
 import { detailDestination, detailListName, detailNumber, detailText, maskIdentifier, profileApiStatus } from "../utils/profileDisplay.js";
 import { rail } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function accountPage(state) {
   const persona = personas[state.personaId] || personas.anonymous;
@@ -55,6 +56,7 @@ export function accountPage(state) {
         <a class="secondary" href="/itinerary" data-link>Review itinerary</a>
       </div>
     </section>
+    ${personalizationBanner("account", state)}
     <section class="account-layout">
       <section class="account-main">
         <div class="account-kpis">

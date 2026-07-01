@@ -31,7 +31,7 @@ async function boot() {
 function render() {
   const summary = cartSummary();
   const path = location.pathname;
-  app.innerHTML = layout(routeView(path, state, summary), summary, state);
+  app.innerHTML = layout(routeView(path, state, summary), summary, state, path);
   wireEvents(summary, render);
   trackPageView({ route: path, persona: state.personaId });
   runPageEffects(path, state, summary);

@@ -4,6 +4,7 @@ import { personas } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { money } from "../utils/format.js";
 import { profileProof, productCard, rail, searchPanel } from "./components.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function homePage(state) {
   const persona = personas[state.personaId] || personas.anonymous;
@@ -39,6 +40,7 @@ export function homePage(state) {
       </div>
       ${profileProof(state.profile)}
     </section>
+    ${personalizationBanner("home", state)}
     <section class="destination-band">
       <div class="section-heading">
         <h2>Popular ways to leave responsibly</h2>

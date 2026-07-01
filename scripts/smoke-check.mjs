@@ -37,6 +37,7 @@ const checkout = await readFile("src/ui/checkout.js", "utf8");
 const thankYou = await readFile("src/ui/thankYou.js", "utf8");
 const review = await readFile("src/ui/review.js", "utf8");
 const wishlist = await readFile("src/ui/wishlist.js", "utf8");
+const personalizationBanners = await readFile("src/ui/personalizationBanners.js", "utf8");
 const recommendations = await readFile("src/recommendations/strategies.js", "utf8");
 const lookup = await readFile("src/catalog/lookups.js", "utf8");
 const simulator = await readFile("scripts/simulate-events.mjs", "utf8");
@@ -100,6 +101,13 @@ assert(thankYou.includes("confirmation-image") && thankYou.includes("bookedProdu
 assert(review.includes("data-review-form") && sourceText.includes("wireReviewForm") && sourceText.includes('trackEvent("survey_answer"'), "Review page must submit survey_answer event");
 assert(sourceText.includes("price-watch-panel") && sourceText.includes("data-watch-target") && sourceText.includes("data-watch-alert-toggle"), "Watch price CTA must show an interactive price watch panel");
 assert(wishlist.includes("wishlistPage") && sourceText.includes("data-save") && sourceText.includes("showWishlistModal") && sourceText.includes("data-remove-wishlist"), "Wishlist page and modal controls must exist");
+for (const placement of ["home", "search", "product", "itinerary", "checkout", "account", "thankYou", "wishlist"]) {
+  assert(personalizationBanners.includes(`${placement}:`) && sourceText.includes(`personalizationBanner("${placement}"`), `Personalization banner placement missing: ${placement}`);
+}
+assert(sourceText.includes("personalizationPopup(state, path)") && sourceText.includes("data-dismiss-personalization"), "Personalization popup must be mounted and dismissible");
+for (const field of ["first_name", "last_search_details", "abandoned_booking", "last_viewed_offer_details", "last_wishlist_item_added", "total_lifetime_purchase_value", "recommended_add_on_ids"]) {
+  assert(personalizationBanners.includes(field), `Personalization banners must use Profile API field: ${field}`);
+}
 assert(sourceText.includes("data-product-category") && sourceText.includes("data-product-category-value"), "Search category pills must update the searchable product category");
 for (const checkoutStep of ["travelers", "contact", "addons", "payment"]) {
   assert(checkout.includes(`data-checkout-step="${checkoutStep}"`), `Checkout progress step missing: ${checkoutStep}`);

@@ -1,5 +1,6 @@
 import { trackingCartPayload } from "../tracking/schema.js";
 import { money } from "../utils/format.js";
+import { personalizationBanner } from "./personalizationBanners.js";
 
 export function checkoutPage(state, summary) {
   if (!summary.enriched.length) {
@@ -16,6 +17,7 @@ export function checkoutPage(state, summary) {
       </div>
       <strong>${money(summary.total)}</strong>
     </section>
+    ${personalizationBanner("checkout", state)}
     <form class="checkout-flow" data-checkout-form>
       <div class="checkout-main">
         <section class="checkout-progress" aria-label="Checkout steps">
