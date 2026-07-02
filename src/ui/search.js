@@ -21,7 +21,6 @@ export function searchPage(state) {
     </section>
     ${searchPanel(state.search, { variant: "compact" })}
     ${luckyPickBanner(state, "search")}
-    ${whatsappConsentBanner(state, "search")}
     <section class="results-shell">
       <div class="results-panel">
         <div class="results-toolbar">
@@ -43,6 +42,7 @@ export function searchPage(state) {
       </div>
     </section>
     ${rail("Recommended for you", recommendationRail("search", state), "search_recommended")}
+    ${whatsappConsentBanner(state, "search")}
   `;
 }
 
