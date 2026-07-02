@@ -397,6 +397,66 @@ function wireProfileControls() {
 }
 
 function wirePersonalizationBanners() {
+  document.querySelectorAll("[data-whatsapp-consent-banner]").forEach((banner) => {
+    trackEvent("web_banner_impression", {
+      banner_id: `whatsapp_${banner.dataset.whatsappConsentBanner}`,
+      item_name: "WhatsApp price alert consent",
+      item_type: "whatsapp_consent_banner",
+      destination: banner.dataset.destination,
+      list_name: location.pathname
+    });
+    banner.querySelector("[data-whatsapp-consent-form]")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const phoneInput = form.querySelector("input[name='phone']");
+      const consentInput = form.querySelector("input[name='whatsappConsent']");
+      const phone = normalizeCzechPhone(phoneInput?.value || "");
+      const hasConsent = Boolean(consentInput?.checked);
+      const isValid = /^\+420\d{9}$/.test(phone);
+      banner.querySelector("[data-whatsapp-error]")?.classList.toggle("is-visible", !isValid || !hasConsent);
+      phoneInput?.classList.toggle("is-invalid", !isValid);
+      if (!isValid || !hasConsent) {
+        if (!hasConsent) consentInput?.focus();
+        return;
+      }
+      setConsent({ marketing: true, personalization: true });
+      const payload = {
+        lead_type: "whatsapp_price_alert",
+        channel: "whatsapp",
+        phone,
+        consent_whatsapp: true,
+        consent_text: "I agree to receive WhatsApp price alerts, campaign updates, and useful booking reminders from Elsewhere Travel Co.",
+        source: "onsite_profile_api_banner",
+        banner_id: `whatsapp_${banner.dataset.whatsappConsentBanner}`,
+        destination: banner.dataset.destination,
+        trip_type: banner.dataset.tripType,
+        travel_start_date: banner.dataset.travelStartDate,
+        travel_end_date: banner.dataset.travelEndDate,
+        context_name: banner.dataset.contextName,
+        list_name: location.pathname
+      };
+      trackEvent("generate_lead", payload);
+      trackEvent("web_banner_click", {
+        ...payload,
+        item_name: "WhatsApp consent submitted",
+        item_type: "whatsapp_consent_banner"
+      });
+      banner.classList.add("is-success");
+    });
+    banner.querySelectorAll("[data-whatsapp-dismiss]").forEach((button) => {
+      button.addEventListener("click", () => {
+        banner.remove();
+        trackEvent("web_banner_close", {
+          banner_id: `whatsapp_${banner.dataset.whatsappConsentBanner}`,
+          item_name: "WhatsApp consent dismissed",
+          item_type: "whatsapp_consent_banner",
+          destination: banner.dataset.destination,
+          list_name: location.pathname
+        });
+      });
+    });
+  });
+
   document.querySelectorAll("[data-lucky-pick]").forEach((banner) => {
     trackEvent("web_banner_impression", {
       banner_id: banner.dataset.luckyPick,
@@ -455,6 +515,13 @@ function wirePersonalizationBanners() {
       window.setTimeout(() => popup.remove(), 220);
     });
   });
+}
+
+function normalizeCzechPhone(value) {
+  let digits = String(value || "").replace(/[^\d]/g, "");
+  if (digits.startsWith("00420")) digits = digits.slice(5);
+  if (digits.startsWith("420")) digits = digits.slice(3);
+  return `+420${digits}`;
 }
 
 function wireDemoControls() {

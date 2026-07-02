@@ -235,6 +235,70 @@ export function luckyPickBanner(state, placement = "home") {
   `;
 }
 
+export function whatsappConsentBanner(state, placement = "search") {
+  const fields = profileFields(state);
+  const destination = destinationSignal(fields, state.search.destination);
+  const tripType = detailText(fields.preferred_trip_types || fields.last_interest_trip_type || state.search.tripType, state.search.tripType);
+  const dates = dateRangeLabel(state.search);
+  const travelers = travelerLabel(fields, state);
+  const phone = localPhoneValue(detailText(fields.phone || state.booking?.phone, ""));
+  const watchedDestination = detailDestination(fields.watched_price_destination) || destination;
+  const contextTitle = watchedDestination === destination
+    ? `${destination} ${tripType} trip`
+    : `${watchedDestination} price watch`;
+  const contextDetails = `${dates} · ${travelers}`;
+  const consentText = "I agree to receive WhatsApp price alerts, campaign updates, and useful booking reminders from Elsewhere Travel Co.";
+  return `
+    <section
+      class="whatsapp-consent-banner"
+      data-whatsapp-consent-banner="${placement}"
+      data-destination="${attr(destination)}"
+      data-trip-type="${attr(tripType)}"
+      data-travel-start-date="${attr(state.search.departureDate || "")}"
+      data-travel-end-date="${attr(state.search.returnDate || "")}"
+      data-context-name="${attr(contextTitle)}"
+      aria-label="WhatsApp price alert consent"
+    >
+      <button class="whatsapp-consent-close" type="button" data-whatsapp-dismiss aria-label="Hide WhatsApp price alert">&times;</button>
+      <div class="whatsapp-consent-hero" aria-hidden="true">
+        <div class="whatsapp-phone-mark">WA</div>
+        <div class="whatsapp-bubbles">
+          <span>${firstName(fields)}, price changes for ${destination}?</span>
+          <span>We can message you on WhatsApp.</span>
+        </div>
+      </div>
+      <div class="whatsapp-consent-body" data-whatsapp-content>
+        <span class="eyebrow">WhatsApp price alert</span>
+        <h2>${firstName(fields)}, should we watch ${destination} for you?</h2>
+        <p>Get a WhatsApp heads-up if prices, availability, or timely little travel temptations change for your recent search.</p>
+        <div class="whatsapp-context">
+          <span>Profile context</span>
+          <strong>${contextTitle}</strong>
+          <small>${contextDetails}</small>
+        </div>
+        <form class="whatsapp-consent-form" data-whatsapp-consent-form>
+          <div class="whatsapp-phone-row">
+            <span>+420</span>
+            <input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="777 123 456" value="${attr(phone)}" />
+          </div>
+          <p class="whatsapp-error" data-whatsapp-error>Enter a valid phone number and tick the WhatsApp consent box.</p>
+          <label class="whatsapp-check">
+            <input name="whatsappConsent" type="checkbox" />
+            <span>${consentText}</span>
+          </label>
+          <button class="primary full" type="submit">Send WhatsApp alerts</button>
+          <button class="whatsapp-dismiss-link" type="button" data-whatsapp-dismiss>Not now</button>
+        </form>
+      </div>
+      <div class="whatsapp-success" data-whatsapp-success>
+        <strong>All set. We will keep it useful.</strong>
+        <p>WhatsApp alerts are ready for ${contextTitle}. If the price moves, the CDP now has permission to be helpful.</p>
+        <button class="secondary full" type="button" data-whatsapp-dismiss>Close</button>
+      </div>
+    </section>
+  `;
+}
+
 function dateRangeLabel(search = {}) {
   if (!search.departureDate || !search.returnDate) return "Dates from recent search";
   return `${formatDate(search.departureDate)} - ${formatDate(search.returnDate)}`;
@@ -253,6 +317,21 @@ function travelerLabel(fields, state) {
   const ages = Array.isArray(composition.children_ages || composition.childAges) ? composition.children_ages || composition.childAges : state.search.childAges || [];
   const childText = children ? `, ${children} children${ages.length ? ` (${ages.join(", ")})` : ""}` : "";
   return `${adults} adults${childText}`;
+}
+
+function localPhoneValue(value) {
+  const digits = String(value || "").replace(/[^\d]/g, "");
+  if (digits.startsWith("420")) return digits.slice(3);
+  if (digits.startsWith("00420")) return digits.slice(5);
+  return digits;
+}
+
+function attr(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 export function personalizationPopup(state, path) {

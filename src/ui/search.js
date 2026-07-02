@@ -1,7 +1,7 @@
 import { personalizedResults, recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { rail, searchPanel } from "./components.js";
-import { luckyPickBanner, personalizationBanner } from "./personalizationBanners.js";
+import { luckyPickBanner, personalizationBanner, whatsappConsentBanner } from "./personalizationBanners.js";
 
 export function searchPage(state) {
   const results = personalizedResults(state.search, state);
@@ -21,6 +21,7 @@ export function searchPage(state) {
     </section>
     ${searchPanel(state.search, { variant: "compact" })}
     ${luckyPickBanner(state, "search")}
+    ${whatsappConsentBanner(state, "search")}
     <section class="results-shell">
       <div class="results-panel">
         <div class="results-toolbar">

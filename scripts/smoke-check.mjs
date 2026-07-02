@@ -110,6 +110,9 @@ assert(wishlist.includes("wishlistPage") && sourceText.includes("data-save") && 
 assert(personalizationBanners.includes("luckyPickBanner") && sourceText.includes("data-lucky-pick") && sourceText.includes("data-lucky-reveal"), "Profile API lucky pick banner must exist and be revealable");
 assert(sourceText.includes('trackEvent("web_banner_impression"') && sourceText.includes('trackEvent("web_banner_click"') && sourceText.includes('trackEvent("web_banner_close"'), "Lucky pick banner must emit web banner tracking events");
 assert(personalizationBanners.includes("destination_affinities") && personalizationBanners.includes("booking_lifecycle_stage") && personalizationBanners.includes("traveler_composition"), "Lucky pick banner must use Profile API personalization fields");
+assert(personalizationBanners.includes("whatsappConsentBanner") && sourceText.includes("data-whatsapp-consent-form") && sourceText.includes("consent_whatsapp"), "WhatsApp consent banner must collect explicit channel consent");
+assert(sourceText.includes('trackEvent("generate_lead"') && trackingSchema.includes("generate_lead"), "WhatsApp consent banner must emit generate_lead tracking");
+assert(personalizationBanners.includes("watched_price_destination") && personalizationBanners.includes("traveler_composition"), "WhatsApp consent banner must use Profile API personalization fields");
 assert(sourceText.includes('["all", "All"]') && recommendations.includes('productCategory !== "all"'), "Search must support broad all-product results");
 assert(sourceText.includes('["/search", "/checkout", "/thank-you", "/review"].includes(path)'), "Search page must not show the blocking personalization popup");
 assert(sourceText.includes("productSignals(results, state)") && sourceText.includes("moodSignals(results, state)"), "Search page must show passive signal chips instead of fake filter buttons");

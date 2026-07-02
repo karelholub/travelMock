@@ -45,6 +45,7 @@ export const trackingEvents = {
   review_submitted: ["booking_id", "rating"],
   survey_answer: ["booking_id", "rating"],
   payment_failed: ["booking_id", "reason"],
+  generate_lead: ["lead_type", "channel", "phone", "consent_whatsapp", "consent_text", "destination", "trip_type", "travel_start_date", "travel_end_date"],
   set_consent: ["analytics", "personalization", "marketing"],
   identify_user: ["email", "phone", "loyalty_tier"]
 };
