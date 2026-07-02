@@ -842,13 +842,13 @@ textarea {
 .lucky-pick-banner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(170px, 0.34fr) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 0.4fr) minmax(0, 1fr);
   gap: 0;
-  margin-top: 18px;
+  margin-top: 22px;
   overflow: hidden;
   color: var(--ink);
   background: white;
-  border: 1px solid var(--line);
+  border: 1px solid #cfe0dc;
   border-radius: 8px;
   box-shadow: var(--shadow);
 }
@@ -869,28 +869,55 @@ textarea {
   box-shadow: 0 10px 22px rgba(17, 24, 23, 0.1);
 }
 .lucky-pick-mark {
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 8px;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: end;
   min-height: 310px;
-  padding: 28px;
+  padding: 22px;
   color: white;
   background: #0b4f49;
+}
+.lucky-pick-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(5, 20, 18, 0.1), rgba(5, 20, 18, 0.72));
+}
+.lucky-pick-mark img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lucky-pick-mark-card {
+  display: grid;
+  gap: 8px;
+  width: min(210px, 100%);
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  color: var(--ink);
+  box-shadow: 0 22px 42px rgba(0, 0, 0, 0.18);
 }
 .lucky-pick-mark strong {
   display: grid;
   place-items: center;
-  width: 118px;
-  height: 118px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  width: 62px;
+  height: 62px;
+  border: 1px solid rgba(0, 127, 115, 0.25);
   border-radius: 8px;
   background: #007f73;
-  font-size: 4.2rem;
+  color: white;
+  font-size: 2.4rem;
   line-height: 1;
-  box-shadow: 0 22px 38px rgba(0, 0, 0, 0.16);
 }
 .lucky-pick-mark span {
+  color: var(--muted);
   font-size: 0.78rem;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -899,9 +926,9 @@ textarea {
 .lucky-pick-copy {
   display: grid;
   align-content: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
-  padding: 28px;
+  padding: clamp(22px, 3vw, 34px);
 }
 .lucky-pick-copy h2 {
   max-width: 740px;
@@ -928,17 +955,18 @@ textarea {
   color: var(--muted);
   background: var(--soft);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 800;
 }
 .lucky-pick-card {
   display: none;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 190px minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid #cfe0dc;
   border-radius: 8px;
   background: white;
+  box-shadow: 0 14px 30px rgba(17, 24, 23, 0.08);
 }
 .lucky-pick-banner.is-revealed .lucky-pick-card {
   display: grid;
@@ -961,7 +989,7 @@ textarea {
   padding: 6px 9px;
   color: white;
   background: var(--accent);
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 0.72rem;
   font-weight: 900;
 }
@@ -998,10 +1026,11 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  align-items: center;
 }
 .lucky-pick-actions .primary,
 .lucky-pick-actions .secondary {
-  min-height: 44px;
+  min-height: 46px;
 }
 .lucky-pick-actions [data-lucky-open] {
   display: none;
@@ -1016,15 +1045,15 @@ textarea {
 .whatsapp-consent-banner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  grid-template-columns: minmax(270px, 0.38fr) minmax(0, 1fr);
   gap: 0;
-  margin-top: 18px;
+  margin-top: 22px;
   overflow: hidden;
   color: var(--ink);
   background: white;
-  border: 1px solid var(--line);
+  border: 1px solid #cfe0dc;
   border-radius: 8px;
-  box-shadow: var(--soft-shadow);
+  box-shadow: var(--shadow);
 }
 .whatsapp-consent-close {
   position: absolute;
@@ -1042,23 +1071,41 @@ textarea {
   line-height: 1;
 }
 .whatsapp-consent-hero {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  align-content: center;
+  align-content: end;
   gap: 16px;
   min-height: 280px;
-  padding: 28px;
-  background: #eaf7f2;
+  overflow: hidden;
+  padding: 22px;
+  background: #0b4f49;
+}
+.whatsapp-consent-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(5, 20, 18, 0.06), rgba(5, 20, 18, 0.7));
+}
+.whatsapp-consent-hero img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .whatsapp-phone-mark {
   display: grid;
   place-items: center;
   width: 62px;
   height: 62px;
-  color: white;
-  background: #128c7e;
+  color: #075448;
+  background: rgba(255, 255, 255, 0.94);
   border-radius: 8px;
   font-weight: 950;
-  box-shadow: 0 18px 34px rgba(18, 140, 126, 0.2);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
 }
 .whatsapp-bubbles {
   display: grid;
@@ -1068,8 +1115,8 @@ textarea {
   width: fit-content;
   max-width: 270px;
   padding: 9px 12px;
-  background: white;
-  border: 1px solid #cfe8df;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 8px;
   color: var(--ink);
   font-size: 0.88rem;
@@ -1084,9 +1131,9 @@ textarea {
 .whatsapp-success {
   display: grid;
   align-content: center;
-  gap: 12px;
+  gap: 13px;
   min-width: 0;
-  padding: 26px;
+  padding: clamp(22px, 3vw, 32px);
 }
 .whatsapp-consent-body h2 {
   max-width: 640px;
@@ -1101,9 +1148,9 @@ textarea {
 .whatsapp-context {
   display: grid;
   gap: 4px;
-  padding: 12px;
-  background: var(--soft);
-  border: 1px solid var(--line);
+  padding: 13px;
+  background: #f5fbf8;
+  border: 1px solid #cfe8df;
   border-radius: 8px;
 }
 .whatsapp-context span {
@@ -1122,7 +1169,7 @@ textarea {
 }
 .whatsapp-consent-form {
   display: grid;
-  gap: 10px;
+  gap: 11px;
 }
 .whatsapp-phone-row {
   display: grid;
@@ -1131,7 +1178,7 @@ textarea {
 }
 .whatsapp-phone-row span,
 .whatsapp-phone-row input {
-  min-height: 44px;
+  min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -1148,6 +1195,11 @@ textarea {
   background: white;
   font: inherit;
   font-weight: 750;
+}
+.whatsapp-phone-row input:focus {
+  border-color: #128c7e;
+  box-shadow: 0 0 0 3px rgba(18, 140, 126, 0.12);
+  outline: none;
 }
 .whatsapp-phone-row input.is-invalid {
   border-color: #b64a3b;
@@ -2790,13 +2842,17 @@ textarea {
     grid-template-columns: minmax(0, 1fr);
   }
   .lucky-pick-mark {
-    min-height: 130px;
+    min-height: 170px;
     padding: 20px;
   }
+  .lucky-pick-mark-card {
+    width: min(190px, 78%);
+    padding: 12px;
+  }
   .lucky-pick-mark strong {
-    width: 86px;
-    height: 86px;
-    font-size: 3rem;
+    width: 54px;
+    height: 54px;
+    font-size: 2.1rem;
   }
   .lucky-pick-copy {
     padding: 22px;

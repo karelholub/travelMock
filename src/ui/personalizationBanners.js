@@ -197,8 +197,11 @@ export function luckyPickBanner(state, placement = "home") {
     <section class="lucky-pick-banner" data-lucky-pick="${placement}" data-picked-product="${picked.id}" aria-label="Profile API lucky pick">
       <button class="lucky-pick-close" type="button" data-lucky-dismiss aria-label="Hide lucky pick">&times;</button>
       <div class="lucky-pick-mark" aria-hidden="true">
-        <strong>?</strong>
-        <span>Lucky pick</span>
+        <img src="${picked.image}" alt="" loading="lazy" />
+        <div class="lucky-pick-mark-card">
+          <strong>?</strong>
+          <span>Lucky pick</span>
+        </div>
       </div>
       <div class="lucky-pick-copy">
         <span class="eyebrow">Profile API lucky pick</span>
@@ -243,6 +246,8 @@ export function whatsappConsentBanner(state, placement = "search") {
   const travelers = travelerLabel(fields, state);
   const phone = localPhoneValue(detailText(fields.phone || state.booking?.phone, ""));
   const watchedDestination = detailDestination(fields.watched_price_destination) || destination;
+  const heroProduct = recommendationRail("search", state).find((product) => product.destination === destination)
+    || recommendationRail("homepage", state)[0];
   const contextTitle = watchedDestination === destination
     ? `${destination} ${tripType} trip`
     : `${watchedDestination} price watch`;
@@ -261,6 +266,7 @@ export function whatsappConsentBanner(state, placement = "search") {
     >
       <button class="whatsapp-consent-close" type="button" data-whatsapp-dismiss aria-label="Hide WhatsApp price alert">&times;</button>
       <div class="whatsapp-consent-hero" aria-hidden="true">
+        ${heroProduct ? `<img src="${heroProduct.image}" alt="" loading="lazy" />` : ""}
         <div class="whatsapp-phone-mark">WA</div>
         <div class="whatsapp-bubbles">
           <span>${firstName(fields)}, price changes for ${destination}?</span>
