@@ -3,7 +3,7 @@ import { findProductsByIds } from "../catalog/lookups.js";
 import { personas } from "../data/personas.js";
 import { recommendationRail } from "../recommendations/strategies.js";
 import { profileProof, rail, searchPanel } from "./components.js";
-import { personalizationBanner } from "./personalizationBanners.js";
+import { luckyPickBanner, personalizationBanner } from "./personalizationBanners.js";
 
 export function homePage(state) {
   const persona = personas[state.personaId] || personas.anonymous;
@@ -37,6 +37,7 @@ export function homePage(state) {
       </div>
     </section>
     ${personalizationBanner("home", state)}
+    ${luckyPickBanner(state, "home")}
     <section class="destination-band">
       <div class="section-heading">
         <h2>Popular ways to leave responsibly</h2>

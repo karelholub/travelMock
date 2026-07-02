@@ -1,4 +1,5 @@
 import { findProductById } from "../catalog/lookups.js";
+import { recommendationRail } from "../recommendations/strategies.js";
 import { money, productTypeLabel } from "../utils/format.js";
 import { detailDestination, detailNumber, detailText } from "../utils/profileDisplay.js";
 
@@ -173,6 +174,85 @@ export function personalizationBanner(placement, state, options = {}) {
       ${ctaHtml}
     </section>
   `;
+}
+
+export function luckyPickBanner(state, placement = "home") {
+  const fields = profileFields(state);
+  const products = recommendationRail(placement === "search" ? "search" : "homepage", state);
+  const picked = products[0] || recommendedAddOn(fields);
+  if (!picked) return "";
+  const destination = destinationSignal(fields, state.search.destination);
+  const stage = detailText(fields.booking_lifecycle_stage, "planning");
+  const travelers = travelerLabel(fields, state);
+  const dates = dateRangeLabel(state.search);
+  const score = (8.4 + Math.min(1.1, Number(picked.margin || 0) * 2)).toFixed(1);
+  const offerReason = picked.type === "transfer"
+    ? "transport gap"
+    : picked.type === "insurance"
+      ? "insurance gap"
+      : picked.type === "experience"
+        ? "excursion match"
+        : "best profile fit";
+  return `
+    <section class="lucky-pick-banner" data-lucky-pick="${placement}" data-picked-product="${picked.id}" aria-label="Profile API lucky pick">
+      <button class="lucky-pick-close" type="button" data-lucky-dismiss aria-label="Hide lucky pick">&times;</button>
+      <div class="lucky-pick-mark" aria-hidden="true">
+        <strong>?</strong>
+        <span>Lucky pick</span>
+      </div>
+      <div class="lucky-pick-copy">
+        <span class="eyebrow">Profile API lucky pick</span>
+        <h2>${firstName(fields)}, want us to choose the next best offer?</h2>
+        <p>We will use ${destination} affinity, ${stage}, recent searches, and product preferences to reveal one offer worth following up.</p>
+        <div class="lucky-pick-context" aria-label="Personalization context">
+          <span>${dates}</span>
+          <span>${travelers}</span>
+          <span>${detailText(fields.preferred_trip_types || state.search.tripType, state.search.tripType)}</span>
+        </div>
+        <article class="lucky-pick-card" data-lucky-card>
+          <a class="lucky-pick-image" href="/product/${picked.slug}" data-link>
+            <img src="${picked.image}" alt="${picked.destination} recommendation" loading="lazy" />
+            <span>${offerReason}</span>
+          </a>
+          <div class="lucky-pick-card-body">
+            <span class="eyebrow">Picked for this profile</span>
+            <a href="/product/${picked.slug}" data-link>${picked.name}</a>
+            <p>${picked.destination} · ${productTypeLabel(picked.type)} · ${picked.tagline}</p>
+            <div class="lucky-pick-meta">
+              <strong>${score}<small>/10</small></strong>
+              <span>${money(picked.price)}</span>
+              <span>${Math.round(Number(picked.margin || 0) * 100)}% margin</span>
+            </div>
+          </div>
+        </article>
+        <div class="lucky-pick-actions">
+          <button class="primary" type="button" data-lucky-reveal>Pick for me</button>
+          <a class="secondary" href="/product/${picked.slug}" data-link data-lucky-open>View picked offer</a>
+        </div>
+        <p class="lucky-pick-note">Later this can be rendered by Meiro CDP; for now the site uses the same Profile API fields directly.</p>
+      </div>
+    </section>
+  `;
+}
+
+function dateRangeLabel(search = {}) {
+  if (!search.departureDate || !search.returnDate) return "Dates from recent search";
+  return `${formatDate(search.departureDate)} - ${formatDate(search.returnDate)}`;
+}
+
+function formatDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+function travelerLabel(fields, state) {
+  const composition = fields.traveler_composition || {};
+  const adults = Number(composition.adults || composition.adult_count || state.search.adults || 1);
+  const children = Number(composition.children || composition.child_count || state.search.children || 0);
+  const ages = Array.isArray(composition.children_ages || composition.childAges) ? composition.children_ages || composition.childAges : state.search.childAges || [];
+  const childText = children ? `, ${children} children${ages.length ? ` (${ages.join(", ")})` : ""}` : "";
+  return `${adults} adults${childText}`;
 }
 
 export function personalizationPopup(state, path) {

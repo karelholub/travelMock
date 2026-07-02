@@ -397,6 +397,38 @@ function wireProfileControls() {
 }
 
 function wirePersonalizationBanners() {
+  document.querySelectorAll("[data-lucky-pick]").forEach((banner) => {
+    trackEvent("web_banner_impression", {
+      banner_id: banner.dataset.luckyPick,
+      item_id: banner.dataset.pickedProduct,
+      item_name: "Profile API lucky pick",
+      list_name: location.pathname
+    });
+    banner.querySelector("[data-lucky-reveal]")?.addEventListener("click", (event) => {
+      if (banner.classList.contains("is-revealed")) {
+        banner.querySelector("[data-lucky-open]")?.click();
+        return;
+      }
+      banner.classList.add("is-revealed");
+      event.currentTarget.textContent = "View this offer";
+      trackEvent("web_banner_click", {
+        banner_id: banner.dataset.luckyPick,
+        item_id: banner.dataset.pickedProduct,
+        item_name: "Profile API lucky pick reveal",
+        list_name: location.pathname
+      });
+    });
+    banner.querySelector("[data-lucky-dismiss]")?.addEventListener("click", () => {
+      banner.remove();
+      trackEvent("web_banner_close", {
+        banner_id: banner.dataset.luckyPick,
+        item_id: banner.dataset.pickedProduct,
+        item_name: "Profile API lucky pick dismissed",
+        list_name: location.pathname
+      });
+    });
+  });
+
   document.querySelectorAll("[data-personalization-banner]").forEach((banner) => {
     banner.querySelectorAll("a, button").forEach((control) => {
       control.addEventListener("click", () => {
